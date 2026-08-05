@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стася · Домашняя работа по английскому</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C97B5B' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z'/%3E%3Cpath d='M12 12v6a2.5 2.5 0 0 0 5 0'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F3EFE9; --card:#FBF8F3; --accent:#C97B5B; --accent-d:#A85D3F;
+    --ink:#3A3532; --mut:#6B625C; --line:#D9CFC2;
+    --ok:#A9BFA0; --warn:#E8C989; --bad:#D98B7A;
+    --ok-bg:#EFF3E9; --ok-ink:#66805A;
+    --bad-bg:#F8ECE7; --bad-ink:#AD5E4C;
+    --warn-bg:#F8EED4; --warn-ink:#8A6D33;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'DejaVu Sans','Segoe UI',Tahoma,sans-serif;
+    font-size:16px; line-height:1.55; color:var(--ink);
+    background:var(--bg); min-height:100vh;
+  }
+  /* ------- фон: фото + бежевый фейд ------- */
+  .bg-photo{
+    position:fixed; inset:0; z-index:-2;
+    background:#F3EFE9 url('photo.jpg') center/cover no-repeat;
+  }
+  .bg-fade{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(243,239,233,1) 0%,
+      rgba(243,239,233,.68) 20%,
+      rgba(243,239,233,.55) 50%,
+      rgba(243,239,233,.68) 80%,
+      rgba(243,239,233,1) 100%);
+  }
+  h1,h2,h3{font-family:Georgia,'Times New Roman',serif; color:var(--ink)}
+  .page{max-width:920px; margin:0 auto; padding:26px 20px 60px; display:flex; flex-direction:column; gap:26px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:28px 30px}
+
+  /* ------- верхняя полоска ------- */
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
+    font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--mut)}
+  .topbar .tl,.topbar .tr{display:flex; align-items:center; gap:9px}
+  .topbar svg{width:17px;height:17px;color:var(--accent); flex:0 0 auto}
+
+  /* ------- обложка ------- */
+  .cover{position:relative; overflow:hidden; display:flex; flex-direction:column; gap:18px}
+  .deco-umbrella{position:absolute; right:-14px; top:-16px; width:150px; height:150px; color:var(--accent); opacity:.16; transform:rotate(14deg); pointer-events:none}
+  .stamp{display:inline-flex; align-items:center; gap:9px; align-self:flex-start;
+    border:1.5px solid var(--accent); color:var(--accent-d); background:var(--card);
+    padding:6px 15px; border-radius:999px; font-size:11.5px; letter-spacing:.15em;
+    text-transform:uppercase; transform:rotate(-1.6deg)}
+  .stamp svg{width:14px;height:14px}
+  .cover h1{font-size:clamp(30px,4.8vw,46px); line-height:1.14; max-width:640px}
+  .squiggle{display:block; margin-top:6px}
+  .chips{display:flex; flex-wrap:wrap; gap:10px}
+  .chip{display:inline-flex; align-items:center; gap:8px; padding:8px 15px;
+    border:1px solid var(--line); border-radius:999px; background:#FFFDF9;
+    font-size:13.5px; color:var(--mut)}
+  .chip svg{width:16px;height:16px;color:var(--accent); flex:0 0 auto}
+  .chip b{color:var(--ink); font-weight:600}
+  .notice{display:flex; gap:13px; align-items:flex-start; padding:15px 17px; border-radius:14px; border:1px solid; font-size:14.5px}
+  .notice svg{width:21px;height:21px; flex:0 0 auto; margin-top:1px}
+  .notice.warn{background:var(--warn-bg); border-color:#E3CD98; color:#6E5A2E}
+  .notice.warn svg{color:#B98F3E}
+  .notice.info{background:#F5E7DE; border-color:#E0B9A4; color:#7C4E36}
+  .notice.info svg{color:var(--accent-d)}
+  .notice b{font-weight:600}
+
+  /* ------- прогресс (липкий) ------- */
+  .progress{position:sticky; top:12px; z-index:30; display:flex; align-items:center; gap:14px;
+    background:rgba(251,248,243,.95); border:1px solid var(--line); border-radius:14px; padding:11px 18px}
+  .progress .plabel{font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); white-space:nowrap}
+  .bar{flex:1; height:9px; border-radius:99px; background:#ECE4D7; overflow:hidden; display:flex}
+  .bar-fill{width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-d)); border-radius:99px; transition:width .4s ease}
+  .pcount{font-size:13.5px; color:var(--mut); white-space:nowrap; font-variant-numeric:tabular-nums}
+  .pcount b{color:var(--accent-d)}
+
+  /* ------- блоки ------- */
+  .b-head{display:flex; gap:17px; align-items:flex-start}
+  .b-num{flex:0 0 auto; width:48px; height:48px; border-radius:14px; background:var(--accent);
+    border:1px solid var(--accent-d); color:#FBF8F3; font-family:Georgia,serif; font-size:25px;
+    display:flex; align-items:center; justify-content:center}
+  .b-over{font-size:11px; letter-spacing:.17em; text-transform:uppercase; color:var(--mut)}
+  .b-head h2{font-size:clamp(21px,3vw,26px); margin-top:2px; line-height:1.25}
+  .b-desc{margin-top:14px; font-size:14.5px; color:var(--mut); max-width:720px}
+
+  /* ------- задания ------- */
+  .items{display:flex; flex-direction:column; gap:10px}
+  .vocab-list{display:flex; flex-wrap:wrap; gap:10px}
+  .vocab-list .item{flex:1 1 calc(50% - 5px); min-width:295px}
+  .item{display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+    background:#FFFDF9; border:1px solid var(--line); border-radius:14px; padding:11px 15px;
+    transition:border-color .25s ease, background-color .25s ease}
+  .item:hover{border-color:#CBBBA6}
+  .item.ok{background:#F6F8F1; border-color:#CBD9C2}
+  .item.bad{background:#FAF0EC; border-color:#E7C4B9}
+  .num{flex:0 0 30px; width:30px; height:30px; border-radius:50%; border:1px solid var(--line);
+    background:var(--card); color:var(--mut); font-size:12.5px; display:flex; align-items:center; justify-content:center}
+  .prompt{flex:1; min-width:120px; font-family:Georgia,serif; font-style:italic; font-size:17.5px; color:var(--ink)}
+  .sent{flex:1; display:flex; flex-wrap:wrap; align-items:center; gap:7px; font-size:16.5px}
+  .sent .hint{color:var(--mut)}
+  .ru-chip{font-family:Georgia,serif; font-style:italic; font-size:18px; color:var(--accent-d);
+    background:#F6EDE4; border:1px solid #E4D2C3; border-radius:10px; padding:4px 13px; white-space:nowrap}
+  .pctx{flex-basis:100%; font-size:12.5px; color:var(--mut); margin-left:42px; font-style:italic}
+  input[type=text]{
+    font-family:inherit; font-size:15.5px; color:var(--ink);
+    background:#FFFDF9; border:1.5px solid var(--line); border-radius:10px;
+    padding:8px 12px; outline:none; width:clamp(150px,24vw,225px);
+    transition:border-color .2s ease, background-color .2s ease;
+  }
+  input[type=text]:focus{border-color:var(--accent); background:#fff}
+  input[type=text].ok{border-color:var(--ok); background:var(--ok-bg); color:#4E6444}
+  input[type=text].bad{border-color:var(--bad); background:var(--bad-bg)}
+  input[type=text]:disabled{cursor:default; opacity:1}
+  input[type=text]::placeholder{color:#BDB1A3}
+  input.gv{width:112px; text-align:center}
+  input.pv{width:120px; text-align:center}
+  input.art{width:96px; text-align:center}
+  .feedback{display:none; flex-basis:100%; align-items:center; gap:8px; font-size:13.5px; margin:3px 0 0 42px}
+  .feedback.show{display:flex}
+  .feedback svg{width:15px;height:15px; flex:0 0 auto}
+  .feedback.ok{color:var(--ok-ink)}
+  .feedback.bad{color:var(--bad-ink)}
+
+  /* ------- кнопки и статистика ------- */
+  .btn{display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+    background:var(--accent); color:#FBF8F3; border:1px solid var(--accent-d);
+    border-radius:13px; padding:12px 23px; font-family:inherit; font-size:15.5px; font-weight:600;
+    transition:background-color .2s ease, transform .15s ease}
+  .btn svg{width:17px;height:17px}
+  .btn:hover{background:var(--accent-d); transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.big{padding:16px 32px; font-size:17px; border-radius:15px}
+  .b-foot{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:20px}
+  .stats{display:none; align-items:center; gap:10px; padding:10px 17px; border-radius:12px; border:1px solid; font-size:14.5px}
+  .stats.show{display:flex}
+  .stats svg{width:17px;height:17px; flex:0 0 auto}
+  .stats.good{background:var(--ok-bg); border-color:var(--ok); color:var(--ok-ink)}
+  .stats.mid{background:var(--warn-bg); border-color:var(--warn); color:var(--warn-ink)}
+
+  /* ------- финал ------- */
+  .final-cta{display:flex; flex-direction:column; align-items:flex-start; gap:14px}
+  #finalResults{display:none; flex-direction:column; gap:20px}
+  #finalResults.show{display:flex}
+  .praise-wrap{background:#F5E7DE; border:1px solid #E0B9A4; border-radius:16px; padding:24px 26px;
+    display:flex; flex-direction:column; gap:10px}
+  .stars{display:flex; gap:8px}
+  .stars svg{width:24px;height:24px; color:#E2B85C}
+  .stars .s1{animation:pop .5s .1s both}
+  .stars .s2{animation:pop .5s .28s both}
+  .stars .s3{animation:pop .5s .46s both}
+  @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .praise{font-family:Georgia,serif; font-size:clamp(23px,3.4vw,31px); color:var(--accent-d); line-height:1.25}
+  .total-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .total-big{font-family:Georgia,serif; font-size:40px; color:var(--accent-d); line-height:1}
+  .total-big span{font-size:20px; color:var(--mut)}
+  .pct{display:inline-flex; align-items:center; padding:7px 15px; border-radius:999px;
+    background:#F5E7DE; border:1px solid #E0B9A4; color:var(--accent-d); font-size:14px; font-weight:600}
+  .extra{font-size:14.5px; color:var(--mut)}
+  .break-row{display:flex; align-items:center; gap:14px; padding:11px 2px; border-bottom:1px dashed var(--line); flex-wrap:wrap}
+  .break-row .bn{flex:0 0 26px; width:26px; height:26px; border-radius:8px; background:var(--card);
+    border:1px solid var(--line); font-family:Georgia,serif; font-size:14px; color:var(--accent-d);
+    display:flex; align-items:center; justify-content:center}
+  .break-row .bname{flex:1; min-width:170px; font-size:15px}
+  .mini-bar{flex:0 0 130px; height:7px; border-radius:99px; background:#ECE4D7; overflow:hidden; display:flex}
+  .mini-fill{height:100%; border-radius:99px; background:var(--ok); transition:width .6s ease}
+  .break-row .bscore{font-size:14px; color:var(--mut); font-variant-numeric:tabular-nums}
+  .reminder{display:flex; gap:14px; align-items:flex-start; background:#F5E7DE;
+    border:1px solid #E0B9A4; border-radius:14px; padding:17px 19px; font-size:15px; color:#7C4E36}
+  .reminder svg{width:23px;height:23px; color:var(--accent-d); flex:0 0 auto; margin-top:1px}
+  .reminder b{color:var(--accent-d)}
+
+  footer{display:flex; align-items:center; justify-content:center; gap:8px; font-size:13px; color:var(--mut); padding:4px 0 10px}
+  footer svg{width:15px;height:15px; color:var(--accent)}
+
+  /* ------- появление при прокрутке ------- */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none}
+    .stars svg{animation:none}
+  }
+  @media (max-width:600px){
+    .card{padding:20px 18px}
+    .pctx,.feedback{margin-left:0}
+    .progress{top:6px}
+  }
+</style>
+</head>
+<body>
+<div class="bg-photo"></div>
+<div class="bg-fade"></div>
+
+<main class="page">
+
+  <div class="topbar reveal">
+    <div class="tl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.8-1.6-4.2-2-7-2v14c2.8 0 5.2.4 7 2 1.8-1.6 4.2-2 7-2V4c-2.8 0-5.2.4-7 2z"/><path d="M12 6v14"/></svg>
+      <span>Английский язык · домашняя работа</span>
+    </div>
+    <div class="tr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
+      <span id="today"></span>
+    </div>
+  </div>
+
+  <!-- ======= ОБЛОЖКА ======= -->
+  <section class="card cover reveal">
+    <svg class="deco-umbrella" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z"/><path d="M12 3V2M12 12v6a2.5 2.5 0 0 0 5 0"/></svg>
+    <span class="stamp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg>
+      домашняя работа
+    </span>
+    <div>
+      <h1>Стася, это твоя домашняя работа</h1>
+      <svg class="squiggle" width="175" height="12" viewBox="0 0 175 12"><path d="M2 8C12 2 20 2 30 8S48 14 58 8 76 2 86 8 104 14 114 8 132 2 142 8 160 14 172 8" fill="none" stroke="#C97B5B" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </div>
+    <div class="chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        примерно <b>&nbsp;20–25 минут</b>
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>
+        <b>4 раздела&nbsp;·&nbsp;61 задание</b>
+      </span>
+    </div>
+    <div class="notice warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.8 19.5h18.4L12 3.5z"/><path d="M12 10v4M12 16.8h.01"/></svg>
+      <div><b>Пройди всю работу за один раз</b> — не перезагружай страницу и не закрывай вкладку. Иначе все ответы сбросятся, и придётся начинать заново.</div>
+    </div>
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div>Когда закончишь все четыре блока — <b>сделай скриншот страницы с результатами и отправь его в Telegram</b>.</div>
+    </div>
+  </section>
+
+  <!-- ======= ПРОГРЕСС ======= -->
+  <div class="progress reveal">
+    <span class="plabel">Прогресс</span>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <span class="pcount"><b id="pNow">0</b> / <span id="pTotal">0</span> полей</span>
+  </div>
+
+  <!-- ======= БЛОК 1 ======= -->
+  <section class="card reveal" id="b1">
+    <div class="b-head">
+      <div class="b-num">1</div>
+      <div>
+        <div class="b-over">Блок 1 · Лексика</div>
+        <h2>Переведи слова на английский</h2>
+      </div>
+    </div>
+    <p class="b-desc">Прочитай слово по-русски и впиши его по-английски. Большие и маленькие буквы не различаются — пиши как удобно, важны только сами буквы.</p>
+    <div class="items vocab-list" id="list1"></div>
+    <div class="b-foot">
+      <button class="btn" data-check="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Проверить блок 1</button>
+      <div class="stats" id="stats1"></div>
+    </div>
+  </section>
+
+  <!-- ======= БЛОК 2 ======= -->
+  <section class="card reveal" id="b2">
+    <div class="b-head">
+      <div class="b-num">2</div>
+      <div>
+        <div class="b-over">Блок 2 · Грамматика</div>
+        <h2>Глагол или to be? Впиши верную форму</h2>
+      </div>
+    </div>
+    <p class="b-desc">В скобках подсказка — какой глагол нужен. Тебе остаётся выбрать правильную форму: <b>to be</b> (am / is / are) или глагол в <b>Present Simple</b>. Все предложения — утвердительные.</p>
+    <div class="items" id="list2"></div>
+    <div class="b-foot">
+      <button class="btn" data-check="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Проверить блок 2</button>
+      <div class="stats" id="stats2"></div>
+    </div>
+  </section>
+
+  <!-- ======= БЛОК 3 ======= -->
+  <section class="card reveal" id="b3">
+    <div class="b-head">
+      <div class="b-num">3</div>
+      <div>
+        <div class="b-over">Блок 3 · Грамматика</div>
+        <h2>Притяжательные прилагательные</h2>
+      </div>
+    </div>
+    <p class="b-desc">Прочитай русское слово и подсказку о том, кто говорит, и впиши английское притяжательное прилагательное (my, your, his, her, its, our, their).</p>
+    <div class="items" id="list3"></div>
+    <div class="b-foot">
+      <button class="btn" data-check="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Проверить блок 3</button>
+      <div class="stats" id="stats3"></div>
+    </div>
+  </section>
+
+  <!-- ======= БЛОК 4 ======= -->
+  <section class="card reveal" id="b4">
+    <div class="b-head">
+      <div class="b-num">4</div>
+      <div>
+        <div class="b-over">Блок 4 · Артикли</div>
+        <h2>Артикли: a, an, the — или ничего</h2>
+      </div>
+    </div>
+    <p class="b-desc">Впиши нужный артикль <b>a</b>, <b>an</b> или <b>the</b>. Если артикль не нужен — поставь тире (<b>–</b>). Задания перемешаны: вспомни правила и догадайся сама, какой вариант подходит в каждом предложении.</p>
+    <div id="list4"></div>
+    <div class="b-foot">
+      <button class="btn" data-check="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Проверить блок 4</button>
+      <div class="stats" id="stats4"></div>
+    </div>
+  </section>
+
+  <!-- ======= ФИНАЛ ======= -->
+  <section class="card reveal" id="bFinal">
+    <div class="b-head">
+      <div class="b-num">★</div>
+      <div>
+        <div class="b-over">Финал</div>
+        <h2>Итог всей работы</h2>
+      </div>
+    </div>
+    <div class="final-cta" id="finalCta" style="margin-top:18px">
+      <p style="font-size:14.5px;color:var(--mut)">Нажми кнопку — она проверит все блоки и соберёт твой общий результат.</p>
+      <button class="btn big" id="finalBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>Показать итоги всей работы</button>
+    </div>
+    <div id="finalResults"></div>
+  </section>
+
+  <footer class="reveal">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.6-9.2-9A5.2 5.2 0 0 1 12 6.4 5.2 5.2 0 0 1 21.2 11C19 15.4 12 20 12 20z"/></svg>
+    Сделано с теплом для Стаси · английский язык
+  </footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= ДАННЫЕ ================= */
+var VOCAB = [
+  ['зонтик','umbrella'],['надеяться','hope'],['ветеринар','vet'],['далеко','far'],
+  ['квартира','flat'],['инженер','engineer'],['менеджер','manager'],['дизайнер','designer'],
+  ['шеф-повар','chef'],['водитель','driver'],['курьер','courier'],['диспетчер','dispatcher'],
+  ['футболка','t-shirt',['t shirt']],['море','sea'],['брать','take'],['весна','spring'],
+  ['зима','winter'],['осень','autumn'],['лето','summer'],['давать','give'],
+  ['думать','think'],['готовый','ready'],['сейчас','now'],['добрый','kind'],
+  ['я устал',"i am tired",["i'm tired"]]
+];
+
+var GRAMMAR = [
+  {pre:'She',          h:'(be)',    rest:'a designer.',                              a:'is'},
+  {pre:'He',           h:'(work)',  rest:'as a courier.',                            a:'works'},
+  {pre:'I',            h:'(be)',    rest:'tired now.',                               a:'am'},
+  {pre:'We',           h:'(be)',    rest:'ready for the lesson.',                    a:'are'},
+  {pre:'My brother',   h:'(live)',  rest:'in a big flat.',                           a:'lives'},
+  {pre:'The sea',      h:'(be)',    rest:'warm in summer.',                          a:'is'},
+  {pre:'They',         h:'(be)',    rest:'engineers.',                               a:'are'},
+  {pre:'Anna',         h:'(think)', rest:'this is a good idea.',                     a:'thinks'},
+  {pre:'My dad',       h:'(be)',    rest:'a driver.',                                a:'is'},
+  {pre:'He',           h:'(give)',  rest:'flowers to his mother every spring.',      a:'gives'},
+  {pre:'The children', h:'(be)',    rest:'at home now.',                             a:'are'},
+  {pre:'My sister',    h:'(take)',  rest:'an umbrella when it rains.',               a:'takes'},
+  {pre:'Stasya',       h:'(love)',  rest:'winter.',                                  a:'loves'},
+  {pre:'The manager',  h:'(work)',  rest:'in an office.',                            a:'works'},
+  {pre:'I',            h:'(need)',  rest:'my umbrella today.',                       a:'need'}
+];
+
+var POSS = [
+  {ru:'мой',      ctx:'я говорю о себе',                pre:'',           rest:'umbrella is blue.',                 a:'my'},
+  {ru:'твой',     ctx:'я обращаюсь к тебе',             pre:'',           rest:'name is Stasya.',                   a:'your'},
+  {ru:'его',      ctx:'я говорю о мальчике Томе',       pre:'',           rest:'bike is new.',                      a:'his'},
+  {ru:'её',       ctx:'я говорю о маме',                pre:'',           rest:'bag is beautiful.',                 a:'her'},
+  {ru:'его / её', ctx:'я говорю о коте (это животное)', pre:'The cat likes', rest:'basket.',                       a:'its'},
+  {ru:'наш',      ctx:'мы говорим о своей семье',       pre:'',           rest:'flat is warm and nice.',            a:'our'},
+  {ru:'их',       ctx:'я говорю о друзьях',             pre:'',           rest:'summer house is near the sea.',     a:'their'},
+  {ru:'ваш',      ctx:'учитель обращается к классу',    pre:'Open',       rest:'books, please.',                    a:'your'},
+  {ru:'мой',      ctx:'я говорю о себе',                pre:'I think',    rest:'homework is fun.',                  a:'my'}
+];
+
+/* Артикли — задания перемешаны по правилам (повтор → единственный → общий) */
+var ARTICLES = [
+  {segs:['I have','umbrella.','umbrella is red.'],        a:['an','the']},
+  {segs:['','sun is warm today.'],                        a:['the']},
+  {segs:['','cats are kind animals.'],                    a:['-']},
+  {segs:['She has','t-shirt.','t-shirt is white.'],       a:['a','the']},
+  {segs:['','sea is beautiful in summer.'],               a:['the']},
+  {segs:['He drinks','tea every morning.'],               a:['-']},
+  {segs:['We have','flat.','flat is very nice.'],         a:['a','the']},
+  {segs:['Look!','moon is big tonight.'],                 a:['the']},
+  {segs:['She reads','books every day.'],                 a:['-']},
+  {segs:['He has','bike.','bike is new.'],                a:['a','the']},
+  {segs:['','sky is blue today.'],                        a:['the']},
+  {segs:['We listen to','music in the evening.'],         a:['-']}
+];
+var BLOCK_NAMES = {1:'Лексика', 2:'Глаголы и to be', 3:'Притяжательные прилагательные', 4:'Артикли'};
+
+var ICO_OK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>';
+var ICO_BAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>';
+var ICO_STAR= '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3-5.7-3.1-5.7 3.1 1.2-6.3L2.8 9.5l6.4-.8L12 2.8z"/></svg>';
+
+/* ================= РЕНДЕР ================= */
+var EXP = {1:[],2:[],3:[],4:[]};
+
+/* Блок 1 */
+document.getElementById('list1').innerHTML = VOCAB.map(function(w,i){
+  EXP[1][i] = [{ans:w[1].toLowerCase(), alts:(w[2]||[]).map(function(x){return x.toLowerCase();})}];
+  return '<div class="item" data-item="'+i+'">'+
+    '<div class="num">'+(i+1)+'</div>'+
+    '<div class="prompt">'+w[0]+'</div>'+
+    '<input type="text" data-b="1" data-i="'+i+'" data-s="0" placeholder="по-английски">'+
+    '<div class="feedback"></div></div>';
+}).join('');
+
+/* Блок 2 */
+document.getElementById('list2').innerHTML = GRAMMAR.map(function(g,i){
+  EXP[2][i] = [{ans:g.a}];
+  return '<div class="item" data-item="'+i+'">'+
+    '<div class="num">'+(i+1)+'</div>'+
+    '<div class="sent">'+(g.pre? '<span>'+g.pre+'</span>':'')+
+    '<input type="text" class="gv" data-b="2" data-i="'+i+'" data-s="0">'+
+    '<span class="hint">'+g.h+'</span><span>'+g.rest+'</span></div>'+
+    '<div class="feedback"></div></div>';
+}).join('');
+
+/* Блок 3 */
+document.getElementById('list3').innerHTML = POSS.map(function(p,i){
+  EXP[3][i] = [{ans:p.a}];
+  return '<div class="item" data-item="'+i+'">'+
+    '<div class="num">'+(i+1)+'</div>'+
+    '<span class="ru-chip">'+p.ru+'</span>'+
+    '<div class="sent" style="flex:1">'+(p.pre? '<span>'+p.pre+'</span>':'')+
+    '<input type="text" class="pv" data-b="3" data-i="'+i+'" data-s="0">'+
+    '<span>'+p.rest+'</span></div>'+
+    '<div class="pctx">подсказка: '+p.ctx+'</div>'+
+    '<div class="feedback"></div></div>';
+}).join('');
+
+/* Блок 4 — смешанный список */
+ARTICLES.forEach(function(a,i){ EXP[4][i] = a.a.map(function(x){return {ans:x};}); });
+document.getElementById('list4').innerHTML = '<div class="items">' + ARTICLES.map(function(it,i){
+  var inner='';
+  for(var k=0;k<it.segs.length;k++){
+    if(it.segs[k]) inner += '<span>'+it.segs[k]+'</span>';
+    if(k<it.segs.length-1)
+      inner += '<input type="text" class="art" data-b="4" data-i="'+i+'" data-s="'+k+'" placeholder="a / an / the / –">';
+  }
+  return '<div class="item" data-item="'+i+'">'+
+    '<div class="num">'+(i+1)+'</div>'+
+    '<div class="sent">'+inner+'</div>'+
+    '<div class="feedback"></div></div>';
+}).join('') + '</div>';
+
+/* служебные атрибуты полей */
+var allInputs = Array.prototype.slice.call(document.querySelectorAll('main input[type=text]'));
+allInputs.forEach(function(inp){
+  inp.setAttribute('autocomplete','off');
+  inp.setAttribute('autocorrect','off');
+  inp.setAttribute('autocapitalize','off');
+  inp.setAttribute('spellcheck','false');
+});
+var TOTAL_INPUTS = allInputs.length;
+document.getElementById('pTotal').textContent = TOTAL_INPUTS;
+
+/* ================= ЛОГИКА ================= */
+var results = {}, finished = false;
+
+function norm(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+function isCorrect(b,i,s,val){
+  var e = EXP[b][i][s], v = norm(val);
+  if(e.ans === '-') return ['-','—','–','−'].indexOf(v) !== -1;
+  if(v === e.ans) return true;
+  return (e.alts||[]).indexOf(v) !== -1;
+}
+
+function prettyAns(ans){ return ans === '-' ? '– (артикль не нужен)' : ans; }
+
+function checkBlock(b){
+  var block = document.getElementById('b'+b);
+  block.querySelectorAll('input').forEach(function(inp){ inp.classList.remove('ok','bad'); });
+  block.querySelectorAll('.feedback').forEach(function(f){ f.className='feedback'; f.innerHTML=''; });
+  block.querySelectorAll('.item').forEach(function(it){ it.classList.remove('ok','bad'); });
+
+  var okItems = 0, total = EXP[b].length;
+  for(var i=0;i<total;i++){
+    var itemOk = true, parts = [];
+    EXP[b][i].forEach(function(e,s){
+      var inp = block.querySelector('input[data-i="'+i+'"][data-s="'+s+'"]');
+      var ok = isCorrect(b,i,s,inp.value);
+      inp.classList.add(ok ? 'ok' : 'bad');
+      if(ok){ inp.disabled = true; } else { itemOk = false; }
+      parts.push(prettyAns(e.ans));
+    });
+    var item = block.querySelector('.item[data-item="'+i+'"]');
+    var fb = item.querySelector('.feedback');
+    if(itemOk){
+      okItems++;
+      item.classList.add('ok');
+      fb.className = 'feedback show ok';
+      fb.innerHTML = ICO_OK + '<span>Верно</span>';
+    } else {
+      item.classList.add('bad');
+      fb.className = 'feedback show bad';
+      fb.innerHTML = ICO_BAD + '<span>Правильный ответ: ' + parts.join(' … ') + '</span>';
+    }
+  }
+  results[b] = {ok:okItems, total:total};
+
+  var st = document.getElementById('stats'+b);
+  var all = okItems === total;
+  st.className = 'stats show ' + (all ? 'good' : 'mid');
+  st.innerHTML = (all ? ICO_OK : ICO_BAD) +
+    '<span><b>Верно: '+okItems+' из '+total+'</b>' +
+    (all ? ' — отлично, все ответы верные!' : ' — загляни в задания с пометкой, рядом написан правильный ответ. Можно исправить и проверить ещё раз.') + '</span>';
+}
+
+document.querySelectorAll('[data-check]').forEach(function(btn){
+  btn.addEventListener('click', function(){ checkBlock(+btn.getAttribute('data-check')); });
+});
+
+/* прогресс */
+function updateProgress(){
+  var filled = allInputs.filter(function(x){ return x.value.trim() !== ''; }).length;
+  document.getElementById('pNow').textContent = filled;
+  document.getElementById('barFill').style.width = Math.round(filled/TOTAL_INPUTS*100) + '%';
+}
+document.addEventListener('input', function(e){
+  if(e.target && e.target.tagName === 'INPUT') updateProgress();
+});
+
+/* Enter — к следующему полю */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && e.target && e.target.tagName === 'INPUT'){
+    e.preventDefault();
+    var open = allInputs.filter(function(x){ return !x.disabled; });
+    var idx = open.indexOf(e.target);
+    if(idx > -1 && idx < open.length-1) open[idx+1].focus();
+  }
+});
+
+/* финал */
+document.getElementById('finalBtn').addEventListener('click', function(){
+  [1,2,3,4].forEach(checkBlock);
+  var totalOk = 0, totalAll = 0, rows = '';
+  [1,2,3,4].forEach(function(b){
+    var r = results[b];
+    totalOk += r.ok; totalAll += r.total;
+    rows += '<div class="break-row">'+
+      '<span class="bn">'+b+'</span>'+
+      '<span class="bname">'+BLOCK_NAMES[b]+'</span>'+
+      '<span class="mini-bar"><span class="mini-fill" style="width:'+(r.ok/r.total*100)+'%"></span></span>'+
+      '<span class="bscore">'+r.ok+' из '+r.total+'</span></div>';
+  });
+  var pct = Math.round(totalOk/totalAll*100);
+  var extra = totalOk === totalAll ? 'Ни одной ошибки — вот это да! Потрясающий результат.' :
+              totalOk >= totalAll*0.8 ? 'Отличная работа! Совсем чуть-чуть до идеала.' :
+              'Хорошая попытка! Загляни в исправления — в следующий раз будет ещё лучше.';
+
+  document.getElementById('finalCta').style.display = 'none';
+  var fr = document.getElementById('finalResults');
+  fr.innerHTML =
+    '<div class="praise-wrap">'+
+      '<div class="stars"><span class="s1">'+ICO_STAR+'</span><span class="s2">'+ICO_STAR+'</span><span class="s3">'+ICO_STAR+'</span></div>'+
+      '<div class="praise">Стася, ты молодец, ты сделала домашку!</div>'+
+      '<div class="extra">'+extra+'</div>'+
+    '</div>'+
+    '<div class="total-row">'+
+      '<div class="total-big">'+totalOk+' <span>из '+totalAll+' заданий</span></div>'+
+      '<span class="pct">'+pct+'% верно</span>'+
+    '</div>'+
+    '<div>'+rows+'</div>'+
+    '<div class="reminder">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>'+
+      '<div><b>Сделай скриншот этой страницы с результатами и отправь его в Telegram.</b></div>'+
+    '</div>';
+  fr.className = 'show';
+  finished = true;
+  setTimeout(function(){ fr.scrollIntoView({behavior:'smooth', block:'start'}); }, 80);
+});
+
+/* защита от случайной перезагрузки */
+window.addEventListener('beforeunload', function(e){
+  var anyFilled = allInputs.some(function(x){ return x.value.trim() !== ''; });
+  if(anyFilled && !finished){ e.preventDefault(); e.returnValue=''; }
+});
+
+/* дата */
+document.getElementById('today').textContent =
+  new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date());
+
+/* плавное появление карточек */
+var revealEls = document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  },{threshold:.08});
+  revealEls.forEach(function(el){ io.observe(el); });
+} else {
+  revealEls.forEach(function(el){ el.classList.add('in'); });
+}
+})();
+</script>
+</body>
+</html>
