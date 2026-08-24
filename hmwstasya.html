@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стася · Домашняя работа на повторение</title>
+<style>
+  :root{
+    --bg:#F3EFE9; --card:#FBF8F3; --paper:#FFFDF9;
+    --accent:#C97B5B; --accent-d:#A85D3F; --accent-soft:#F3E2D7;
+    --ink:#3A3532; --mut:#6B625C; --line:#D9CFC2;
+    --ok:#A9BFA0; --ok-soft:#EDF3E8; --ok-ink:#5F7A52;
+    --warn:#E8C989; --warn-soft:#F7EDD6; --warn-ink:#8A6A2F;
+    --bad:#D98B7A; --bad-soft:#F6E3DD; --bad-ink:#A25A47;
+    --head:Georgia,'Times New Roman',serif;
+    --body:'DejaVu Sans',Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg);min-height:100vh}
+  ::selection{background:var(--accent-soft);color:var(--accent-d)}
+  h1,h2,h3{font-family:var(--head)}
+  button{font-family:var(--body)}
+  .hidden{display:none!important}
+
+  .bg-photo{position:fixed;inset:0;z-index:-2;background:#F3EFE9 url('photo.jpg') center/cover no-repeat}
+  .bg-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(243,239,233,1) 0%,rgba(243,239,233,.72) 16%,rgba(243,239,233,.55) 50%,rgba(243,239,233,.72) 84%,rgba(243,239,233,1) 100%)}
+
+  .scorebar{position:sticky;top:0;z-index:60;background:rgba(251,248,243,.97);border-bottom:1px solid var(--line)}
+  .sb-inner{max-width:980px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .sb-label{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-d)}
+  .sb-label svg{width:15px;height:15px;color:var(--accent)}
+  .sb-track{flex:1;min-width:120px;height:9px;border-radius:99px;background:#ECE4D7;border:1px solid var(--line);overflow:hidden;display:flex}
+  .sb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-d));border-radius:99px;transition:width .4s ease}
+  .sb-num{font-weight:700;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .sb-parts{font-size:12.5px;color:var(--mut)}
+
+  .page{max-width:980px;margin:0 auto;padding:34px 20px 40px;display:flex;flex-direction:column;gap:28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+
+  .cover{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+  .doodle{position:absolute;color:var(--accent);pointer-events:none}
+  .d-umbrella{width:110px;top:-10px;right:28px;opacity:.30;transform:rotate(10deg);animation:floaty 7s ease-in-out infinite}
+  .d-sun{width:70px;left:-8px;bottom:-12px;opacity:.35;animation:floaty 9s ease-in-out .5s infinite reverse}
+  .d-spark{width:44px;right:170px;bottom:6px;opacity:.4;animation:floaty 6s ease-in-out 1s infinite}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -9px}}
+  .cover-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .stamp{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--accent);color:var(--accent-d);background:var(--paper);padding:6px 15px;border-radius:999px;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;transform:rotate(-1.6deg)}
+  .stamp svg{width:14px;height:14px}
+  .date{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--mut);transform:rotate(-1.5deg)}
+  .cover h1{font-size:clamp(2.4rem,5.5vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+  .squiggle{display:block;margin-top:2px}
+  .cover .sub{color:var(--mut);max-width:740px}
+  .cover .sub b{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:99px;background:var(--paper);font-size:13.5px;color:var(--mut);transition:transform .2s,border-color .2s}
+  .chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .chip svg{width:16px;height:16px;color:var(--accent)}
+  .chip b{color:var(--ink)}
+  .notice{display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:14px;border:1px solid;font-size:14.5px}
+  .notice svg{width:21px;height:21px;flex:0 0 auto;margin-top:1px}
+  .notice.warn{background:var(--warn-soft);border-color:#E3CD98;color:#6E5A2E}
+  .notice.warn svg{color:#B98F3E}
+  .notice.info{background:var(--accent-soft);border-color:#E0B9A4;color:#7C4E36}
+  .notice.info svg{color:var(--accent-d)}
+
+  .steps{display:flex;gap:16px;flex-wrap:wrap}
+  .step{flex:1 1 240px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;gap:15px;align-items:flex-start;transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateY(-3px);border-color:#E4C5B2}
+  .step-ico{flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--accent-soft);border:1px solid #EAD3C3;display:flex;align-items:center;justify-content:center}
+  .step-ico svg{width:23px;height:23px;color:var(--accent-d)}
+  .step-over{font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+  .step h3{font-size:1.14rem;margin:2px 0 4px}
+  .step p{font-size:.9rem;color:var(--mut);line-height:1.5}
+
+  .b-head{display:flex;gap:16px;align-items:flex-start;border-bottom:1px dashed var(--line);padding-bottom:18px;margin-bottom:20px}
+  .b-num{flex:0 0 auto;width:50px;height:50px;border-radius:16px;background:var(--accent);border:1px solid var(--accent-d);color:#FBF8F3;font-family:var(--head);font-size:25px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);transition:transform .25s}
+  .card:hover .b-num{transform:rotate(3deg) scale(1.05)}
+  .b-over{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+  .b-head h2{font-size:clamp(20px,3vw,26px);margin-top:2px}
+  .b-desc{margin-top:6px;font-size:14.5px;color:var(--mut);max-width:760px}
+  .rulebox{background:var(--warn-soft);border:1px solid #E3CD98;border-radius:14px;padding:14px 18px;margin-top:14px;display:flex;flex-direction:column;gap:7px;font-size:14px;color:#6E5A2E}
+  .rulebox b{color:#5C4A21}
+
+  .part{border:1px solid var(--line);border-radius:16px;background:var(--paper);padding:20px 22px;margin-top:16px}
+  .part-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:14px}
+  .p-ico{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);border:1px solid #EAD3C3;display:flex;align-items:center;justify-content:center}
+  .p-ico svg{width:17px;height:17px;color:var(--accent-d)}
+  .part-head h3{font-size:1.1rem}
+  .time-chip{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700}
+  .time-chip svg{width:14px;height:14px}
+  .time-chip.t{background:var(--accent-soft);color:var(--accent-d);border:1px solid #E4C5B2}
+  .time-chip.nt{background:var(--ok-soft);color:var(--ok-ink);border:1px solid #C4D4BB}
+
+  .start-panel{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 12px;border:1.5px dashed #E0BFA6;border-radius:16px;background:linear-gradient(180deg,#FDF7ED,#FAF0E0)}
+  .sp-ico{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);border:1px dashed #DEB79E;display:flex;align-items:center;justify-content:center;animation:floaty 5s ease-in-out infinite}
+  .sp-ico svg{width:28px;height:28px;color:var(--accent-d)}
+  .sp-note{color:var(--mut);font-size:.95rem;font-weight:700}
+
+  .task{display:flex;flex-direction:column;gap:13px}
+  .t-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .step-chip{font-size:12.5px;font-weight:700;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:6px 13px;border-radius:99px}
+  .t-row{display:flex;align-items:center;gap:12px}
+  .t-row>svg{width:19px;height:19px;color:var(--accent-d)}
+  .t-track{flex:1;height:13px;border-radius:99px;background:#EFE5D5;border:1px solid var(--line);overflow:hidden;display:flex}
+  .t-fill{height:100%;width:100%;background:linear-gradient(90deg,#D18F70,var(--accent-d));border-radius:99px;transition:width .1s linear}
+  .t-fill.low{background:linear-gradient(90deg,var(--bad),#C0604E)}
+  .t-num{font-weight:700;min-width:44px;text-align:right;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .t-num.low{color:var(--bad-ink)}
+  .sent{font-family:var(--head);font-weight:600;font-size:clamp(1.25rem,3vw,1.6rem);line-height:1.5;text-align:center;padding:8px 4px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+  .blank{display:inline-block;width:76px;border-bottom:3px solid var(--accent);height:1.1em}
+  .hint-line{font-size:12.5px;color:var(--mut);text-align:center;font-style:italic}
+  .opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .opt-btn{min-width:92px;padding:12px 24px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1.05rem;color:var(--ink);transition:transform .15s,border-color .2s,background .2s}
+  .opt-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent);background:var(--accent-soft)}
+  .opt-btn:disabled{cursor:default}
+  .opt-btn.correct{background:var(--ok-soft);border-color:#9DBB90;color:var(--ok-ink)}
+  .opt-btn.wrongpick{background:var(--bad-soft);border-color:#DCA79A;color:var(--bad-ink)}
+  .opt-btn.dim{opacity:.5}
+  .ans-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .ans-input{width:200px;padding:11px 15px;font-family:var(--body);font-size:1.02rem;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;text-align:center}
+  .ans-input:focus{border-color:var(--accent);outline:none}
+  .ans-input:disabled{opacity:.6}
+  .w-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .w-btn{padding:9px 15px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1rem;transition:transform .15s,border-color .2s}
+  .w-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+  .w-btn.correct{background:var(--ok-soft);border-color:#9DBB90;color:var(--ok-ink)}
+  .w-btn.wrongpick{background:var(--bad-soft);border-color:#DCA79A;color:var(--bad-ink)}
+  .fb{border-radius:14px;border:1px solid;padding:14px 18px;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+  .fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+  .fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+  .fb.time{background:var(--warn-soft);border-color:var(--warn)}
+  .fb-status{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15.5px}
+  .fb-status svg{width:17px;height:17px}
+  .fb.ok .fb-status{color:var(--ok-ink)} .fb.bad .fb-status{color:var(--bad-ink)} .fb.time .fb-status{color:var(--warn-ink)}
+  .fb-ans b{color:var(--ink)}
+  .fb-exp{display:flex;gap:9px;align-items:flex-start;color:var(--mut);border-top:1px dashed rgba(0,0,0,.12);padding-top:8px}
+  .fb-exp svg{width:16px;height:16px;color:var(--accent-d);flex:0 0 auto;margin-top:2px}
+  .nav{display:flex;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;font-weight:700;font-size:1rem;border-radius:99px;padding:12px 28px;background:var(--accent);color:#FFF8F1;border:1px solid var(--accent-d);transition:transform .15s,background .2s}
+  .btn svg{width:17px;height:17px}
+  .btn:hover{background:var(--accent-d);transform:translateY(-2px)}
+  .btn-start{font-size:1.1rem;padding:14px 42px}
+  .done-strip{display:flex;align-items:center;gap:10px;background:var(--ok-soft);border:1px solid var(--ok);color:var(--ok-ink);border-radius:13px;padding:12px 18px;font-weight:700}
+  .done-strip svg{width:18px;height:18px}
+
+  .match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+  .match-col{flex:1 1 230px;display:flex;flex-direction:column;gap:8px}
+  .m-btn{padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:.98rem;text-align:left;transition:transform .15s,border-color .2s,background .2s}
+  .m-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+  .m-btn.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+  .m-btn.done{background:var(--ok-soft);border-color:#B9CBAF;color:var(--ok-ink);cursor:default;opacity:.85}
+  .m-btn.badflash{background:var(--bad-soft);border-color:#DCA79A}
+  .m-btn.ru{font-weight:600}
+
+  .sort-bank{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:16px}
+  .s-chip{padding:10px 17px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1rem;transition:transform .15s,border-color .2s,background .2s}
+  .s-chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .s-chip.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+  .s-chip.badflash{background:var(--bad-soft);border-color:#DCA79A}
+  .sort-groups{display:flex;flex-wrap:wrap;gap:12px}
+  .s-group{flex:1 1 170px;border:1.5px dashed var(--line);border-radius:14px;padding:12px;min-height:110px;background:var(--card)}
+  .s-group h4{font-family:var(--body);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-d);margin-bottom:10px;text-align:center}
+  .placed{display:inline-block;margin:3px;padding:6px 12px;border-radius:99px;background:var(--ok-soft);border:1px solid #B9CBAF;color:var(--ok-ink);font-weight:700;font-size:.9rem}
+
+  .final{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+  .final h2{font-size:clamp(22px,3.4vw,30px);color:var(--accent-d)}
+  .final .big{font-family:var(--head);font-size:2.5rem;color:var(--accent-d)}
+  .reminder{display:flex;gap:14px;align-items:flex-start;background:var(--accent-soft);border:1px solid #E0B9A4;border-radius:14px;padding:16px 19px;font-size:15px;color:#7C4E36}
+  .reminder svg{width:22px;height:22px;color:var(--accent-d);flex:0 0 auto;margin-top:1px}
+
+  footer{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 0 14px}
+  footer svg{width:17px;height:17px;color:var(--accent)}
+  footer span{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--accent-d)}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+  .reveal.in{opacity:1;transform:none}
+  @media (max-width:640px){.card{padding:22px 18px}.part{padding:16px 14px}.d-spark{display:none}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="bg-photo"></div>
+<div class="bg-fade"></div>
+
+<div class="scorebar">
+  <div class="sb-inner">
+    <span class="sb-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.5l-5.8 3.1 1.1-6.4L2.6 9.6l6.5-.9z"/></svg>Очки</span>
+    <div class="sb-track"><div class="sb-fill" id="sbFill"></div></div>
+    <span class="sb-num"><b id="sbNow">0</b> / 131</span>
+    <span class="sb-parts" id="sbParts">0 / 12 частей</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <section class="card cover reveal">
+    <svg class="doodle d-umbrella" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3.5 12.5a8.5 8.5 0 0 1 17 0Z"/><path d="M12 3V2M12 12.5v5.3a2.2 2.2 0 0 0 4.4 0"/></svg>
+    <svg class="doodle d-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+    <svg class="doodle d-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+
+    <div class="cover-top">
+      <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>домашняя работа · повторение</span>
+      <span class="date" id="dateNow"></span>
+    </div>
+
+    <div>
+      <h1>Hello, Стася</h1>
+      <svg class="squiggle" width="200" height="14" viewBox="0 0 200 14" fill="none"><path d="M3 9 Q 15 1 27 9 T 51 9 T 75 9 T 99 9 T 123 9 T 147 9 T 171 9 T 195 9" stroke="#C97B5B" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+
+    <p class="sub">Это домашняя работа на повторение всех пройденных тем: <b>Present Simple vs to be</b>, притяжательные прилагательные, артикли, профессии, внешность и множественное число. Часть заданий — на время: следи за полоской таймера.</p>
+
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><b>5 блоков · 12 частей</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.5l-5.8 3.1 1.1-6.4L2.6 9.6l6.5-.9z"/></svg><b>131 очко</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><b>≈ 30–35 минут</b></span>
+    </div>
+
+    <div class="notice warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.8 19.5h18.4L12 3.5z"/><path d="M12 10v4M12 16.8h.01"/></svg>
+      <div><b>Пройди всё целиком за один раз</b> — не перезагружай страницу и не закрывай вкладку. Иначе все ответы сбросятся, и придётся начинать заново.</div>
+    </div>
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div>После завершения — <b>сделай скриншот страницы с результатами и отправь его мне в Telegram</b>.</div>
+    </div>
+  </section>
+
+  <div class="steps reveal">
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="12.5" height="16.5" rx="2.2"/><path d="M5.5 6.8H5a2 2 0 0 0-2 2v9.7a2 2 0 0 0 2 2h9.3"/></svg></div><div><div class="step-over">шаг 1</div><h3>Лексика</h3><p>Соедини пары и заполни пропуски — без времени.</p></div></div>
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div><div class="step-over">шаг 2</div><h3>Грамматика</h3><p>Задания на время — жми «Старт», когда будешь готова.</p></div></div>
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></div><div><div class="step-over">шаг 3</div><h3>Отправь результат</h3><p>Скриншот с результатами — мне в Telegram.</p></div></div>
+  </div>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">1</div><div><div class="b-over">Лексика · без времени</div><h2>Профессии и внешность</h2><p class="b-desc">Соединяй слова с переводом и заполняй пропуски в предложениях.</p></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="12.5" height="16.5" rx="2.2"/><path d="M5.5 6.8H5a2 2 0 0 0-2 2v9.7a2 2 0 0 0 2 2h9.3"/></svg></span><h3>1.1 Профессии — найди пары</h3><span class="time-chip nt">без времени</span></div><div id="st1a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="12.5" height="16.5" rx="2.2"/><path d="M5.5 6.8H5a2 2 0 0 0-2 2v9.7a2 2 0 0 0 2 2h9.3"/></svg></span><h3>1.2 Внешность — найди пары</h3><span class="time-chip nt">без времени</span></div><div id="st1b"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg></span><h3>1.3 Пропуски в предложениях</h3><span class="time-chip nt">без времени</span></div><div id="st1c"></div></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">2</div><div><div class="b-over">Грамматика · на время</div><h2>Present Simple vs “to be”</h2><p class="b-desc">Выбирай, вписывай форму и находи ошибки.</p></div></div>
+    <div class="rulebox"><span><b>to be</b> (am / is / are) — когда после идёт <b>прилагательное</b>, <b>существительное</b> или <b>место</b>.</span><span><b>Present Simple</b> — когда в предложении есть <b>действие</b>.</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>2.1 Выбери: to be или глагол</h3><span class="time-chip t">8 сек / предложение</span></div><div id="st2a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>2.2 Впиши правильную форму</h3><span class="time-chip t">8 сек / предложение</span></div><div id="st2b"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><h3>2.3 Найди ошибку</h3><span class="time-chip nt">без времени</span></div><div id="st2c"></div></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">3</div><div><div class="b-over">Грамматика · на время</div><h2>Притяжательные прилагательные</h2><p class="b-desc">my / your / his / her / its / our / their</p></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>3.1 Выбери вариант</h3><span class="time-chip t">6 сек / предложение</span></div><div id="st3a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>3.2 Впиши сам</h3><span class="time-chip t">6 сек / предложение</span></div><div id="st3b"></div></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">4</div><div><div class="b-over">Грамматика · на время</div><h2>Артикли: a / an / the / —</h2></div></div>
+    <div class="rulebox"><span><b>1.</b> Первое упоминание → <b>a / an</b>; повторное → <b>the</b>.</span><span><b>2.</b> Единственное в своём роде или в ситуации → <b>the</b>.</span><span><b>3.</b> Общее / неисчисляемое → <b>без артикля</b> (тире –).</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>4.1 Выбери артикль</h3><span class="time-chip t">7 сек / предложение</span></div><div id="st4a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>4.2 Впиши артикль</h3><span class="time-chip t">7 сек / предложение</span></div><div id="st4b"></div></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">5</div><div><div class="b-over">Лексика + грамматика</div><h2>Множественное число</h2><p class="b-desc">Все правила: +s, +es, -ies, -ves, -o, неправильные формы и неизменяемые слова.</p></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>5.1 Впиши множественное число</h3><span class="time-chip t">6 сек / слово</span></div><div id="st5a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><h3>5.2 Распредели по группам</h3><span class="time-chip nt">без времени</span></div><div id="st5b"></div></div>
+  </section>
+
+  <section class="card final reveal hidden" id="finalCard">
+    <h2>Стася, ты молодец — вся домашка сделана!</h2>
+    <div class="big" id="finalScore">0 / 131</div>
+    <div class="reminder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div><b>Сделай скриншот этой страницы с результатами и отправь его мне в Telegram.</b></div>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.7C6.4 16.7 3 13.2 3 9.6 3 7 5 5 7.6 5c1.8 0 3.4 1 4.4 2.6C13 6 14.6 5 16.4 5 19 5 21 7 21 9.6c0 3.6-3.4 7.1-9 11.1z"/></svg>
+    <span>Made for Stasya with love</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+if('scrollRestoration' in history){ history.scrollRestoration='manual'; }
+window.scrollTo(0,0);
+
+var TOTAL=131, PARTS=12, score=0, partsDone=0, finished=false, started=false;
+
+var ICO={
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>',
+ cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ bulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V17h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+};
+
+function $(id){return document.getElementById(id);}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function norm(s){return String(s).toLowerCase().replace(/[.,!?;:«»"'’‘`´]/g,'').replace(/\s+/g,' ').trim();}
+function isDash(ch){return ['-','–','—','−'].indexOf(ch)!==-1;}
+function addPoint(){score++;renderScore();}
+function renderScore(){$('sbNow').textContent=score;$('sbFill').style.width=(score/TOTAL*100)+'%';}
+function partDone(){partsDone++;$('sbParts').textContent=partsDone+' / '+PARTS+' частей';if(partsDone===PARTS)showFinal();}
+function showFinal(){finished=true;$('finalScore').textContent=score+' / '+TOTAL;$('finalCard').classList.remove('hidden');setTimeout(function(){$('finalCard').scrollIntoView({behavior:'smooth'});},100);}
+function doneStrip(txt){return '<div class="done-strip">'+ICO.check+'<span>'+(txt||'Часть завершена!')+'</span></div>';}
+function fbHTML(status,ans,exp){
+ var t=status==='ok'?'Верно!':(status==='time'?'Время вышло!':'Ошибка');
+ var ic=status==='ok'?ICO.check:(status==='time'?ICO.clock:ICO.cross);
+ return '<div class="fb '+status+'"><div class="fb-status">'+ic+t+'</div>'+
+  '<div class="fb-ans">Правильный ответ: <b>'+ans+'</b></div>'+
+  (exp?'<div class="fb-exp">'+ICO.bulb+'<span>'+exp+'</span></div>':'')+'</div>';
+}
+function timerHTML(sec){return '<div class="t-row">'+ICO.clock+'<div class="t-track"><div class="t-fill"></div></div><b class="t-num">'+sec+'</b></div>';}
+function startTimer(sec,root,onEnd){
+ var left=sec,fill=root.querySelector('.t-fill'),num=root.querySelector('.t-num');
+ function paint(){fill.style.width=(left/sec*100)+'%';var s=Math.ceil(left);num.textContent=s;var low=left<=3;fill.classList.toggle('low',low);num.classList.toggle('low',low);}
+ paint();
+ var id=setInterval(function(){left-=0.1;if(left<=0){left=0;paint();clearInterval(id);onEnd();return;}paint();},100);
+ return function(){clearInterval(id);};
+}
+function gated(stage,note,fn){
+ stage.innerHTML='<div class="start-panel"><div class="sp-ico">'+ICO.play+'</div><div class="sp-note">'+note+'</div><button class="btn btn-start">'+ICO.play+' Старт</button></div>';
+ stage.querySelector('.btn-start').onclick=function(){started=true;fn();};
+}
+
+/* ================= ДАННЫЕ ================= */
+var PROF=[['engineer','инженер'],['manager','менеджер'],['designer','дизайнер'],['chef','шеф-повар'],['driver','водитель'],['courier','курьер'],['dispatcher','диспетчер'],['vet','ветеринар']];
+var APP=[['tall','высокий'],['short','низкий'],['slim','стройный'],['chubby','полноватый'],['bald','лысый'],['beard','борода'],['moustache','усы'],['glasses','очки'],['curly hair','кудрявые волосы'],['medium height','средний рост']];
+var GAP1=[
+ {pre:'My uncle drives a bus. He is a',post:'.',ans:'driver',exp:'driver — водитель.'},
+ {pre:'She works in a hospital and helps animals. She is a',post:'.',ans:'vet',exp:'vet — ветеринар.'},
+ {pre:'He isn’t tall or short — he is of medium',post:'.',ans:'height',exp:'medium height — средний рост.'},
+ {pre:'My grandfather has no hair on his head. He is',post:'.',ans:'bald',exp:'bald — лысый.'},
+ {pre:'She works in a restaurant and cooks food. She is a',post:'.',ans:'chef',exp:'chef — шеф-повар.'},
+ {pre:'He has a',post:'and a moustache — lots of hair on his face.',ans:'beard',exp:'beard — борода.'},
+ {pre:'I can’t see well, so I wear',post:'.',ans:'glasses',exp:'glasses — очки.'},
+ {pre:'She isn’t slim or chubby — she is of medium',post:'.',ans:'build',exp:'medium build — среднее телосложение.'}
+];
+var CH2=[
+ {pre:'My dad',post:'a driver.',opts:['is','drives'],ans:'is',exp:'После пропуска существительное → to be: is.'},
+ {pre:'She',post:'breakfast every morning.',opts:['is','cooks'],ans:'cooks',exp:'Есть действие → Present Simple: cooks.'},
+ {pre:'They',post:'happy today.',opts:['are','have'],ans:'are',exp:'Прилагательное happy → to be: are.'},
+ {pre:'He',post:'parcels all over the city.',opts:['is','delivers'],ans:'delivers',exp:'Действие → Present Simple: delivers.'},
+ {pre:'I',post:'tired now.',opts:['am','work'],ans:'am',exp:'Прилагательное tired → to be: am.'},
+ {pre:'The vet',post:'animals.',opts:['is','helps'],ans:'helps',exp:'Действие → Present Simple: helps.'},
+ {pre:'We',post:'at home now.',opts:['are','have'],ans:'are',exp:'Место (at home) → to be: are.'},
+ {pre:'My sister',post:'glasses.',opts:['is','wears'],ans:'wears',exp:'Действие → Present Simple: wears.'},
+ {pre:'The soup',post:'hot.',opts:['is','cooks'],ans:'is',exp:'Прилагательное hot → to be: is.'},
+ {pre:'He',post:'English very well.',opts:['is','speaks'],ans:'speaks',exp:'Действие → Present Simple: speaks.'},
+ {pre:'You',post:'my best friend.',opts:['are','have'],ans:'are',exp:'Существительное friend → to be: are.'},
+ {pre:'The manager',post:'busy every day.',opts:['is','works'],ans:'is',exp:'Прилагательное busy → to be: is.'}
+];
+var TY2=[
+ {pre:'She',post:'(be) a designer.',ans:'is'},{pre:'He',post:'(work) as a courier.',ans:'works'},
+ {pre:'I',post:'(be) tired now.',ans:'am'},{pre:'They',post:'(be) engineers.',ans:'are'},
+ {pre:'My mum',post:'(cook) dinner every day.',ans:'cooks'},{pre:'The cat',post:'(be) on the table.',ans:'is'},
+ {pre:'We',post:'(be) ready.',ans:'are'},{pre:'He',post:'(wear) glasses.',ans:'wears'},
+ {pre:'Stasya',post:'(be) a good student.',ans:'is'},{pre:'The chef',post:'(make) breakfast in the morning.',ans:'makes'}
+];
+var MIS2=[
+ {w:['She','are','a','designer.'],err:1,fix:'is',exp:'She → is.'},
+ {w:['He','work','in','a','bank.'],err:1,fix:'works',exp:'He → works (нужно -s).'},
+ {w:['They','is','happy.'],err:1,fix:'are',exp:'They → are.'},
+ {w:['My','brother','have','a','car.'],err:2,fix:'has',exp:'My brother = he → has.'},
+ {w:['I','wears','glasses.'],err:1,fix:'wear',exp:'I → wear (без -s).'},
+ {w:['The','cat','sleep','on','the','sofa.'],err:2,fix:'sleeps',exp:'The cat = it → sleeps.'},
+ {w:['He','don’t','like','tea.'],err:1,fix:'doesn’t',exp:'He → doesn’t.'}
+];
+var MC3=[
+ {pre:'This is Tom.',post:'bag is blue.',opts:['his','her','its'],ans:'his'},
+ {pre:'I love',post:'mum.',opts:['my','your','our'],ans:'my'},
+ {pre:'Anna and I have a cat.',post:'cat is black.',opts:['our','their','my'],ans:'our'},
+ {pre:'The dog wags',post:'tail.',opts:['its','his','her'],ans:'its'},
+ {pre:'They are my friends.',post:'names are Max and Vera.',opts:['their','our','your'],ans:'their'},
+ {pre:'Is this',post:'pen?',hint:'я спрашиваю тебя',opts:['your','my','his'],ans:'your'},
+ {pre:'My sister has',post:'own room.',opts:['her','his','its'],ans:'her'},
+ {pre:'We love',post:'teacher.',opts:['our','their','your'],ans:'our'},
+ {pre:'Dad has',post:'own car.',opts:['his','her','their'],ans:'his'},
+ {pre:'The children have',post:'books here.',opts:['their','our','its'],ans:'their'},
+ {pre:'',post:'names are Stasya and Alex.',hint:'мы представляемся',opts:['our','their','your'],ans:'our'},
+ {pre:'Masha, is this',post:'t-shirt?',opts:['your','her','my'],ans:'your'}
+];
+var TY3=[
+ {ru:'мой',pre:'',post:'umbrella is blue.',ans:'my'},{ru:'твой',pre:'',post:'name is Stasya.',ans:'your'},
+ {ru:'его',pre:'This is Tom.',post:'bike is new.',ans:'his'},{ru:'её',pre:'This is Anna.',post:'bag is beautiful.',ans:'her'},
+ {ru:'его/её (животное)',pre:'The cat likes',post:'basket.',ans:'its'},{ru:'наш',pre:'',post:'flat is warm.',ans:'our'},
+ {ru:'их',pre:'',post:'summer house is near the sea.',ans:'their'},{ru:'ваш',pre:'Open',post:'books, please.',ans:'your'},
+ {ru:'мой',pre:'I think',post:'homework is fun.',ans:'my'},{ru:'её',pre:'Masha has',post:'own room.',ans:'her'}
+];
+var MC4=[
+ {pre:'I have',post:'umbrella.',ans:'an',exp:'Первое упоминание, гласный звук → an.'},
+ {pre:'',post:'umbrella is red.',ans:'the',exp:'Повторное упоминание → the.'},
+ {pre:'She has',post:'t-shirt.',ans:'a',exp:'Первое упоминание, согласный звук → a.'},
+ {pre:'',post:'t-shirt is white.',ans:'the',exp:'Повторное упоминание → the.'},
+ {pre:'',post:'sea is beautiful in summer.',ans:'the',exp:'Единственное в своём роде → the.'},
+ {pre:'',post:'sun is warm today.',ans:'the',exp:'Единственное → the.'},
+ {pre:'I love',post:'cats.',ans:'-',exp:'Общее, множественное число → без артикля.'},
+ {pre:'He drinks',post:'tea every morning.',ans:'-',exp:'Неисчисляемое → без артикля.'},
+ {pre:'We have',post:'flat.',ans:'a',exp:'Первое упоминание → a.'},
+ {pre:'',post:'flat is very nice.',ans:'the',exp:'Повторное упоминание → the.'},
+ {pre:'Look!',post:'moon is big tonight.',ans:'the',exp:'Единственное → the.'},
+ {pre:'She reads',post:'books every day.',ans:'-',exp:'Общее, множественное → без артикля.'},
+ {pre:'He has',post:'bike.',ans:'a',exp:'Первое упоминание → a.'},
+ {pre:'',post:'bike is new.',ans:'the',exp:'Повторное упоминание → the.'},
+ {pre:'We listen to',post:'music in the evening.',ans:'-',exp:'Неисчисляемое → без артикля.'}
+];
+var TY4=[
+ {pre:'Mia has',post:'umbrella.',ans:'an'},{pre:'',post:'umbrella is red.',ans:'the'},
+ {pre:'He has',post:'dog.',ans:'a'},{pre:'',post:'dog is kind.',ans:'the'},
+ {pre:'',post:'sky is blue today.',ans:'the'},{pre:'I love',post:'spring.',ans:'-'},
+ {pre:'She drinks',post:'water every day.',ans:'-'},{pre:'',post:'cats are kind animals.',ans:'-'},
+ {pre:'We have',post:'flat.',ans:'a'},{pre:'',post:'flat is nice.',ans:'the'},
+ {pre:'',post:'sun is warm.',ans:'the'},{pre:'He reads',post:'books every day.',ans:'-'}
+];
+var TY5=[
+ {s:'cat',a:'cats'},{s:'bus',a:'buses'},{s:'watch',a:'watches'},{s:'city',a:'cities'},{s:'boy',a:'boys'},
+ {s:'knife',a:'knives'},{s:'roof',a:'roofs'},{s:'potato',a:'potatoes'},{s:'photo',a:'photos'},
+ {s:'man',a:'men'},{s:'child',a:'children'},{s:'tooth',a:'teeth'},{s:'mouse',a:'mice'},{s:'sheep',a:'sheep'},{s:'person',a:'people'}
+];
+var SORT_G=[{id:'s',t:'+s · базовое'},{id:'es',t:'+es · шипящие'},{id:'ies',t:'-ies · согл.+y'},{id:'ves',t:'-ves · -f/-fe'},{id:'irr',t:'неправильные'}];
+var SORT_W=[{w:'cat',g:'s'},{w:'roof',g:'s'},{w:'photo',g:'s'},{w:'bus',g:'es'},{w:'watch',g:'es'},{w:'city',g:'ies'},{w:'baby',g:'ies'},{w:'knife',g:'ves'},{w:'leaf',g:'ves'},{w:'man',g:'irr'},{w:'child',g:'irr'},{w:'sheep',g:'irr'}];
+
+/* ================= MATCHING ================= */
+function buildMatch(stage,pairs,onDone){
+ var matched=0,selL=null,selR=null;
+ var L=shuffle(pairs.map(function(p,i){return{i:i,t:p[0]};}));
+ var R=shuffle(pairs.map(function(p,i){return{i:i,t:p[1]};}));
+ stage.innerHTML='<div class="match-wrap"><div class="match-col" id="mL"></div><div class="match-col" id="mR"></div></div>';
+ var cL=stage.querySelector('#mL'),cR=stage.querySelector('#mR');
+ L.forEach(function(o){var b=document.createElement('button');b.className='m-btn';b.textContent=o.t;b.dataset.id=o.i;b.onclick=function(){pick(b,'L');};cL.appendChild(b);});
+ R.forEach(function(o){var b=document.createElement('button');b.className='m-btn ru';b.textContent=o.t;b.dataset.id=o.i;b.onclick=function(){pick(b,'R');};cR.appendChild(b);});
+ function pick(b,side){
+  if(b.classList.contains('done'))return;
+  started=true;
+  if(side==='L'){if(selL)selL.classList.remove('sel');selL=b;}else{if(selR)selR.classList.remove('sel');selR=b;}
+  b.classList.add('sel');
+  if(selL&&selR){
+   var a=selL,c=selR;selL=null;selR=null;
+   if(a.dataset.id===c.dataset.id){
+    a.classList.remove('sel');c.classList.remove('sel');a.classList.add('done');c.classList.add('done');
+    a.disabled=true;c.disabled=true;addPoint();matched++;
+    if(matched===pairs.length){setTimeout(function(){stage.insertAdjacentHTML('beforeend',doneStrip());onDone();},350);}
+   }else{
+    a.classList.add('badflash');c.classList.add('badflash');
+    setTimeout(function(){a.classList.remove('badflash','sel');c.classList.remove('badflash','sel');},500);
+   }
+  }
+ }
+}
+
+/* ================= MULTIPLE CHOICE ================= */
+function runMC(stage,items,time,onDone,article){
+ var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  var opts=article?['a','an','the','–']:it.opts;
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   (time?timerHTML(time):'')+
+   '<div class="sent">'+(it.pre?'<span>'+it.pre+'</span>':'')+'<span class="blank"></span>'+(it.post?'<span>'+it.post+'</span>':'')+'</div>'+
+   (it.hint?'<div class="hint-line">подсказка: '+it.hint+'</div>':'')+
+   '<div class="opts"></div><div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  var box=stage.querySelector('.opts');
+  shuffle(opts.slice()).forEach(function(o){
+   var b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+   b.onclick=function(){answer(o,b);};box.appendChild(b);
+  });
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+  if(time)stop=startTimer(time,stage,function(){answer(null,null);});
+ }
+ function answer(val,btn){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';
+  if(stop)stop();
+  var it=items[idx];
+  var ok;
+  if(val===null){ ok=false; }
+  else if(article){ ok = (isDash(val)&&isDash(it.ans)) || val===it.ans; }
+  else { ok = val===it.ans; }
+  if(ok)addPoint();
+  stage.querySelectorAll('.opt-btn').forEach(function(b){
+   b.disabled=true;
+   var isAns = article ? ((isDash(b.textContent)&&isDash(it.ans))||b.textContent===it.ans) : b.textContent===it.ans;
+   if(isAns)b.classList.add('correct');
+   else if(btn===b)b.classList.add('wrongpick');
+   else b.classList.add('dim');
+  });
+  var shown=(article&&isDash(it.ans))?'– (без артикля)':it.ans;
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(val===null?'time':'bad'),shown,it.exp);
+  stage.querySelector('#nx').classList.remove('hidden');
+ }
+ show();
+}
+
+/* ================= TYPED ================= */
+function runTyped(stage,items,time,onDone,cfg){
+ cfg=cfg||{};var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  var target = it.ans!==undefined ? it.ans : it.a;
+  var ph = cfg.article ? 'a / an / the / –' : (it.s ? 'множественное число' : 'впиши слово');
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   (time?timerHTML(time):'')+
+   '<div class="sent">'+(it.ru?'<span style="font-family:var(--body);font-size:.95rem;color:var(--accent-d);font-style:italic">('+it.ru+')</span>':'')+
+   (it.s?'<span>one '+it.s+' → two</span>':'')+
+   (it.pre?'<span>'+it.pre+'</span>':'')+'<input class="ans-input" id="inp" placeholder="'+ph+'" autocomplete="off" autocapitalize="off" spellcheck="false">'+
+   (it.post?'<span>'+it.post+'</span>':'')+'</div>'+
+   '<div class="ans-row"><button class="btn" id="ck">Проверить</button></div>'+
+   '<div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  var inp=stage.querySelector('#inp');
+  if(time) inp.focus({preventScroll:true});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();answer(false);}});
+  stage.querySelector('#ck').onclick=function(){answer(false);};
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+  if(time)stop=startTimer(time,stage,function(){answer(true);});
+ }
+ function answer(byTime){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';
+  if(stop)stop();
+  var it=items[idx];var inp=stage.querySelector('#inp');var v=inp.value;
+  var target = it.ans!==undefined ? it.ans : it.a;
+  var ok;
+  if(cfg.article){
+   var raw=v.trim();
+   if(isDash(target)){ ok = !byTime && (raw==='' || isDash(raw)); }
+   else { ok = !byTime && norm(v)===norm(target); }
+  } else {
+   ok = !byTime && norm(v)===norm(target);
+  }
+  if(ok)addPoint();
+  inp.disabled=true;stage.querySelector('#ck').style.display='none';
+  var shown=(cfg.article&&isDash(target))?'– (без артикля)':target;
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(byTime?'time':'bad'),shown,it.exp);
+  stage.querySelector('#nx').classList.remove('hidden');
+ }
+ show();
+}
+
+/* ================= MISTAKES ================= */
+function runMistakes(stage,items,onDone){
+ var idx=0;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span><span class="hint-line" style="margin-left:auto">нажми на слово с ошибкой</span></div>'+
+   '<div class="w-row"></div><div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  var row=stage.querySelector('.w-row');
+  it.w.forEach(function(word,i){
+   var b=document.createElement('button');b.className='w-btn';b.textContent=word;
+   b.onclick=function(){click(i,b);};row.appendChild(b);
+  });
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+ }
+ function click(i,btn){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';
+  var it=items[idx];var ok=i===it.err;
+  if(ok){addPoint();btn.classList.add('correct');}else{btn.classList.add('wrongpick');}
+  stage.querySelectorAll('.w-btn').forEach(function(b){b.disabled=true;});
+  if(ok)stage.querySelectorAll('.w-btn')[it.err].classList.add('correct');
+  var fixed=it.w.slice();fixed[it.err]=it.fix;
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':'bad',fixed.join(' '),it.exp);
+  stage.querySelector('#nx').classList.remove('hidden');
+ }
+ show();
+}
+
+/* ================= SORT ================= */
+function runSort(stage,onDone){
+ var placed=0,sel=null;
+ stage.innerHTML='<div class="sort-bank"></div><div class="sort-groups"></div>';
+ var bank=stage.querySelector('.sort-bank'),gw=stage.querySelector('.sort-groups');
+ shuffle(SORT_W).forEach(function(o){
+  var c=document.createElement('button');c.className='s-chip';c.textContent=o.w;c.dataset.g=o.g;c.dataset.dead='';
+  c.onclick=function(){if(sel)sel.classList.remove('sel');sel=c;c.classList.add('sel');};
+  bank.appendChild(c);
+ });
+ SORT_G.forEach(function(g){
+  var d=document.createElement('div');d.className='s-group';d.innerHTML='<h4>'+g.t+'</h4>';
+  d.onclick=function(){
+   if(!sel)return;started=true;
+   if(sel.dataset.g===g.id){
+    if(sel.dataset.dead!=='1')addPoint();
+    var p=document.createElement('span');p.className='placed';p.textContent=sel.textContent;
+    d.appendChild(p);sel.remove();sel=null;placed++;
+    if(placed===SORT_W.length){stage.insertAdjacentHTML('beforeend',doneStrip());onDone();}
+   }else{
+    sel.dataset.dead='1';sel.classList.add('badflash');
+    var s=sel;setTimeout(function(){s.classList.remove('badflash','sel');},450);sel=null;
+   }
+  };
+  gw.appendChild(d);
+ });
+}
+
+/* ================= ЗАПУСК ================= */
+buildMatch($('st1a'),PROF,function(){partDone();});
+buildMatch($('st1b'),APP,function(){partDone();});
+runTyped($('st1c'),GAP1,0,function(){partDone();});
+
+gated($('st2a'),'Задание на время · 8 сек на предложение',function(){runMC($('st2a'),CH2,8,function(){partDone();});});
+gated($('st2b'),'Задание на время · 8 сек на предложение',function(){runTyped($('st2b'),TY2,8,function(){partDone();});});
+runMistakes($('st2c'),MIS2,function(){partDone();});
+
+gated($('st3a'),'Задание на время · 6 сек на предложение',function(){runMC($('st3a'),MC3,6,function(){partDone();});});
+gated($('st3b'),'Задание на время · 6 сек на предложение',function(){runTyped($('st3b'),TY3,6,function(){partDone();});});
+
+gated($('st4a'),'Задание на время · 7 сек на предложение',function(){runMC($('st4a'),MC4,7,function(){partDone();},true);});
+gated($('st4b'),'Задание на время · 7 сек на предложение',function(){runTyped($('st4b'),TY4,7,function(){partDone();},{article:true});});
+
+gated($('st5a'),'Задание на время · 6 сек на слово',function(){runTyped($('st5a'),TY5,6,function(){partDone();});});
+runSort($('st5b'),function(){partDone();});
+
+$('dateNow').textContent=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date());
+
+var rev=document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window){
+ var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.08});
+ rev.forEach(function(el){io.observe(el);});
+}else rev.forEach(function(el){el.classList.add('in');});
+
+window.addEventListener('beforeunload',function(e){
+ if(started&&!finished){e.preventDefault();e.returnValue='';}
+});
+})();
+</script>
+</body>
+</html>
