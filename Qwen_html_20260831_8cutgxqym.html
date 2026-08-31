@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стася · Домашняя работа · Мой дом</title>
+<style>
+  :root{
+    --bg:#F3EFE9; --card:#FBF8F3; --paper:#FFFDF9;
+    --accent:#C97B5B; --accent-d:#A85D3F; --accent-soft:#F3E2D7;
+    --ink:#3A3532; --mut:#6B625C; --line:#D9CFC2;
+    --ok:#A9BFA0; --ok-soft:#EDF3E8; --ok-ink:#5F7A52;
+    --warn:#E8C989; --warn-soft:#F7EDD6; --warn-ink:#8A6A2F;
+    --bad:#D98B7A; --bad-soft:#F6E3DD; --bad-ink:#A25A47;
+    --head:Georgia,'Times New Roman',serif;
+    --body:'DejaVu Sans',Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg);min-height:100vh}
+  ::selection{background:var(--accent-soft);color:var(--accent-d)}
+  h1,h2,h3{font-family:var(--head)}
+  button{font-family:var(--body)}
+  .hidden{display:none!important}
+
+  .bg-photo{position:fixed;inset:0;z-index:-2;background:#F3EFE9 url('photo.jpg') center/cover no-repeat}
+  .bg-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(243,239,233,1) 0%,rgba(243,239,233,.72) 16%,rgba(243,239,233,.55) 50%,rgba(243,239,233,.72) 84%,rgba(243,239,233,1) 100%)}
+
+  .scorebar{position:sticky;top:0;z-index:60;background:rgba(251,248,243,.97);border-bottom:1px solid var(--line)}
+  .sb-inner{max-width:980px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .sb-label{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-d)}
+  .sb-label svg{width:15px;height:15px;color:var(--accent)}
+  .sb-track{flex:1;min-width:120px;height:9px;border-radius:99px;background:#ECE4D7;border:1px solid var(--line);overflow:hidden;display:flex}
+  .sb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-d));border-radius:99px;transition:width .4s ease}
+  .sb-num{font-weight:700;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .sb-parts{font-size:12.5px;color:var(--mut)}
+
+  .page{max-width:980px;margin:0 auto;padding:34px 20px 40px;display:flex;flex-direction:column;gap:28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+
+  .cover{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+  .doodle{position:absolute;color:var(--accent);pointer-events:none}
+  .d-house{width:120px;top:-8px;right:26px;opacity:.30;transform:rotate(6deg);animation:floaty 7s ease-in-out infinite}
+  .d-lamp{width:64px;left:-6px;bottom:-10px;opacity:.35;animation:floaty 9s ease-in-out .5s infinite reverse}
+  .d-spark{width:44px;right:180px;bottom:8px;opacity:.4;animation:floaty 6s ease-in-out 1s infinite}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -9px}}
+  .cover-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .stamp{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--accent);color:var(--accent-d);background:var(--paper);padding:6px 15px;border-radius:999px;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;transform:rotate(-1.6deg)}
+  .stamp svg{width:14px;height:14px}
+  .date{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--mut);transform:rotate(-1.5deg)}
+  .cover h1{font-size:clamp(2.4rem,5.5vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+  .squiggle{display:block;margin-top:2px}
+  .cover .sub{color:var(--mut);max-width:740px}
+  .cover .sub b{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:99px;background:var(--paper);font-size:13.5px;color:var(--mut);transition:transform .2s,border-color .2s}
+  .chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .chip svg{width:16px;height:16px;color:var(--accent)}
+  .chip b{color:var(--ink)}
+  .notice{display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:14px;border:1px solid;font-size:14.5px}
+  .notice svg{width:21px;height:21px;flex:0 0 auto;margin-top:1px}
+  .notice.warn{background:var(--warn-soft);border-color:#E3CD98;color:#6E5A2E}
+  .notice.warn svg{color:#B98F3E}
+  .notice.info{background:var(--accent-soft);border-color:#E0B9A4;color:#7C4E36}
+  .notice.info svg{color:var(--accent-d)}
+
+  .steps{display:flex;gap:16px;flex-wrap:wrap}
+  .step{flex:1 1 240px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;gap:15px;align-items:flex-start;transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateY(-3px);border-color:#E4C5B2}
+  .step-ico{flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--accent-soft);border:1px solid #EAD3C3;display:flex;align-items:center;justify-content:center}
+  .step-ico svg{width:23px;height:23px;color:var(--accent-d)}
+  .step-over{font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+  .step h3{font-size:1.14rem;margin:2px 0 4px}
+  .step p{font-size:.9rem;color:var(--mut);line-height:1.5}
+
+  .b-head{display:flex;gap:16px;align-items:flex-start;border-bottom:1px dashed var(--line);padding-bottom:18px;margin-bottom:20px}
+  .b-num{flex:0 0 auto;width:50px;height:50px;border-radius:16px;background:var(--accent);border:1px solid var(--accent-d);color:#FBF8F3;font-family:var(--head);font-size:25px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);transition:transform .25s}
+  .card:hover .b-num{transform:rotate(3deg) scale(1.05)}
+  .b-over{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+  .b-head h2{font-size:clamp(20px,3vw,26px);margin-top:2px}
+  .b-desc{margin-top:6px;font-size:14.5px;color:var(--mut);max-width:760px}
+  .aloud-note{display:inline-block;font-family:var(--head);font-style:italic;font-weight:700;color:var(--accent-d);font-size:1.15rem;transform:rotate(-2deg);margin-left:auto}
+  .hchip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent-d);border:1px solid #E4C5B2;margin-left:auto}
+
+  .word-grid{display:flex;flex-wrap:wrap;gap:10px}
+  .word-item{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:12px;padding:9px 15px;background:var(--paper);flex:1 1 260px;transition:transform .2s,border-color .2s}
+  .word-item:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .word-item .we{font-family:var(--head);font-style:italic;font-weight:600;color:var(--accent-d)}
+  .word-item .wr{color:var(--mut);font-size:.92rem}
+  .word-item .dash{color:var(--accent)}
+
+  .start-panel{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 12px;border:1.5px dashed #E0BFA6;border-radius:16px;background:linear-gradient(180deg,#FDF7ED,#FAF0E0)}
+  .sp-ico{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);border:1px dashed #DEB79E;display:flex;align-items:center;justify-content:center;animation:floaty 5s ease-in-out infinite}
+  .sp-ico svg{width:28px;height:28px;color:var(--accent-d)}
+  .sp-note{color:var(--mut);font-size:.95rem;font-weight:700}
+  .btn-start{font-size:1.1rem;padding:14px 42px}
+
+  .task{display:flex;flex-direction:column;gap:13px}
+  .t-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .step-chip{font-size:12.5px;font-weight:700;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:6px 13px;border-radius:99px}
+  .t-row{display:flex;align-items:center;gap:12px}
+  .t-row>svg{width:19px;height:19px;color:var(--accent-d)}
+  .t-track{flex:1;height:13px;border-radius:99px;background:#EFE5D5;border:1px solid var(--line);overflow:hidden;display:flex}
+  .t-fill{height:100%;width:100%;background:linear-gradient(90deg,#D18F70,var(--accent-d));border-radius:99px;transition:width .1s linear}
+  .t-fill.low{background:linear-gradient(90deg,var(--bad),#C0604E)}
+  .t-num{font-weight:700;min-width:44px;text-align:right;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .t-num.low{color:var(--bad-ink)}
+  .sent{font-family:var(--head);font-weight:600;font-size:clamp(1.2rem,3vw,1.55rem);line-height:1.5;text-align:center;padding:8px 4px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+  .w-en{font-family:var(--head);font-style:italic;font-weight:600;color:var(--accent-d);font-size:1.25rem}
+  .w-ru{font-weight:700}
+  .hint-line{font-size:12.5px;color:var(--mut);text-align:center;font-style:italic;display:inline-flex;align-items:center;gap:6px}
+  .hint-line svg{width:14px;height:14px}
+  .opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .opt-btn{min-width:120px;padding:12px 22px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1rem;color:var(--ink);transition:transform .15s,border-color .2s,background .2s}
+  .opt-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent);background:var(--accent-soft)}
+  .opt-btn:disabled{cursor:default}
+  .opt-btn.correct{background:var(--ok-soft);border-color:#9DBB90;color:var(--ok-ink)}
+  .opt-btn.wrongpick{background:var(--bad-soft);border-color:#DCA79A;color:var(--bad-ink)}
+  .opt-btn.dim{opacity:.5}
+  .ans-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .ans-input{width:230px;padding:11px 15px;font-family:var(--body);font-size:1.02rem;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;text-align:center}
+  .ans-input:focus{border-color:var(--accent);outline:none}
+  .ans-input:disabled{opacity:.6}
+  .oral-big{font-family:var(--head);font-weight:600;font-size:1.7rem;text-align:center;color:var(--ink);padding:6px 0}
+  .fb{border-radius:14px;border:1px solid;padding:14px 18px;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+  .fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+  .fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+  .fb.time{background:var(--warn-soft);border-color:var(--warn)}
+  .fb-status{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15.5px}
+  .fb-status svg{width:17px;height:17px}
+  .fb.ok .fb-status{color:var(--ok-ink)} .fb.bad .fb-status{color:var(--bad-ink)} .fb.time .fb-status{color:var(--warn-ink)}
+  .fb-ans b{color:var(--ink)}
+  .fb-exp{display:flex;gap:9px;align-items:flex-start;color:var(--mut);border-top:1px dashed rgba(0,0,0,.12);padding-top:8px}
+  .fb-exp svg{width:16px;height:16px;color:var(--accent-d);flex:0 0 auto;margin-top:2px}
+  .nav{display:flex;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;font-weight:700;font-size:1rem;border-radius:99px;padding:12px 28px;background:var(--accent);color:#FFF8F1;border:1px solid var(--accent-d);transition:transform .15s,background .2s}
+  .btn svg{width:17px;height:17px}
+  .btn:hover{background:var(--accent-d);transform:translateY(-2px)}
+  .btn-ok{background:var(--ok);border-color:#8CA882;color:#33452C}
+  .btn-ok:hover{background:#9BB490}
+  .btn-bad{background:var(--bad);border-color:#C0705E;color:#4E241A}
+  .btn-bad:hover{background:#CE7C69;color:#FFF6F1}
+  .done-strip{display:flex;align-items:center;gap:10px;background:var(--ok-soft);border:1px solid var(--ok);color:var(--ok-ink);border-radius:13px;padding:12px 18px;font-weight:700}
+  .done-strip svg{width:18px;height:18px}
+
+  .final{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+  .final h2{font-size:clamp(22px,3.4vw,30px);color:var(--accent-d)}
+  .final .big{font-family:var(--head);font-size:2.5rem;color:var(--accent-d)}
+  .reminder{display:flex;gap:14px;align-items:flex-start;background:var(--accent-soft);border:1px solid #E0B9A4;border-radius:14px;padding:16px 19px;font-size:15px;color:#7C4E36}
+  .reminder svg{width:22px;height:22px;color:var(--accent-d);flex:0 0 auto;margin-top:1px}
+
+  footer{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 0 14px}
+  footer svg{width:17px;height:17px;color:var(--accent)}
+  footer span{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--accent-d)}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+  .reveal.in{opacity:1;transform:none}
+  @media (max-width:640px){.card{padding:22px 18px}.d-spark{display:none}.aloud-note,.hchip{margin-left:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="bg-photo"></div>
+<div class="bg-fade"></div>
+
+<div class="scorebar">
+  <div class="sb-inner">
+    <span class="sb-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.5l-5.8 3.1 1.1-6.4L2.6 9.6l6.5-.9z"/></svg>Очки</span>
+    <div class="sb-track"><div class="sb-fill" id="sbFill"></div></div>
+    <span class="sb-num"><b id="sbNow">0</b> / <span id="sbTotal">90</span></span>
+    <span class="sb-parts" id="sbParts">0 / 5 частей</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <section class="card cover reveal">
+    <svg class="doodle d-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
+    <svg class="doodle d-lamp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l2 6H6z"/><path d="M12 9v8"/><path d="M9 21h6"/></svg>
+    <svg class="doodle d-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+
+    <div class="cover-top">
+      <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>домашняя работа · мой дом</span>
+      <span class="date" id="dateNow"></span>
+    </div>
+
+    <div>
+      <h1>Hello, Стася</h1>
+      <svg class="squiggle" width="200" height="14" viewBox="0 0 200 14" fill="none"><path d="M3 9 Q 15 1 27 9 T 51 9 T 75 9 T 99 9 T 123 9 T 147 9 T 171 9 T 195 9" stroke="#C97B5B" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+
+    <p class="sub">Сегодня учим слова по теме <b>«Мой дом»</b>: комнаты, мебель и предметы. Сначала спокойно запиши слова и вставь их в предложения, потом <b>обязательно проговори всё вслух</b>, а в конце — быстрый тест с переводом на время.</p>
+
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="12.5" height="16.5" rx="2.2"/><path d="M5.5 6.8H5a2 2 0 0 0-2 2v9.7a2 2 0 0 0 2 2h9.3"/></svg><b>18 слов</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><b>5 упражнений · 90 очков</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><b>≈ 20 минут</b></span>
+    </div>
+
+    <div class="notice warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.8 19.5h18.4L12 3.5z"/><path d="M12 10v4M12 16.8h.01"/></svg>
+      <div><b>Пройди всё целиком за один раз</b> — не перезагружай страницу и не закрывай вкладку. Иначе все ответы сбросятся, и придётся начинать заново.</div>
+    </div>
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div>После завершения — <b>сделай скриншот страницы с результатами и отправь его мне в Telegram</b>.</div>
+    </div>
+  </section>
+
+  <div class="steps reveal">
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg></div><div><div class="step-over">шаг 1</div><h3>Запиши и вставь</h3><p>Три упражнения без времени: перевод, слово по-английски, предложения.</p></div></div>
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5a3 3 0 0 1 3 3V11a3 3 0 0 1-6 0V5.5a3 3 0 0 1 3-3z"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></div><div><div class="step-over">шаг 2</div><h3>Скажи вслух</h3><p>Обязательно проговори все слова голосом — это важно!</p></div></div>
+    <div class="step"><div class="step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div><div class="step-over">шаг 3</div><h3>Тест на время</h3><p>Жми «Старт», когда будешь готова — 7 секунд на слово. Потом скриншот в Telegram.</p></div></div>
+  </div>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">★</div><div><div class="b-over">Сначала повтори</div><h2>Слова по теме «Мой дом»</h2><p class="b-desc">Посмотри на пары, прочитай их вслух пару раз — и переходи к упражнениям.</p></div></div>
+    <div class="word-grid" id="wordGrid"></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">1</div><div><div class="b-over">Письменно · без времени</div><h2>Запиши перевод</h2><p class="b-desc">Видишь английское слово — напиши его перевод на русском.</p></div></div>
+    <div id="ex1"></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">2</div><div><div class="b-over">Письменно · без времени</div><h2>Напиши слово на английском</h2><p class="b-desc">Теперь наоборот: видишь перевод — напиши слово по-английски.</p></div></div>
+    <div id="ex2"></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">3</div><div><div class="b-over">Письменно · без времени</div><h2>Вставь слово в предложение</h2><p class="b-desc">Прочитай предложение и впиши подходящее слово из списка.</p></div></div>
+    <div id="ex3"></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">4</div><div><div class="b-over">Устно</div><h2>Проговори вслух</h2><p class="b-desc">Видишь перевод — скажи слово по-английски голосом, потом проверь себя.</p></div><span class="aloud-note">обязательно вслух!</span></div>
+    <div id="ex4"></div>
+  </section>
+
+  <section class="card reveal">
+    <div class="b-head"><div class="b-num">5</div><div><div class="b-over">На время</div><h2>Выбери перевод</h2><p class="b-desc">Финал: выбирай нужный перевод, пока не истекла полоска времени.</p></div><span class="hchip">7 сек / слово</span></div>
+    <div id="ex5"></div>
+  </section>
+
+  <section class="card final reveal hidden" id="finalCard">
+    <h2>Стася, ты молодец — домашка сделана!</h2>
+    <div class="big" id="finalScore">0 / 90</div>
+    <div class="reminder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div><b>Сделай скриншот этой страницы с результатами и отправь его мне в Telegram.</b></div>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.7C6.4 16.7 3 13.2 3 9.6 3 7 5 5 7.6 5c1.8 0 3.4 1 4.4 2.6C13 6 14.6 5 16.4 5 19 5 21 7 21 9.6c0 3.6-3.4 7.1-9 11.1z"/></svg>
+    <span>Made for Stasya with love</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+if('scrollRestoration' in history){ history.scrollRestoration='manual'; }
+window.scrollTo(0,0);
+
+var ICO={
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>',
+ cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ bulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V17h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>',
+ mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5a3 3 0 0 1 3 3V11a3 3 0 0 1-6 0V5.5a3 3 0 0 1 3-3z"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+};
+
+var W=[
+ {en:'dining room', ru:['столовая']},
+ {en:'cosy', ru:['уютный']},
+ {en:'toilet', ru:['туалет','унитаз']},
+ {en:'bath', ru:['ванна']},
+ {en:'shower', ru:['душ']},
+ {en:'sink', ru:['раковина']},
+ {en:'wardrobe', enAlt:'closet', ru:['шкаф']},
+ {en:'bed', ru:['кровать']},
+ {en:'dresser', ru:['комод']},
+ {en:'living room', ru:['гостиная']},
+ {en:'sofa', ru:['диван']},
+ {en:'lamp', ru:['лампа']},
+ {en:'TV', ru:['телевизор'], alts:['television']},
+ {en:'armchair', ru:['кресло']},
+ {en:'dishwasher', ru:['посудомоечная машина','посудомойка']},
+ {en:'stove', ru:['плита']},
+ {en:'cupboard', ru:['шкаф для посуды','посудный шкаф']},
+ {en:'fridge', ru:['холодильник'], alts:['refrigerator']}
+];
+
+var SENT=[
+ {pre:'We eat dinner in the', post:'— not in the kitchen.', ans:['dining room']},
+ {pre:'Our kitchen is small but very', post:'.', ans:['cosy']},
+ {pre:'Put the cheese in the', post:'or it will go bad.', ans:['fridge','refrigerator']},
+ {pre:'Mum is cooking soup on the', post:'.', ans:['stove']},
+ {pre:'We don’t wash plates by hand — we put them in the', post:'.', ans:['dishwasher']},
+ {pre:'Wash your hands in the', post:'.', ans:['sink']},
+ {pre:'My dresses hang in the', post:'.', ans:['wardrobe','closet']},
+ {pre:'At night I sleep on my', post:'.', ans:['bed']},
+ {pre:'I keep my sweaters in the', post:'— it has three big drawers.', ans:['dresser']},
+ {pre:'The', post:'is big — we all sit on it together.', ans:['sofa']},
+ {pre:'Dad sits in his favourite', post:'and reads a book.', ans:['armchair']},
+ {pre:'It’s dark — turn on the', post:', please.', ans:['lamp']},
+ {pre:'We watch the', post:'in the evening.', ans:['TV','television']},
+ {pre:'The sofa and the TV are in the', post:'.', ans:['living room']},
+ {pre:'I wash standing under the', post:'.', ans:['shower']},
+ {pre:'The', post:'is full of warm water — I want to lie in it.', ans:['bath']},
+ {pre:'The bathroom has a bath, a sink and a', post:'.', ans:['toilet']},
+ {pre:'The plates and cups are in the', post:'.', ans:['cupboard']}
+];
+
+function enDisplay(w){ return w.enAlt ? w.en+' / '+w.enAlt : w.en; }
+function ruDisplay(w){ return w.ru.join(', '); }
+function enVariants(w){ var a=[w.en]; if(w.enAlt)a.push(w.enAlt); if(w.alts)a=a.concat(w.alts); return a; }
+
+var TOTAL = W.length*5; /* 90 */
+var PARTS = 5;
+var score=0, partsDone=0, finished=false, started=false;
+
+function $(id){return document.getElementById(id);}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function norm(s){return String(s).toLowerCase().replace(/ё/g,'е').replace(/[.,!?;:«»"'’‘`´–—\-()]/g,'').replace(/\s+/g,' ').trim();}
+function addPoint(){score++;$('sbNow').textContent=score;$('sbFill').style.width=(score/TOTAL*100)+'%';}
+function partDone(){partsDone++;$('sbParts').textContent=partsDone+' / '+PARTS+' частей';if(partsDone===PARTS)showFinal();}
+function showFinal(){finished=true;$('finalScore').textContent=score+' / '+TOTAL;$('finalCard').classList.remove('hidden');setTimeout(function(){$('finalCard').scrollIntoView({behavior:'smooth'});},100);}
+function doneStrip(txt){return '<div class="done-strip">'+ICO.check+'<span>'+(txt||'Часть завершена!')+'</span></div>';}
+function fbHTML(status,ans,exp){
+ var t=status==='ok'?'Верно!':(status==='time'?'Время вышло!':'Ошибка');
+ var ic=status==='ok'?ICO.check:(status==='time'?ICO.clock:ICO.cross);
+ return '<div class="fb '+status+'"><div class="fb-status">'+ic+t+'</div>'+
+  '<div class="fb-ans">Правильный ответ: <b>'+ans+'</b></div>'+
+  (exp?'<div class="fb-exp">'+ICO.bulb+'<span>'+exp+'</span></div>':'')+'</div>';
+}
+function timerHTML(sec){return '<div class="t-row">'+ICO.clock+'<div class="t-track"><div class="t-fill"></div></div><b class="t-num">'+sec+'</b></div>';}
+function startTimer(sec,root,onEnd){
+ var left=sec,fill=root.querySelector('.t-fill'),num=root.querySelector('.t-num');
+ function paint(){fill.style.width=(left/sec*100)+'%';var s=Math.ceil(left);num.textContent=s;var low=left<=3;fill.classList.toggle('low',low);num.classList.toggle('low',low);}
+ paint();
+ var id=setInterval(function(){left-=0.1;if(left<=0){left=0;paint();clearInterval(id);onEnd();return;}paint();},100);
+ return function(){clearInterval(id);};
+}
+function gated(stage,note,fn){
+ stage.innerHTML='<div class="start-panel"><div class="sp-ico">'+ICO.play+'</div><div class="sp-note">'+note+'</div><button class="btn btn-start">'+ICO.play+' Старт</button></div>';
+ stage.querySelector('.btn-start').onclick=function(){started=true;fn();};
+}
+
+$('wordGrid').innerHTML = W.map(function(w){
+ return '<div class="word-item"><span class="we">'+enDisplay(w)+'</span><span class="dash">—</span><span class="wr">'+ruDisplay(w)+'</span></div>';
+}).join('');
+
+/* ---------- письменный (без времени) ---------- */
+function runTyped(stage,items,onDone,ph){
+ var idx=0;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   '<div class="sent">'+(it.left?'<span class="'+(it.cls||'')+'">'+it.left+'</span>':'')+'<input class="ans-input" id="inp" placeholder="'+ph+'" autocomplete="off" autocapitalize="off" spellcheck="false">'+
+   (it.right?'<span>'+it.right+'</span>':'')+'</div>'+
+   '<div class="ans-row"><button class="btn" id="ck">Проверить</button></div>'+
+   '<div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  var inp=stage.querySelector('#inp');
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();answer(false);}});
+  stage.querySelector('#ck').onclick=function(){answer(false);};
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+ }
+ function answer(byTime){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';started=true;
+  var it=items[idx];var inp=stage.querySelector('#inp');var v=inp.value;
+  var ok=!byTime && it.ans.some(function(a){return norm(a)===norm(v);});
+  if(ok)addPoint();
+  inp.disabled=true;stage.querySelector('#ck').style.display='none';
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':'bad',it.show,it.exp);
+  stage.querySelector('#nx').classList.remove('hidden');
+ }
+ show();
+}
+
+/* ---------- устный ---------- */
+function runOral(stage,items,onDone){
+ var idx=0;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span><span class="hint-line" style="margin-left:auto">'+ICO.mic+' скажи слово вслух по-английски</span></div>'+
+   '<div class="oral-big">'+it.ru+'</div>'+
+   '<div class="nav"><button class="btn" id="rv">'+ICO.mic+' Я сказала — показать слово</button></div>'+
+   '<div class="fbwrap hidden"></div>'+
+   '<div class="nav hidden" id="selfRow" style="gap:12px">'+
+     '<button class="btn btn-ok" id="ok">'+ICO.check+' Сказала верно</button>'+
+     '<button class="btn btn-bad" id="no">'+ICO.cross+' Была ошибка</button>'+
+   '</div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  stage.querySelector('#rv').onclick=function(){
+   started=true;
+   stage.querySelector('#rv').style.display='none';
+   var fw=stage.querySelector('.fbwrap');
+   fw.classList.remove('hidden');
+   fw.innerHTML='<div class="fb ok"><div class="fb-ans">Слово: <b>'+it.en+'</b></div></div>';
+   stage.querySelector('#selfRow').classList.remove('hidden');
+  };
+  function mark(ok){
+   if(stage.dataset.lock)return;stage.dataset.lock='1';
+   if(ok)addPoint();
+   stage.querySelector('#selfRow').classList.add('hidden');
+   stage.querySelector('#nx').classList.remove('hidden');
+  }
+  stage.querySelector('#ok').onclick=function(){mark(true);};
+  stage.querySelector('#no').onclick=function(){mark(false);};
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+ }
+ show();
+}
+
+/* ---------- тест на время ---------- */
+function runQuiz(stage,items,time,onDone){
+ var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   timerHTML(time)+
+   '<div class="sent"><span class="w-en">'+it.en+'</span></div>'+
+   '<div class="opts"></div><div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше '+ICO.arrow+'</button></div></div>';
+  var box=stage.querySelector('.opts');
+  shuffle(it.opts.slice()).forEach(function(o){
+   var b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+   b.onclick=function(){answer(o,b);};box.appendChild(b);
+  });
+  stage.querySelector('#nx').onclick=function(){idx++;if(idx<items.length)show();else{stage.innerHTML=doneStrip();onDone();}};
+  stop=startTimer(time,stage,function(){answer(null,null);});
+ }
+ function answer(val,btn){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';started=true;
+  if(stop)stop();
+  var it=items[idx];var ok=val!==null&&val===it.ans;
+  if(ok)addPoint();
+  stage.querySelectorAll('.opt-btn').forEach(function(b){
+   b.disabled=true;
+   if(b.textContent===it.ans)b.classList.add('correct');
+   else if(btn===b)b.classList.add('wrongpick');
+   else b.classList.add('dim');
+  });
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(val===null?'time':'bad'),it.ans,it.en+' — '+it.ans);
+  stage.querySelector('#nx').classList.remove('hidden');
+ }
+ show();
+}
+
+/* ---------- запуск ---------- */
+runTyped($('ex1'), W.map(function(w){
+ return {left:enDisplay(w), cls:'w-en', right:'', ans:w.ru, show:ruDisplay(w), exp:enDisplay(w)+' — '+ruDisplay(w)};
+}), function(){partDone();}, 'перевод на русском');
+
+runTyped($('ex2'), shuffle(W).map(function(w){
+ return {left:ruDisplay(w), cls:'w-ru', right:'', ans:enVariants(w), show:enDisplay(w), exp:ruDisplay(w)+' — '+enDisplay(w)};
+}), function(){partDone();}, 'слово на английском');
+
+var ruByEn={}; W.forEach(function(w){ruByEn[w.en]=w.ru[0];});
+runTyped($('ex3'), SENT.map(function(s){
+ return {left:s.pre, right:s.post, ans:s.ans, show:s.ans[0], exp:s.ans[0]+' — '+ruByEn[s.ans[0]]};
+}), function(){partDone();}, 'впиши слово');
+
+runOral($('ex4'), shuffle(W).map(function(w){return {ru:ruDisplay(w), en:enDisplay(w)};}), function(){partDone();});
+
+gated($('ex5'),'Тест на время · 7 сек на слово', function(){
+ runQuiz($('ex5'), shuffle(W).map(function(w){
+  var others=shuffle(W.filter(function(x){return x!==w;})).slice(0,2).map(function(x){return x.ru[0];});
+  return {en:enDisplay(w), ans:w.ru[0], opts:[w.ru[0]].concat(others)};
+ }), 7, function(){partDone();});
+});
+
+$('sbTotal').textContent=TOTAL;
+$('dateNow').textContent=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date());
+
+var rev=document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window){
+ var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.08});
+ rev.forEach(function(el){io.observe(el);});
+}else rev.forEach(function(el){el.classList.add('in');});
+
+window.addEventListener('beforeunload',function(e){
+ if(started&&!finished){e.preventDefault();e.returnValue='';}
+});
+})();
+</script>
+</body>
+</html>
