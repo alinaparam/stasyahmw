@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стася · Домашняя работа на время</title>
+<style>
+  :root{
+    --bg:#F3EFE9; --card:#FBF8F3; --paper:#FFFDF9;
+    --accent:#C97B5B; --accent-d:#A85D3F; --accent-soft:#F3E2D7;
+    --ink:#3A3532; --mut:#6B625C; --line:#D9CFC2;
+    --ok:#A9BFA0; --ok-soft:#EDF3E8; --ok-ink:#5F7A52;
+    --warn:#E8C989; --warn-soft:#F7EDD6; --warn-ink:#8A6A2F;
+    --bad:#D98B7A; --bad-soft:#F6E3DD; --bad-ink:#A25A47;
+    --head:Georgia,'Times New Roman',serif;
+    --body:'DejaVu Sans',Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg);min-height:100vh}
+  ::selection{background:var(--accent-soft);color:var(--accent-d)}
+  h1,h2,h3{font-family:var(--head)}
+  button{font-family:var(--body)}
+  .hidden{display:none!important}
+
+  .bg-photo{position:fixed;inset:0;z-index:-2;background:#F3EFE9 url('photo.jpg') center/cover no-repeat}
+  .bg-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(243,239,233,1) 0%,rgba(243,239,233,.72) 16%,rgba(243,239,233,.55) 50%,rgba(243,239,233,.72) 84%,rgba(243,239,233,1) 100%)}
+
+  .scorebar{position:sticky;top:0;z-index:60;background:rgba(251,248,243,.97);border-bottom:1px solid var(--line)}
+  .sb-inner{max-width:980px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .sb-label{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-d)}
+  .sb-label svg{width:15px;height:15px;color:var(--accent)}
+  .sb-track{flex:1;min-width:110px;height:9px;border-radius:99px;background:#ECE4D7;border:1px solid var(--line);overflow:hidden;display:flex}
+  .sb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-d));border-radius:99px;transition:width .4s ease}
+  .sb-num{font-weight:700;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .sb-done{font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+
+  .page{max-width:980px;margin:0 auto;padding:34px 20px 40px;display:flex;flex-direction:column;gap:26px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+
+  .cover{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+  .doodle{position:absolute;color:var(--accent);pointer-events:none}
+  .d-house{width:116px;top:-8px;right:26px;opacity:.30;transform:rotate(6deg);animation:floaty 7s ease-in-out infinite}
+  .d-clock{width:64px;left:-6px;bottom:-10px;opacity:.35;animation:floaty 9s ease-in-out .5s infinite reverse}
+  .d-spark{width:44px;right:180px;bottom:8px;opacity:.4;animation:floaty 6s ease-in-out 1s infinite}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -9px}}
+  .cover-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .stamp{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--accent);color:var(--accent-d);background:var(--paper);padding:6px 15px;border-radius:999px;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;transform:rotate(-1.6deg)}
+  .stamp svg{width:14px;height:14px}
+  .cover h1{font-size:clamp(2.4rem,5.5vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+  .squiggle{display:block;margin-top:2px}
+  .cover .sub{color:var(--mut);max-width:740px}
+  .cover .sub b{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:99px;background:var(--paper);font-size:13.5px;color:var(--mut)}
+  .chip svg{width:16px;height:16px;color:var(--accent)}
+  .chip b{color:var(--ink)}
+  .notice{display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:14px;border:1px solid;font-size:14.5px}
+  .notice svg{width:21px;height:21px;flex:0 0 auto;margin-top:1px}
+  .notice.warn{background:var(--warn-soft);border-color:#E3CD98;color:#6E5A2E}
+  .notice.warn svg{color:#B98F3E}
+  .notice.info{background:var(--accent-soft);border-color:#E0B9A4;color:#7C4E36}
+  .notice.info svg{color:var(--accent-d)}
+
+  .b-head{display:flex;gap:16px;align-items:flex-start;border-bottom:1px dashed var(--line);padding-bottom:18px;margin-bottom:20px}
+  .b-num{flex:0 0 auto;width:50px;height:50px;border-radius:16px;background:var(--accent);border:1px solid var(--accent-d);color:#FBF8F3;font-family:var(--head);font-size:24px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg)}
+  .b-over{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+  .b-head h2{font-size:clamp(20px,3vw,26px);margin-top:2px}
+  .b-desc{margin-top:6px;font-size:14.5px;color:var(--mut);max-width:760px}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{padding:6px 15px;border-radius:99px;border:1px solid var(--line);background:var(--paper);font-size:12.5px;font-weight:700;color:var(--mut)}
+  .tab.on{background:var(--accent);border-color:var(--accent-d);color:#FFF8F1}
+
+  .rulebox{background:var(--warn-soft);border:1px solid #E3CD98;border-radius:14px;padding:14px 18px;margin-bottom:18px;display:flex;flex-direction:column;gap:7px;font-size:14px;color:#6E5A2E}
+  .rulebox b{color:#5C4A21}
+
+  .part{border:1px solid var(--line);border-radius:16px;background:var(--paper);padding:20px 22px;margin-top:16px}
+  .part-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:14px}
+  .p-ico{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);border:1px solid #EAD3C3;display:flex;align-items:center;justify-content:center}
+  .p-ico svg{width:17px;height:17px;color:var(--accent-d)}
+  .part-head h3{font-size:1.1rem}
+  .hchip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent-d);border:1px solid #E4C5B2;margin-left:auto}
+  .hchip.nt{background:var(--ok-soft);color:var(--ok-ink);border-color:#C4D4BB}
+
+  .start-panel{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 12px;border:1.5px dashed #E0BFA6;border-radius:16px;background:linear-gradient(180deg,#FDF7ED,#FAF0E0)}
+  .sp-ico{width:60px;height:60px;border-radius:50%;background:var(--accent-soft);border:1px dashed #DEB79E;display:flex;align-items:center;justify-content:center;animation:floaty 5s ease-in-out infinite}
+  .sp-ico svg{width:26px;height:26px;color:var(--accent-d)}
+  .sp-note{color:var(--mut);font-size:.95rem;font-weight:700}
+
+  .task{display:flex;flex-direction:column;gap:13px}
+  .t-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .step-chip{font-size:12.5px;font-weight:700;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:6px 13px;border-radius:99px}
+  .t-row{display:flex;align-items:center;gap:12px}
+  .t-row>svg{width:19px;height:19px;color:var(--accent-d)}
+  .t-track{flex:1;height:13px;border-radius:99px;background:#EFE5D5;border:1px solid var(--line);overflow:hidden;display:flex}
+  .t-fill{height:100%;width:100%;background:linear-gradient(90deg,#D18F70,var(--accent-d));border-radius:99px;transition:width .1s linear}
+  .t-fill.low{background:linear-gradient(90deg,var(--bad),#C0604E)}
+  .t-num{font-weight:700;min-width:44px;text-align:right;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .t-num.low{color:var(--bad-ink)}
+  .sent{font-family:var(--head);font-weight:600;font-size:clamp(1.15rem,3vw,1.5rem);line-height:1.5;text-align:center;padding:8px 4px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+  .w-en{font-family:var(--head);font-style:italic;font-weight:600;color:var(--accent-d);font-size:1.3rem}
+  .w-ru{font-weight:700}
+  .blank{display:inline-block;width:76px;border-bottom:3px solid var(--accent);height:1.1em}
+  .opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .opt-btn{min-width:96px;padding:12px 22px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1rem;color:var(--ink);transition:transform .15s,border-color .2s,background .2s}
+  .opt-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent);background:var(--accent-soft)}
+  .opt-btn:disabled{cursor:default}
+  .opt-btn.correct{background:var(--ok-soft);border-color:#9DBB90;color:var(--ok-ink)}
+  .opt-btn.wrongpick{background:var(--bad-soft);border-color:#DCA79A;color:var(--bad-ink)}
+  .opt-btn.dim{opacity:.5}
+  .ans-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .ans-input{width:220px;padding:11px 15px;font-family:var(--body);font-size:1.02rem;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;text-align:center}
+  .ans-input:focus{border-color:var(--accent);outline:none}
+  .ans-input:disabled{opacity:.6}
+  .fb{border-radius:14px;border:1px solid;padding:13px 18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+  .fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+  .fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+  .fb.time{background:var(--warn-soft);border-color:var(--warn)}
+  .fb-status{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+  .fb-status svg{width:17px;height:17px}
+  .fb.ok .fb-status{color:var(--ok-ink)} .fb.bad .fb-status{color:var(--bad-ink)} .fb.time .fb-status{color:var(--warn-ink)}
+  .fb-ans b{color:var(--ink)}
+  .nav{display:flex;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;font-weight:700;font-size:1rem;border-radius:99px;padding:12px 28px;background:var(--accent);color:#FFF8F1;border:1px solid var(--accent-d);transition:transform .15s,background .2s}
+  .btn svg{width:17px;height:17px}
+  .btn:hover{background:var(--accent-d);transform:translateY(-2px)}
+  .btn-start{font-size:1.05rem;padding:13px 38px}
+  .btn-big{font-size:1.1rem;padding:14px 40px}
+  .done-strip{display:flex;align-items:center;gap:10px;background:var(--ok-soft);border:1px solid var(--ok);color:var(--ok-ink);border-radius:13px;padding:12px 18px;font-weight:700;margin-top:14px}
+  .done-strip svg{width:18px;height:18px}
+  .pagenav{display:flex;justify-content:center;margin-top:18px}
+
+  .sort-bank{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:16px}
+  .s-chip{padding:10px 17px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:1rem;transition:transform .15s,border-color .2s,background .2s}
+  .s-chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .s-chip.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+  .s-chip.badflash{background:var(--bad-soft);border-color:#DCA79A}
+  .sort-groups{display:flex;flex-wrap:wrap;gap:12px}
+  .s-group{flex:1 1 160px;border:1.5px dashed var(--line);border-radius:14px;padding:12px;min-height:110px;background:var(--card)}
+  .s-group h4{font-family:var(--body);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-d);margin-bottom:10px;text-align:center}
+  .placed{display:inline-block;margin:3px;padding:6px 12px;border-radius:99px;background:var(--ok-soft);border:1px solid #B9CBAF;color:var(--ok-ink);font-weight:700;font-size:.9rem}
+
+  .res-row{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+  .res-row:last-child{border-bottom:none}
+  .res-row .rname{flex:1;min-width:200px;font-size:.95rem;font-weight:700}
+  .res-row .rbar{flex:0 0 130px;height:8px;border-radius:99px;background:#ECE4D7;overflow:hidden;display:flex}
+  .res-row .rfill{height:100%;border-radius:99px;background:var(--ok)}
+  .res-row .rscore{font-size:.9rem;color:var(--mut);font-variant-numeric:tabular-nums}
+  .final-big{font-family:var(--head);font-size:2.3rem;color:var(--accent-d)}
+  .praise{font-family:var(--head);font-size:clamp(20px,3vw,27px);color:var(--accent-d)}
+  .reminder{display:flex;gap:14px;align-items:flex-start;background:var(--accent-soft);border:1px solid #E0B9A4;border-radius:14px;padding:16px 19px;font-size:15px;color:#7C4E36}
+  .reminder svg{width:22px;height:22px;color:var(--accent-d);flex:0 0 auto;margin-top:1px}
+
+  footer{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 0 14px}
+  footer svg{width:17px;height:17px;color:var(--accent)}
+  footer span{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--accent-d)}
+  @media (max-width:640px){.card{padding:22px 18px}.d-spark{display:none}.hchip{margin-left:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bg-photo"></div>
+<div class="bg-fade"></div>
+
+<div class="scorebar">
+  <div class="sb-inner">
+    <span class="sb-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.5l-5.8 3.1 1.1-6.4L2.6 9.6l6.5-.9z"/></svg>Очки</span>
+    <div class="sb-track"><div class="sb-fill" id="sbFill"></div></div>
+    <span class="sb-num"><b id="sbNow">0</b></span>
+    <span class="sb-done" id="sbDone">0 / 178 заданий</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ========== ИНТРО ========== -->
+  <section class="card cover" id="pg-intro">
+    <svg class="doodle d-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
+    <svg class="doodle d-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.5V12l3 2"/></svg>
+    <svg class="doodle d-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+
+    <div class="cover-top">
+      <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>домашняя работа · на время</span>
+    </div>
+
+    <div>
+      <h1>Hello, Стася</h1>
+      <svg class="squiggle" width="200" height="14" viewBox="0 0 200 14" fill="none"><path d="M3 9 Q 15 1 27 9 T 51 9 T 75 9 T 99 9 T 123 9 T 147 9 T 171 9 T 195 9" stroke="#C97B5B" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+
+    <p class="sub">Это <b>задания на время</b>: лексика по теме «Мой дом» и пять грамматических правил. Почти у каждого задания тикает таймер — если время кончилось, ответ засчитывается как неверный, и страница листается дальше.</p>
+
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><b>178 заданий · 2 блока</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><b>6–8 сек на задание</b></span>
+    </div>
+
+    <div class="notice warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.8 19.5h18.4L12 3.5z"/><path d="M12 10v4M12 16.8h.01"/></svg>
+      <div><b>Пройди всё целиком за один раз</b> — не перезагружай страницу и не закрывай вкладку. Иначе все ответы сбросятся, и придётся начинать заново.</div>
+    </div>
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div>После завершения — <b>сделай скриншот страницы с результатами и отправь его в telegram</b>.</div>
+    </div>
+
+    <div class="nav"><button class="btn btn-big" id="startAll">Начать домашку
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 1 ========== -->
+  <section class="card hidden" id="pg-b1">
+    <div class="b-head"><div class="b-num">1</div><div><div class="b-over">Блок 1 · страница 1 из 2</div><h2>Лексика: Мой дом</h2><p class="b-desc">Сначала напиши переводы (без времени), потом выбирай перевод на время — 8 секунд на слово.</p></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg></span><h3>1.1 Перевод → написать английское слово</h3><span class="hchip nt">без времени</span></div><div id="ex11"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>1.2 Английское слово → выбрать перевод</h3><span class="hchip">8 сек / слово</span></div><div id="ex12"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b1"><button class="btn btn-big" data-go="pg-b2a">Дальше: грамматика
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 2.1 ========== -->
+  <section class="card hidden" id="pg-b2a">
+    <div class="tabs"><span class="tab on">2.1</span><span class="tab">2.2</span><span class="tab">2.3</span><span class="tab">2.4</span><span class="tab">2.5</span></div>
+    <div class="b-head"><div class="b-num">2.1</div><div><div class="b-over">Блок 2 · правило 1 из 5</div><h2>There is / There are</h2></div></div>
+    <div class="rulebox"><span><b>There is</b> + единственное число / неисчисляемое; <b>There are</b> + множественное число.</span><span>Вопросы: <b>Is there…? / Are there…?</b> Отрицания: <b>isn't / aren't</b>.</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Выбери is / are</h3><span class="hchip">7 сек</span></div><div id="ex21a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Впиши is / are</h3><span class="hchip">7 сек</span></div><div id="ex21b"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Вопросы: Is there / Are there</h3><span class="hchip">7 сек</span></div><div id="ex21c"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b2a"><button class="btn btn-big" data-go="pg-b2b">Дальше: артикли
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 2.2 ========== -->
+  <section class="card hidden" id="pg-b2b">
+    <div class="tabs"><span class="tab">2.1</span><span class="tab on">2.2</span><span class="tab">2.3</span><span class="tab">2.4</span><span class="tab">2.5</span></div>
+    <div class="b-head"><div class="b-num">2.2</div><div><div class="b-over">Блок 2 · правило 2 из 5</div><h2>Артикли: a / an / the / —</h2></div></div>
+    <div class="rulebox"><span><b>1.</b> Первое упоминание → <b>a / an</b>; повторное → <b>the</b>.</span><span><b>2.</b> Единственное в своём роде или в ситуации → <b>the</b>.</span><span><b>3.</b> Общее / неисчисляемое → <b>без артикля</b> (тире –).</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Выбери артикль</h3><span class="hchip">7 сек</span></div><div id="ex22a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Впиши артикль</h3><span class="hchip">7 сек</span></div><div id="ex22b"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b2b"><button class="btn btn-big" data-go="pg-b2c">Дальше: this / that
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 2.3 ========== -->
+  <section class="card hidden" id="pg-b2c">
+    <div class="tabs"><span class="tab">2.1</span><span class="tab">2.2</span><span class="tab on">2.3</span><span class="tab">2.4</span><span class="tab">2.5</span></div>
+    <div class="b-head"><div class="b-num">2.3</div><div><div class="b-over">Блок 2 · правило 3 из 5</div><h2>This / That / These / Those</h2></div></div>
+    <div class="rulebox"><span><b>This / These</b> — близко; <b>That / Those</b> — далеко.</span><span><b>This / That</b> + единственное число; <b>These / Those</b> + множественное.</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Выбери слово</h3><span class="hchip">6 сек</span></div><div id="ex23a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Впиши слово</h3><span class="hchip">6 сек</span></div><div id="ex23b"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b2c"><button class="btn btn-big" data-go="pg-b2d">Дальше: притяжательные
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 2.4 ========== -->
+  <section class="card hidden" id="pg-b2d">
+    <div class="tabs"><span class="tab">2.1</span><span class="tab">2.2</span><span class="tab">2.3</span><span class="tab on">2.4</span><span class="tab">2.5</span></div>
+    <div class="b-head"><div class="b-num">2.4</div><div><div class="b-over">Блок 2 · правило 4 из 5</div><h2>Притяжательные прилагательные</h2></div></div>
+    <div class="rulebox"><span><b>my</b> (мой) · <b>your</b> (твой/ваш) · <b>his</b> (его) · <b>her</b> (её) · <b>its</b> (его/её о предмете и животном) · <b>our</b> (наш) · <b>their</b> (их).</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Выбери вариант</h3><span class="hchip">6 сек</span></div><div id="ex24a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Впиши сам</h3><span class="hchip">6 сек</span></div><div id="ex24b"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b2d"><button class="btn btn-big" data-go="pg-b2e">Дальше: множественное число
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== БЛОК 2.5 ========== -->
+  <section class="card hidden" id="pg-b2e">
+    <div class="tabs"><span class="tab">2.1</span><span class="tab">2.2</span><span class="tab">2.3</span><span class="tab">2.4</span><span class="tab on">2.5</span></div>
+    <div class="b-head"><div class="b-num">2.5</div><div><div class="b-over">Блок 2 · правило 5 из 5</div><h2>Множественное число</h2></div></div>
+    <div class="rulebox"><span><b>+s</b>: cat→cats · <b>+es</b> после -s,-ss,-sh,-ch,-x,-z: dish→dishes · <b>согл.+y → -ies</b>: city→cities (гласная+y → +s: boy→boys).</span><span><b>-f/-fe → -ves</b>: knife→knives (искл. roof→roofs, chief→chiefs) · <b>согл.+o → -es</b>: potato→potatoes (искл. piano→pianos, photo→photos).</span><span><b>Неправильные</b>: man→men, woman→women, child→children, foot→feet, tooth→teeth, mouse→mice, person→people · <b>не меняются</b>: sheep, fish, deer · <b>всегда мн.ч.</b>: trousers, jeans, glasses, scissors · <b>без мн.ч.</b>: water, information, advice, furniture, money.</span></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Впиши множественное число</h3><span class="hchip">8 сек / слово</span></div><div id="ex25a"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><h3>Распредели по группам</h3><span class="hchip nt">без времени</span></div><div id="ex25b"></div></div>
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>Выбери верное множественное</h3><span class="hchip">6 сек</span></div><div id="ex25c"></div></div>
+    <div class="pagenav hidden" id="nav-pg-b2e"><button class="btn btn-big" id="toResults">К результатам
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <!-- ========== РЕЗУЛЬТАТЫ ========== -->
+  <section class="card hidden" id="pg-res" style="display:flex;flex-direction:column;gap:18px">
+    <h2 style="font-size:clamp(22px,3.4vw,30px);color:var(--accent-d)">Результаты</h2>
+    <div class="final-big" id="resTotal">0 / 178</div>
+    <div id="resRows" style="display:flex;flex-direction:column"></div>
+    <div class="praise">Стася, ты молодец, ты сделала домашку!</div>
+    <div class="reminder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div><b>Сделай скриншот этой страницы с результатами и отправь его в TELEGRAM.</b></div>
+    </div>
+  </section>
+
+  <footer>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.7C6.4 16.7 3 13.2 3 9.6 3 7 5 5 7.6 5c1.8 0 3.4 1 4.4 2.6C13 6 14.6 5 16.4 5 19 5 21 7 21 9.6c0 3.6-3.4 7.1-9 11.1z"/></svg>
+    <span>Made for Stasya with love</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+if('scrollRestoration' in history){history.scrollRestoration='manual';}
+window.scrollTo(0,0);
+
+var ICO={
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>',
+ cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+};
+
+var W26=[
+ {en:'dining room',ru:'столовая'},{en:'cosy',ru:'уютный'},{en:'toilet',ru:'туалет, унитаз'},
+ {en:'bath',ru:'ванна'},{en:'shower',ru:'душ'},{en:'sink',ru:'раковина'},
+ {en:'wardrobe',en2:'closet',ru:'шкаф'},{en:'bed',ru:'кровать'},{en:'dresser',ru:'комод'},
+ {en:'living room',ru:'гостиная'},{en:'sofa',ru:'диван'},{en:'lamp',ru:'лампа'},
+ {en:'TV',ru:'телевизор'},{en:'armchair',ru:'кресло'},{en:'dishwasher',ru:'посудомоечная машина'},
+ {en:'stove',ru:'плита'},{en:'cupboard',ru:'шкаф для посуды'},{en:'fridge',ru:'холодильник'},
+ {en:'weak',ru:'слабый'},{en:'expensive',ru:'дорогой'},{en:'ugly',ru:'уродливый, некрасивый'},
+ {en:'difficult',ru:'трудный, сложный'},{en:'dirty',ru:'грязный'},{en:'strong',ru:'сильный'},{en:'cheap',ru:'дешёвый'}
+];
+function enDisp(w){return w.en2? w.en+' / '+w.en2 : w.en;}
+
+var T21a=[
+ {pre:'There',post:'a big sofa in the living room.',ans:'is'},
+ {pre:'There',post:'two chairs near the table.',ans:'are'},
+ {pre:'There',post:'a dishwasher in our kitchen.',ans:'is'},
+ {pre:'There',post:'many books on the dresser.',ans:'are'},
+ {pre:'There',post:'a clean towel in the bathroom.',ans:'is'},
+ {pre:'There',post:'three windows in the bedroom.',ans:'are'},
+ {pre:'There',post:'a wardrobe in the hall.',ans:'is'},
+ {pre:'There',post:'some milk in the fridge.',ans:'is'},
+ {pre:'There',post:'five plates on the stove.',ans:'are'},
+ {pre:'There',post:'an armchair near the window.',ans:'is'},
+ {pre:'There',post:'a lot of cups in the cupboard.',ans:'are'},
+ {pre:'There',post:'some water in the glass.',ans:'is'}
+];
+var T21b=[
+ {pre:'There',post:'a bath in the bathroom.',ans:'is'},
+ {pre:'There',post:'four lamps in the room.',ans:'are'},
+ {pre:'There',post:'a TV on the dresser.',ans:'is'},
+ {pre:'There',post:'many toys under the bed.',ans:'are'},
+ {pre:'There',post:'some cheese in the fridge.',ans:'is'},
+ {pre:'There',post:'two sofas in the living room.',ans:'are'},
+ {pre:'There',post:'a shower in the bathroom.',ans:'is'},
+ {pre:'There',post:'six chairs at the dining table.',ans:'are'}
+];
+var T21c=[
+ {pre:'',post:'a bed in your bedroom?',ans:'Is there'},
+ {pre:'',post:'any chairs in the kitchen?',ans:'Are there'},
+ {pre:'',post:'a lamp on your desk?',ans:'Is there'},
+ {pre:'',post:'many windows in the flat?',ans:'Are there'},
+ {pre:'',post:'a dishwasher in your kitchen?',ans:'Is there'},
+ {pre:'',post:'any milk in the fridge?',ans:'Is there'},
+ {pre:'',post:'two beds in your room?',ans:'Are there'},
+ {pre:'',post:'a shower in your bathroom?',ans:'Is there'}
+];
+var T22a=[
+ {pre:'I have',post:'big sofa in the living room.',ans:'a'},
+ {pre:'',post:'sofa is very cosy.',ans:'the'},
+ {pre:'She bought',post:'expensive lamp.',ans:'an'},
+ {pre:'',post:'lamp is on the dresser now.',ans:'the'},
+ {pre:'',post:'sun is bright today.',ans:'the'},
+ {pre:'I like',post:'cheap furniture.',ans:'-'},
+ {pre:'He has',post:'old cupboard.',ans:'an'},
+ {pre:'',post:'cupboard is in the hall.',ans:'the'},
+ {pre:'I drink',post:'water every day.',ans:'-'},
+ {pre:'There is',post:'bath in the bathroom.',ans:'a'},
+ {pre:'',post:'bath is full of warm water.',ans:'the'},
+ {pre:'She is',post:'strong woman.',ans:'a'},
+ {pre:'',post:'moon is beautiful tonight.',ans:'the'},
+ {pre:'They sell',post:'sofas here.',ans:'-'},
+ {pre:"It's",post:'ugly chair.',ans:'an'}
+];
+var T22b=[
+ {pre:'He has',post:'new fridge.',ans:'a'},
+ {pre:'',post:'fridge is very big.',ans:'the'},
+ {pre:'She wants',post:'expensive dresser.',ans:'an'},
+ {pre:'',post:'dresser in her room is old.',ans:'the'},
+ {pre:'',post:'moon is full tonight.',ans:'the'},
+ {pre:'We need',post:'water.',ans:'-'},
+ {pre:'There is',post:'shower in the bathroom.',ans:'a'},
+ {pre:'',post:'shower is next to the sink.',ans:'the'},
+ {pre:"They don't sell",post:'furniture here.',ans:'-'},
+ {pre:"It's",post:'ugly sofa.',ans:'an'}
+];
+var T23a=[
+ {pre:'',post:'book in my hands is interesting.',ans:'This'},
+ {pre:'',post:'house across the street is very old.',ans:'That'},
+ {pre:'',post:'cookies on my plate are delicious.',ans:'These'},
+ {pre:'',post:'stars in the night sky are bright.',ans:'Those'},
+ {pre:'',post:'bird on the roof is singing.',ans:'That'},
+ {pre:'',post:'flowers in my garden smell nice.',ans:'These'},
+ {pre:'',post:'chair here is very comfortable.',ans:'This'},
+ {pre:'',post:'mountains over there are high.',ans:'Those'},
+ {pre:'',post:'phone in your pocket is ringing.',ans:'That'},
+ {pre:'',post:'keys on this table are mine.',ans:'These'},
+ {pre:'',post:'lamp near me is new.',ans:'This'},
+ {pre:'',post:'people in the park are my friends.',ans:'Those'}
+];
+var T23b=[
+ {pre:'',post:'sofa here is ours.',ans:'This'},
+ {pre:'',post:'armchair over there is free.',ans:'That'},
+ {pre:'',post:'plates in my hands are dirty.',ans:'These'},
+ {pre:'',post:'stars above the mountain are bright.',ans:'Those'},
+ {pre:'',post:'cupboard across the room is old.',ans:'That'},
+ {pre:'',post:'towels in my bag are clean.',ans:'These'},
+ {pre:'',post:'lamp next to me is new.',ans:'This'},
+ {pre:'',post:'people on the other side of the street are tourists.',ans:'Those'}
+];
+var T24a=[
+ {pre:'This is Tom.',post:'bag is blue.',ans:'his'},
+ {pre:'I love',post:'mum.',ans:'my'},
+ {pre:'Anna and I have a cat.',post:'cat is black.',ans:'our'},
+ {pre:'The dog wags',post:'tail.',ans:'its'},
+ {pre:'They are my friends.',post:'names are Max and Vera.',ans:'their'},
+ {pre:'My sister has',post:'own room.',ans:'her'},
+ {pre:'Masha, is this',post:'pen?',ans:'your'},
+ {pre:'Dad has',post:'own car.',ans:'his'},
+ {pre:'We love',post:'teacher.',ans:'our'},
+ {pre:'The children have',post:'books here.',ans:'their'}
+];
+var T24b=[
+ {ru:'мой',pre:'',post:'umbrella is blue.',ans:'my'},
+ {ru:'твой',pre:'',post:'name is Stasya.',ans:'your'},
+ {ru:'его',pre:'This is Tom.',post:'bike is new.',ans:'his'},
+ {ru:'её',pre:'This is Anna.',post:'bag is beautiful.',ans:'her'},
+ {ru:'его/её (животное)',pre:'The cat likes',post:'basket.',ans:'its'},
+ {ru:'наш',pre:'',post:'flat is warm.',ans:'our'},
+ {ru:'их',pre:'',post:'summer house is near the sea.',ans:'their'},
+ {ru:'ваш',pre:'Open',post:'books, please.',ans:'your'}
+];
+var T25a=[
+ {s:'sofa',a:'sofas'},{s:'dish',a:'dishes'},{s:'box',a:'boxes'},{s:'city',a:'cities'},{s:'boy',a:'boys'},
+ {s:'knife',a:'knives'},{s:'leaf',a:'leaves'},{s:'roof',a:'roofs'},{s:'potato',a:'potatoes'},{s:'photo',a:'photos'},
+ {s:'man',a:'men'},{s:'child',a:'children'},{s:'tooth',a:'teeth'},{s:'mouse',a:'mice'},{s:'sheep',a:'sheep'}
+];
+var SORT_W=[{w:'bed',g:'s'},{w:'lamp',g:'s'},{w:'dish',g:'es'},{w:'box',g:'es'},{w:'city',g:'ies'},{w:'baby',g:'ies'},{w:'knife',g:'ves'},{w:'leaf',g:'ves'},{w:'man',g:'irr'},{w:'child',g:'irr'},{w:'sheep',g:'irr'},{w:'fish',g:'irr'}];
+var SORT_G=[{id:'s',t:'+s'},{id:'es',t:'+es'},{id:'ies',t:'-ies'},{id:'ves',t:'-ves'},{id:'irr',t:'неправильные / не меняются'}];
+var T25c=[
+ {s:'watch',a:'watches',o:['watches','watchs','watchies']},
+ {s:'chief',a:'chiefs',o:['chieves','chiefs','chiefes']},
+ {s:'piano',a:'pianos',o:['pianos','pianoes','piani']},
+ {s:'woman',a:'women',o:['womans','women','womens']},
+ {s:'foot',a:'feet',o:['foots','feets','feet']},
+ {s:'person',a:'people',o:['persones','people','person']},
+ {s:'deer',a:'deer',o:['deers','deer','deeres']},
+ {s:'tomato',a:'tomatoes',o:['tomatos','tomatoes','tomatoees']}
+];
+
+var TOTAL=178, score=0, done=0, started=false, finished=false;
+var STATS={lex:{ok:0,t:0},there:{ok:0,t:0},art:{ok:0,t:0},demo:{ok:0,t:0},poss:{ok:0,t:0},plur:{ok:0,t:0}};
+var PENDING={'pg-b1':2,'pg-b2a':3,'pg-b2b':2,'pg-b2c':2,'pg-b2d':2,'pg-b2e':3};
+
+function $(id){return document.getElementById(id);}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function norm(s){return String(s).toLowerCase().replace(/ё/g,'е').replace(/[.,!?;:«»"'’‘`´]/g,'').replace(/\s+/g,' ').trim();}
+function isDash(c){return ['-','–','—','−'].indexOf(c)!==-1;}
+function record(sec,ok){STATS[sec].t++;if(ok){STATS[sec].ok++;score++;$('sbNow').textContent=score;}done++;$('sbDone').textContent=done+' / '+TOTAL;$('sbFill').style.width=(done/TOTAL*100)+'%';}
+function pageDone(pid){PENDING[pid]--;if(PENDING[pid]<=0){var n=$('nav-'+pid);if(n)n.classList.remove('hidden');}}
+function fbHTML(status,ans){
+ var t=status==='ok'?'Верно!':(status==='time'?'Время вышло!':'Ошибка');
+ var ic=status==='ok'?ICO.check:(status==='time'?ICO.clock:ICO.cross);
+ return '<div class="fb '+status+'"><div class="fb-status">'+ic+t+'</div><div class="fb-ans">Правильный ответ: <b>'+ans+'</b></div></div>';
+}
+function timerHTML(sec){return '<div class="t-row">'+ICO.clock+'<div class="t-track"><div class="t-fill"></div></div><b class="t-num">'+sec+'</b></div>';}
+function startTimer(sec,root,onEnd){
+ var left=sec,fill=root.querySelector('.t-fill'),num=root.querySelector('.t-num');
+ function paint(){fill.style.width=(left/sec*100)+'%';var s=Math.ceil(left);num.textContent=s;var low=left<=3;fill.classList.toggle('low',low);num.classList.toggle('low',low);}
+ paint();
+ var id=setInterval(function(){left-=0.1;if(left<=0){left=0;paint();clearInterval(id);onEnd();return;}paint();},100);
+ return function(){clearInterval(id);};
+}
+function gated(stage,note,fn){
+ stage.innerHTML='<div class="start-panel"><div class="sp-ico">'+ICO.play+'</div><div class="sp-note">'+note+'</div><button class="btn btn-start">'+ICO.play+' Старт</button></div>';
+ stage.querySelector('.btn-start').onclick=function(){started=true;fn();};
+}
+
+function showPage(id){
+ ['pg-intro','pg-b1','pg-b2a','pg-b2b','pg-b2c','pg-b2d','pg-b2e','pg-res'].forEach(function(p){$(p).classList.add('hidden');});
+ $(id).classList.remove('hidden');
+ window.scrollTo(0,0);
+}
+$('startAll').onclick=function(){started=true;showPage('pg-b1');};
+Array.prototype.forEach.call(document.querySelectorAll('[data-go]'),function(b){b.onclick=function(){showPage(b.getAttribute('data-go'));};});
+$('toResults').onclick=function(){buildResults();finished=true;showPage('pg-res');};
+
+/* ---------- typed runner (исправлен: pre/post + нормализация ans) ---------- */
+function runTyped(stage,items,cfg){
+ var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  var L = it.left!==undefined?it.left:(it.pre!==undefined?it.pre:'');
+  var R = it.right!==undefined?it.right:(it.post!==undefined?it.post:'');
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   (cfg.time?timerHTML(cfg.time):'')+
+   '<div class="sent">'+(it.ru?'<span style="font-family:var(--body);font-size:.9rem;color:var(--accent-d);font-style:italic">('+it.ru+')</span>':'')+
+   (L?'<span class="'+(it.cls||'')+'">'+L+'</span>':'')+
+   '<input class="ans-input" id="inp" placeholder="'+(cfg.ph||'')+'" autocomplete="off" autocapitalize="off" spellcheck="false">'+
+   (R?'<span>'+R+'</span>':'')+'</div>'+
+   '<div class="ans-row"><button class="btn" id="ck">Check</button></div>'+
+   '<div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше</button></div></div>';
+  var inp=stage.querySelector('#inp');
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();answer(false);}});
+  stage.querySelector('#ck').onclick=function(){answer(false);};
+  stage.querySelector('#nx').onclick=function(){next();};
+  if(cfg.time)stop=startTimer(cfg.time,stage,function(){answer(true);});
+ }
+ function answer(byTime){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';
+  if(stop)stop();
+  var it=items[idx];
+  var answers=Array.isArray(it.ans)?it.ans:[it.ans];
+  var v=stage.querySelector('#inp').value,ok;
+  if(cfg.article){
+   var raw=v.trim(),target=answers[0];
+   ok=!byTime&&(isDash(target)?(raw===''||isDash(raw)):norm(v)===norm(target));
+  }else{
+   ok=!byTime&&answers.some(function(a){return norm(a)===norm(v);});
+  }
+  record(cfg.sec,ok);
+  stage.querySelector('#inp').disabled=true;stage.querySelector('#ck').style.display='none';
+  var shown=cfg.showFn?cfg.showFn(it):answers[0];
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(byTime?'time':'bad'),shown);
+  if(byTime){setTimeout(next,1500);}else{stage.querySelector('#nx').classList.remove('hidden');}
+ }
+ function next(){idx++;if(idx<items.length)show();else{stage.insertAdjacentHTML('beforeend','<div class="done-strip">'+ICO.check+'<span>Часть завершена!</span></div>');cfg.onDone();}}
+ show();
+}
+
+/* ---------- MC runner ---------- */
+function runMC(stage,items,cfg){
+ var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   timerHTML(cfg.time)+
+   '<div class="sent">'+(it.pre?'<span>'+it.pre+'</span>':'')+(it.blank===false?'':'<span class="blank"></span>')+(it.post?'<span>'+it.post+'</span>':'')+(it.word?'<span class="w-en">'+it.word+'</span>':'')+'</div>'+
+   '<div class="opts"></div><div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше</button></div></div>';
+  var box=stage.querySelector('.opts');
+  shuffle(it.opts.slice()).forEach(function(o){
+   var b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+   b.onclick=function(){answer(o,b);};box.appendChild(b);
+  });
+  stage.querySelector('#nx').onclick=function(){next();};
+  stop=startTimer(cfg.time,stage,function(){answer(null,null);});
+ }
+ function answer(val,btn){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';
+  if(stop)stop();
+  var it=items[idx];
+  var ok=val!==null&&(cfg.match?cfg.match(val,it):val===it.ans);
+  record(cfg.sec,ok);
+  stage.querySelectorAll('.opt-btn').forEach(function(b){
+   b.disabled=true;
+   var isAns=cfg.match?cfg.match(b.textContent,it):b.textContent===it.ans;
+   if(isAns)b.classList.add('correct');
+   else if(btn===b)b.classList.add('wrongpick');
+   else b.classList.add('dim');
+  });
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(val===null?'time':'bad'),cfg.showFn?cfg.showFn(it):it.ans);
+  if(val===null){setTimeout(next,1500);}else{stage.querySelector('#nx').classList.remove('hidden');}
+ }
+ function next(){idx++;if(idx<items.length)show();else{stage.insertAdjacentHTML('beforeend','<div class="done-strip">'+ICO.check+'<span>Часть завершена!</span></div>');cfg.onDone();}}
+ show();
+}
+
+/* ---------- sort runner ---------- */
+function runSort(stage,words,groups,sec,onDone){
+ var placed=0,sel=null;
+ stage.innerHTML='<div class="sort-bank"></div><div class="sort-groups"></div>';
+ var bank=stage.querySelector('.sort-bank'),gw=stage.querySelector('.sort-groups');
+ shuffle(words).forEach(function(o){
+  var c=document.createElement('button');c.className='s-chip';c.textContent=o.w;c.dataset.g=o.g;c.dataset.dead='';
+  c.onclick=function(){if(sel)sel.classList.remove('sel');sel=c;c.classList.add('sel');};
+  bank.appendChild(c);
+ });
+ groups.forEach(function(g){
+  var d=document.createElement('div');d.className='s-group';d.innerHTML='<h4>'+g.t+'</h4>';
+  d.onclick=function(){
+   if(!sel)return;started=true;
+   if(sel.dataset.g===g.id){
+    var clean=sel.dataset.dead!=='1';
+    record(sec,clean);
+    var p=document.createElement('span');p.className='placed';p.textContent=sel.textContent;
+    d.appendChild(p);sel.remove();sel=null;placed++;
+    if(placed===words.length){stage.insertAdjacentHTML('beforeend','<div class="done-strip">'+ICO.check+'<span>Часть завершена!</span></div>');onDone();}
+   }else{
+    sel.dataset.dead='1';sel.classList.add('badflash');
+    var s=sel;setTimeout(function(){s.classList.remove('badflash','sel');},450);sel=null;
+   }
+  };
+  gw.appendChild(d);
+ });
+}
+
+/* ---------- запуск ---------- */
+runTyped($('ex11'), W26.map(function(w){return {left:w.ru,cls:'w-ru',ans:w.en2?[w.en,w.en2]:[w.en]};}),
+ {sec:'lex',ph:'по-английски',showFn:function(it){return it.ans.join(' / ');},onDone:function(){pageDone('pg-b1');}});
+
+var ruPool=W26.map(function(w){return w.ru;});
+gated($('ex12'),'1.2 · 8 сек на слово',function(){
+ runMC($('ex12'), shuffle(W26).map(function(w){
+   var others=shuffle(ruPool.filter(function(r){return r!==w.ru;})).slice(0,3);
+   return {word:enDisp(w),blank:false,ans:w.ru,opts:[w.ru].concat(others)};
+ }),{sec:'lex',time:8,onDone:function(){pageDone('pg-b1');}});
+});
+
+gated($('ex21a'),'2.1 · 7 сек на предложение',function(){
+ runMC($('ex21a'),T21a.map(function(x){x.opts=['is','are'];return x;}),{sec:'there',time:7,onDone:function(){pageDone('pg-b2a');}});
+});
+gated($('ex21b'),'2.1 · 7 сек на предложение',function(){
+ runTyped($('ex21b'),T21b,{sec:'there',time:7,ph:'is / are',onDone:function(){pageDone('pg-b2a');}});
+});
+gated($('ex21c'),'2.1 · 7 сек на вопрос',function(){
+ runMC($('ex21c'),T21c.map(function(x){x.opts=['Is there','Are there'];return x;}),{sec:'there',time:7,onDone:function(){pageDone('pg-b2a');}});
+});
+
+gated($('ex22a'),'2.2 · 7 сек на предложение',function(){
+ runMC($('ex22a'),T22a.map(function(x){x.opts=['a','an','the','–'];return x;}),{sec:'art',time:7,match:function(v,it){return isDash(it.ans)?isDash(v):v===it.ans;},showFn:function(it){return isDash(it.ans)?'– (без артикля)':it.ans;},onDone:function(){pageDone('pg-b2b');}});
+});
+gated($('ex22b'),'2.2 · 7 сек на предложение',function(){
+ runTyped($('ex22b'),T22b,{sec:'art',time:7,article:true,ph:'a / an / the / –',showFn:function(it){var t=Array.isArray(it.ans)?it.ans[0]:it.ans;return isDash(t)?'– (без артикля)':t;},onDone:function(){pageDone('pg-b2b');}});
+});
+
+gated($('ex23a'),'2.3 · 6 сек на предложение',function(){
+ runMC($('ex23a'),T23a.map(function(x){x.opts=['This','That','These','Those'];return x;}),{sec:'demo',time:6,onDone:function(){pageDone('pg-b2c');}});
+});
+gated($('ex23b'),'2.3 · 6 сек на предложение',function(){
+ runTyped($('ex23b'),T23b,{sec:'demo',time:6,ph:'this / that / these / those',onDone:function(){pageDone('pg-b2c');}});
+});
+
+var POSSSET=['my','your','his','her','its','our','their'];
+gated($('ex24a'),'2.4 · 6 сек на предложение',function(){
+ runMC($('ex24a'),T24a.map(function(x){var o=shuffle(POSSSET.filter(function(p){return p!==x.ans;})).slice(0,3);x.opts=[x.ans].concat(o);return x;}),{sec:'poss',time:6,onDone:function(){pageDone('pg-b2d');}});
+});
+gated($('ex24b'),'2.4 · 6 сек на предложение',function(){
+ runTyped($('ex24b'),T24b,{sec:'poss',time:6,ph:'my / your / his …',onDone:function(){pageDone('pg-b2d');}});
+});
+
+gated($('ex25a'),'2.5 · 8 сек на слово',function(){
+ runTyped($('ex25a'),T25a.map(function(x){return {left:'one '+x.s+' → two',ans:[x.a]};}),{sec:'plur',time:8,ph:'множественное число',onDone:function(){pageDone('pg-b2e');}});
+});
+runSort($('ex25b'),SORT_W,SORT_G,'plur',function(){pageDone('pg-b2e');});
+gated($('ex25c'),'2.5 · 6 сек на слово',function(){
+ runMC($('ex25c'),T25c.map(function(x){return {word:'one '+x.s+' → two …',blank:false,ans:x.a,opts:x.o};}),{sec:'plur',time:6,onDone:function(){pageDone('pg-b2e');}});
+});
+
+function buildResults(){
+ var rows=[['lex','Блок 1 · Лексика'],['there','2.1 There is / There are'],['art','2.2 Артикли'],['demo','2.3 This / That / These / Those'],['poss','2.4 Притяжательные'],['plur','2.5 Множественное число']];
+ $('resTotal').textContent=score+' / '+TOTAL+' верно';
+ $('resRows').innerHTML=rows.map(function(r){
+  var s=STATS[r[0]],pct=s.t?Math.round(s.ok/s.t*100):0;
+  return '<div class="res-row"><span class="rname">'+r[1]+'</span><span class="rbar"><span class="rfill" style="width:'+pct+'%"></span></span><span class="rscore">'+s.ok+' верно · '+(s.t-s.ok)+' неверно</span></div>';
+ }).join('');
+}
+
+window.addEventListener('beforeunload',function(e){
+ if(started&&!finished){e.preventDefault();e.returnValue='';}
+});
+})();
+</script>
+</body>
+</html>
