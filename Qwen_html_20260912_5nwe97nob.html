@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стася · Месяцы, дни недели и this/that/these/those</title>
+<style>
+  :root{
+    --bg:#F3EFE9; --card:#FBF8F3; --paper:#FFFDF9;
+    --accent:#C97B5B; --accent-d:#A85D3F; --accent-soft:#F3E2D7;
+    --ink:#3A3532; --mut:#6B625C; --line:#D9CFC2;
+    --ok:#A9BFA0; --ok-soft:#EDF3E8; --ok-ink:#5F7A52;
+    --warn:#E8C989; --warn-soft:#F7EDD6; --warn-ink:#8A6A2F;
+    --bad:#D98B7A; --bad-soft:#F6E3DD; --bad-ink:#A25A47;
+    --head:Georgia,'Times New Roman',serif;
+    --body:'DejaVu Sans',Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg);min-height:100vh}
+  ::selection{background:var(--accent-soft);color:var(--accent-d)}
+  h1,h2,h3{font-family:var(--head)}
+  button{font-family:var(--body)}
+  .hidden{display:none!important}
+
+  .bg-photo{position:fixed;inset:0;z-index:-2;background:#F3EFE9 url('photo.jpg') center/cover no-repeat}
+  .bg-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(243,239,233,1) 0%,rgba(243,239,233,.72) 16%,rgba(243,239,233,.55) 50%,rgba(243,239,233,.72) 84%,rgba(243,239,233,1) 100%)}
+
+  .scorebar{position:sticky;top:0;z-index:60;background:rgba(251,248,243,.97);border-bottom:1px solid var(--line)}
+  .sb-inner{max-width:980px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .sb-label{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-d)}
+  .sb-label svg{width:15px;height:15px;color:var(--accent)}
+  .sb-track{flex:1;min-width:110px;height:9px;border-radius:99px;background:#ECE4D7;border:1px solid var(--line);overflow:hidden;display:flex}
+  .sb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-d));border-radius:99px;transition:width .4s ease}
+  .sb-num{font-weight:700;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .sb-done{font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+
+  .page{max-width:980px;margin:0 auto;padding:34px 20px 40px;display:flex;flex-direction:column;gap:26px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+
+  .cover{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+  .doodle{position:absolute;color:var(--accent);pointer-events:none}
+  .d-cal{width:110px;top:-8px;right:26px;opacity:.30;transform:rotate(7deg);animation:floaty 7s ease-in-out infinite}
+  .d-clock{width:62px;left:-6px;bottom:-10px;opacity:.35;animation:floaty 9s ease-in-out .5s infinite reverse}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -9px}}
+  .cover-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .stamp{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--accent);color:var(--accent-d);background:var(--paper);padding:6px 15px;border-radius:999px;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;transform:rotate(-1.6deg)}
+  .stamp svg{width:14px;height:14px}
+  .cover h1{font-size:clamp(2.4rem,5.5vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+  .squiggle{display:block;margin-top:2px}
+  .cover .sub{color:var(--mut);max-width:740px}
+  .cover .sub b{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:99px;background:var(--paper);font-size:13.5px;color:var(--mut)}
+  .chip svg{width:16px;height:16px;color:var(--accent)}
+  .chip b{color:var(--ink)}
+  .notice{display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:14px;border:1px solid;font-size:14.5px}
+  .notice svg{width:21px;height:21px;flex:0 0 auto;margin-top:1px}
+  .notice.warn{background:var(--warn-soft);border-color:#E3CD98;color:#6E5A2E}
+  .notice.warn svg{color:#B98F3E}
+  .notice.info{background:var(--accent-soft);border-color:#E0B9A4;color:#7C4E36}
+  .notice.info svg{color:var(--accent-d)}
+
+  .b-head{display:flex;gap:16px;align-items:flex-start;border-bottom:1px dashed var(--line);padding-bottom:18px;margin-bottom:20px}
+  .b-num{flex:0 0 auto;width:50px;height:50px;border-radius:16px;background:var(--accent);border:1px solid var(--accent-d);color:#FBF8F3;font-family:var(--head);font-size:25px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg)}
+  .b-over{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+  .b-head h2{font-size:clamp(20px,3vw,26px);margin-top:2px}
+  .b-desc{margin-top:6px;font-size:14.5px;color:var(--mut);max-width:760px}
+
+  .rulebox{background:var(--warn-soft);border:1px solid #E3CD98;border-radius:14px;padding:14px 18px;margin-bottom:18px;display:flex;flex-direction:column;gap:7px;font-size:14px;color:#6E5A2E}
+  .rulebox b{color:#5C4A21}
+
+  .word-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .word-item{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--paper);font-size:.86rem}
+  .word-item .we{font-family:var(--head);font-style:italic;font-weight:600;color:var(--accent-d)}
+  .word-item .wr{color:var(--mut)}
+
+  .part{border:1px solid var(--line);border-radius:16px;background:var(--paper);padding:20px 22px;margin-top:16px}
+  .part-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:14px}
+  .p-ico{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);border:1px solid #EAD3C3;display:flex;align-items:center;justify-content:center}
+  .p-ico svg{width:17px;height:17px;color:var(--accent-d)}
+  .part-head h3{font-size:1.1rem}
+  .hchip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent-d);border:1px solid #E4C5B2;margin-left:auto}
+  .hchip.nt{background:var(--ok-soft);color:var(--ok-ink);border-color:#C4D4BB}
+
+  .start-panel{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 12px;border:1.5px dashed #E0BFA6;border-radius:16px;background:linear-gradient(180deg,#FDF7ED,#FAF0E0)}
+  .sp-ico{width:60px;height:60px;border-radius:50%;background:var(--accent-soft);border:1px dashed #DEB79E;display:flex;align-items:center;justify-content:center;animation:floaty 5s ease-in-out infinite}
+  .sp-ico svg{width:26px;height:26px;color:var(--accent-d)}
+  .sp-note{color:var(--mut);font-size:.95rem;font-weight:700}
+
+  .task{display:flex;flex-direction:column;gap:13px}
+  .t-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .step-chip{font-size:12.5px;font-weight:700;color:var(--mut);border:1px solid var(--line);background:var(--card);padding:6px 13px;border-radius:99px}
+  .t-row{display:flex;align-items:center;gap:12px}
+  .t-row>svg{width:19px;height:19px;color:var(--accent-d)}
+  .t-track{flex:1;height:13px;border-radius:99px;background:#EFE5D5;border:1px solid var(--line);overflow:hidden;display:flex}
+  .t-fill{height:100%;width:100%;background:linear-gradient(90deg,#D18F70,var(--accent-d));border-radius:99px;transition:width .1s linear}
+  .t-fill.low{background:linear-gradient(90deg,var(--bad),#C0604E)}
+  .t-num{font-weight:700;min-width:44px;text-align:right;color:var(--accent-d);font-variant-numeric:tabular-nums}
+  .t-num.low{color:var(--bad-ink)}
+  .sent{font-family:var(--head);font-weight:600;font-size:clamp(1.15rem,3vw,1.5rem);line-height:1.5;text-align:center;padding:8px 4px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+  .w-ru{font-weight:700}
+  .hintp{font-family:var(--body);font-style:italic;font-weight:400;font-size:.85rem;color:var(--mut)}
+  .ans-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .ans-input{width:220px;padding:11px 15px;font-family:var(--body);font-size:1.02rem;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;text-align:center}
+  .ans-input:focus{border-color:var(--accent);outline:none}
+  .ans-input:disabled{opacity:.6}
+  .fb{border-radius:14px;border:1px solid;padding:13px 18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+  .fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+  .fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+  .fb.time{background:var(--warn-soft);border-color:var(--warn)}
+  .fb-status{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+  .fb-status svg{width:17px;height:17px}
+  .fb.ok .fb-status{color:var(--ok-ink)} .fb.bad .fb-status{color:var(--bad-ink)} .fb.time .fb-status{color:var(--warn-ink)}
+  .fb-ans b{color:var(--ink)}
+  .nav{display:flex;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;font-weight:700;font-size:1rem;border-radius:99px;padding:12px 28px;background:var(--accent);color:#FFF8F1;border:1px solid var(--accent-d);transition:transform .15s,background .2s}
+  .btn svg{width:17px;height:17px}
+  .btn:hover{background:var(--accent-d);transform:translateY(-2px)}
+  .btn-start{font-size:1.05rem;padding:13px 38px}
+  .done-strip{display:flex;align-items:center;gap:10px;background:var(--ok-soft);border:1px solid var(--ok);color:var(--ok-ink);border-radius:13px;padding:12px 18px;font-weight:700;margin-top:14px}
+  .done-strip svg{width:18px;height:18px}
+
+  .match-wrap{display:flex;gap:18px;flex-wrap:wrap}
+  .match-col{flex:1 1 260px;display:flex;flex-direction:column;gap:8px}
+  .m-btn{padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;font-size:.95rem;text-align:left;transition:transform .15s,border-color .2s,background .2s}
+  .m-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+  .m-btn.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+  .m-btn.done{background:var(--ok-soft);border-color:#B9CBAF;color:var(--ok-ink);cursor:default;opacity:.85}
+  .m-btn.badflash{background:var(--bad-soft);border-color:#DCA79A}
+  .m-btn.ru{font-weight:600}
+
+  .res-row{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+  .res-row:last-child{border-bottom:none}
+  .res-row .rname{flex:1;min-width:200px;font-size:.95rem;font-weight:700}
+  .res-row .rbar{flex:0 0 130px;height:8px;border-radius:99px;background:#ECE4D7;overflow:hidden;display:flex}
+  .res-row .rfill{height:100%;border-radius:99px;background:var(--ok)}
+  .res-row .rscore{font-size:.9rem;color:var(--mut);font-variant-numeric:tabular-nums}
+  .final-big{font-family:var(--head);font-size:2.3rem;color:var(--accent-d)}
+  .praise{font-family:var(--head);font-size:clamp(20px,3vw,27px);color:var(--accent-d)}
+  .reminder{display:flex;gap:14px;align-items:flex-start;background:var(--accent-soft);border:1px solid #E0B9A4;border-radius:14px;padding:16px 19px;font-size:15px;color:#7C4E36}
+  .reminder svg{width:22px;height:22px;color:var(--accent-d);flex:0 0 auto;margin-top:1px}
+
+  footer{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 0 14px}
+  footer svg{width:17px;height:17px;color:var(--accent)}
+  footer span{font-family:var(--head);font-style:italic;font-size:1.05rem;color:var(--accent-d)}
+  @media (max-width:640px){.card{padding:22px 18px}.hchip{margin-left:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bg-photo"></div>
+<div class="bg-fade"></div>
+
+<div class="scorebar">
+  <div class="sb-inner">
+    <span class="sb-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.5l-5.8 3.1 1.1-6.4L2.6 9.6l6.5-.9z"/></svg>Очки</span>
+    <div class="sb-track"><div class="sb-fill" id="sbFill"></div></div>
+    <span class="sb-num"><b id="sbNow">0</b></span>
+    <span class="sb-done" id="sbDone">0 / 64 заданий</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <section class="card cover">
+    <svg class="doodle d-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
+    <svg class="doodle d-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.5V12l3 2"/></svg>
+
+    <div class="cover-top">
+      <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>домашняя работа · слова и this/that</span>
+    </div>
+
+    <div>
+      <h1>Hello, Стася</h1>
+      <svg class="squiggle" width="200" height="14" viewBox="0 0 200 14" fill="none"><path d="M3 9 Q 15 1 27 9 T 51 9 T 75 9 T 99 9 T 123 9 T 147 9 T 171 9 T 195 9" stroke="#C97B5B" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+
+    <p class="sub">Сегодня отрабатываем <b>месяцы, дни недели</b> и слово <b>month</b>, а потом — <b>this / that / these / those</b>. Первые задания спокойные, без времени; последнее — на время: <b>10 секунд</b> на предложение, подсказки в скобках помогут.</p>
+
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><b>20 слов · 4 задания</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><b>10 сек на предложение</b></span>
+    </div>
+
+    <div class="notice warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.8 19.5h18.4L12 3.5z"/><path d="M12 10v4M12 16.8h.01"/></svg>
+      <div><b>Пройди всё целиком за один раз</b> — не перезагружай страницу и не закрывай вкладку. Иначе все ответы сбросятся, и придётся начинать заново.</div>
+    </div>
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div>После завершения — <b>сделай скриншот страницы с результатами и отправь его в TELEGRAM</b>.</div>
+    </div>
+  </section>
+
+  <!-- ========== БЛОК 1 ========== -->
+  <section class="card">
+    <div class="b-head"><div class="b-num">1</div><div><div class="b-over">Блок 1 · без времени</div><h2>Месяцы, дни недели, month</h2><p class="b-desc">Сначала посмотри список слов, потом напечатай их и соедини с переводом.</p></div></div>
+
+    <div class="word-grid" id="wordGrid"></div>
+
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg></span><h3>1.1 Напечатать слова</h3><span class="hchip nt">без времени</span></div><div id="ex11"></div></div>
+
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="12.5" height="16.5" rx="2.2"/><path d="M5.5 6.8H5a2 2 0 0 0-2 2v9.7a2 2 0 0 0 2 2h9.3"/></svg></span><h3>1.2 Соединить с переводом</h3><span class="hchip nt">без времени</span></div><div id="ex12"></div></div>
+  </section>
+
+  <!-- ========== БЛОК 2 ========== -->
+  <section class="card">
+    <div class="b-head"><div class="b-num">2</div><div><div class="b-over">Блок 2 · this / that / these / those</div><h2>Вставь в предложение</h2><p class="b-desc">Подсказка в скобках: <b>близко</b> или <b>далеко</b>. Один предмет — this/that, много — these/those.</p></div></div>
+
+    <div class="rulebox">
+      <span><b>This / These</b> — близко; <b>That / Those</b> — далеко.</span>
+      <span><b>This / That</b> + один предмет; <b>These / Those</b> + много предметов.</span>
+    </div>
+
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg></span><h3>2.1 Вставь слово (спокойно)</h3><span class="hchip nt">без времени</span></div><div id="ex21"></div></div>
+
+    <div class="part"><div class="part-head"><span class="p-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h3>2.2 Вставь слово (на время)</h3><span class="hchip">10 сек / предложение</span></div><div id="ex22"></div></div>
+  </section>
+
+  <!-- ========== РЕЗУЛЬТАТЫ ========== -->
+  <section class="card hidden" id="finalCard" style="display:flex;flex-direction:column;gap:18px">
+    <h2 style="font-size:clamp(22px,3.4vw,30px);color:var(--accent-d)">Результаты</h2>
+    <div class="final-big" id="resTotal">0 / 64</div>
+    <div id="resRows" style="display:flex;flex-direction:column"></div>
+    <div class="praise">Стася, ты молодец, ты сделала домашку!</div>
+    <div class="reminder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3A1.5 1.5 0 0 1 21.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.7" r="3.2"/></svg>
+      <div><b>Сделай скриншот этой страницы с результатами и отправь его в TELEGRAM.</b></div>
+    </div>
+  </section>
+
+  <footer>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.7C6.4 16.7 3 13.2 3 9.6 3 7 5 5 7.6 5c1.8 0 3.4 1 4.4 2.6C13 6 14.6 5 16.4 5 19 5 21 7 21 9.6c0 3.6-3.4 7.1-9 11.1z"/></svg>
+    <span>Made for Stasya with love</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+if('scrollRestoration' in history){history.scrollRestoration='manual';}
+window.scrollTo(0,0);
+
+var ICO={
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>',
+ cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+};
+
+var WORDS=[
+ {en:'December',ru:'декабрь'},{en:'November',ru:'ноябрь'},{en:'October',ru:'октябрь'},
+ {en:'September',ru:'сентябрь'},{en:'August',ru:'август'},{en:'July',ru:'июль'},
+ {en:'June',ru:'июнь'},{en:'May',ru:'май'},{en:'April',ru:'апрель'},
+ {en:'March',ru:'март'},{en:'February',ru:'февраль'},{en:'January',ru:'январь'},
+ {en:'Sunday',ru:'воскресенье'},{en:'Saturday',ru:'суббота'},{en:'Friday',ru:'пятница'},
+ {en:'Thursday',ru:'четверг'},{en:'Wednesday',ru:'среда'},{en:'Tuesday',ru:'вторник'},
+ {en:'Monday',ru:'понедельник'},{en:'month',ru:'месяц'}
+];
+
+var DEMO1=[
+ {post:'book is mine.',hint:'близко',ans:'This'},
+ {post:'books are mine.',hint:'близко',ans:'These'},
+ {post:'cat is small.',hint:'далеко',ans:'That'},
+ {post:'cats are small.',hint:'далеко',ans:'Those'},
+ {post:'pen works.',hint:'близко',ans:'This'},
+ {post:'pens work.',hint:'близко',ans:'These'},
+ {post:'house is old.',hint:'далеко',ans:'That'},
+ {post:'houses are old.',hint:'далеко',ans:'Those'},
+ {post:'dog is friendly.',hint:'близко',ans:'This'},
+ {post:'dogs are friendly.',hint:'близко',ans:'These'},
+ {post:'chair is free.',hint:'далеко',ans:'That'},
+ {post:'chairs are free.',hint:'далеко',ans:'Those'}
+];
+var DEMO2=[
+ {post:'cup is clean.',hint:'близко',ans:'This'},
+ {post:'cups are clean.',hint:'далеко',ans:'Those'},
+ {post:'bird sings.',hint:'далеко',ans:'That'},
+ {post:'birds sing.',hint:'близко',ans:'These'},
+ {post:'lamp is bright.',hint:'близко',ans:'This'},
+ {post:'lamps are bright.',hint:'далеко',ans:'Those'},
+ {post:'tree is tall.',hint:'далеко',ans:'That'},
+ {post:'trees are tall.',hint:'близко',ans:'These'},
+ {post:'phone is new.',hint:'близко',ans:'This'},
+ {post:'phones are new.',hint:'далеко',ans:'Those'},
+ {post:'window is open.',hint:'далеко',ans:'That'},
+ {post:'windows are open.',hint:'близко',ans:'These'}
+];
+
+var TOTAL=64, score=0, done=0, started=false, finished=false, partsDone=0;
+var STATS={t1:{ok:0,t:0,wrong:0},m1:{ok:0,t:0,wrong:0},d1:{ok:0,t:0,wrong:0},d2:{ok:0,t:0,wrong:0}};
+
+function $(id){return document.getElementById(id);}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function norm(s){return String(s).toLowerCase().replace(/ё/g,'е').replace(/[.,!?;:«»"'’‘`´]/g,'').replace(/\s+/g,' ').trim();}
+function record(sec,ok){STATS[sec].t++;if(ok){STATS[sec].ok++;score++;$('sbNow').textContent=score;}done++;$('sbDone').textContent=done+' / '+TOTAL;$('sbFill').style.width=(done/TOTAL*100)+'%';}
+function partComplete(){partsDone++;if(partsDone===4)showFinal();}
+function fbHTML(status,ans){
+ var t=status==='ok'?'Верно!':(status==='time'?'Время вышло!':'Ошибка');
+ var ic=status==='ok'?ICO.check:(status==='time'?ICO.clock:ICO.cross);
+ return '<div class="fb '+status+'"><div class="fb-status">'+ic+t+'</div><div class="fb-ans">Правильный ответ: <b>'+ans+'</b></div></div>';
+}
+function timerHTML(sec){return '<div class="t-row">'+ICO.clock+'<div class="t-track"><div class="t-fill"></div></div><b class="t-num">'+sec+'</b></div>';}
+function startTimer(sec,root,onEnd){
+ var left=sec,fill=root.querySelector('.t-fill'),num=root.querySelector('.t-num');
+ function paint(){fill.style.width=(left/sec*100)+'%';var s=Math.ceil(left);num.textContent=s;var low=left<=3;fill.classList.toggle('low',low);num.classList.toggle('low',low);}
+ paint();
+ var id=setInterval(function(){left-=0.1;if(left<=0){left=0;paint();clearInterval(id);onEnd();return;}paint();},100);
+ return function(){clearInterval(id);};
+}
+function gated(stage,note,fn){
+ stage.innerHTML='<div class="start-panel"><div class="sp-ico">'+ICO.play+'</div><div class="sp-note">'+note+'</div><button class="btn btn-start">'+ICO.play+' Старт</button></div>';
+ stage.querySelector('.btn-start').onclick=function(){started=true;fn();};
+}
+function showFinal(){
+ finished=true;
+ var rows=[['t1','1.1 Напечатать слова'],['m1','1.2 Соединить с переводом'],['d1','2.1 This/That/These/Those (без времени)'],['d2','2.2 This/That/These/Those (10 сек)']];
+ $('resTotal').textContent=score+' / '+TOTAL+' верно';
+ $('resRows').innerHTML=rows.map(function(r){
+  var s=STATS[r[0]];
+  var wrong=(s.t-s.ok)+(s.wrong||0);
+  var pct=s.t?Math.round(s.ok/s.t*100):0;
+  return '<div class="res-row"><span class="rname">'+r[1]+'</span><span class="rbar"><span class="rfill" style="width:'+pct+'%"></span></span><span class="rscore">'+s.ok+' верно · '+wrong+' неверно</span></div>';
+ }).join('');
+ $('finalCard').classList.remove('hidden');
+ setTimeout(function(){$('finalCard').scrollIntoView({behavior:'smooth'});},150);
+}
+
+/* список слов для повторения */
+$('wordGrid').innerHTML=WORDS.map(function(w){
+ return '<span class="word-item"><span class="we">'+w.en+'</span><span class="wr">— '+w.ru+'</span></span>';
+}).join('');
+
+/* ---------- typed runner ---------- */
+function runTyped(stage,items,cfg){
+ var idx=0,stop=null;
+ function show(){
+  stage.dataset.lock='';
+  var it=items[idx];
+  stage.innerHTML='<div class="task">'+
+   '<div class="t-top"><span class="step-chip">'+(idx+1)+' / '+items.length+'</span></div>'+
+   (cfg.time?timerHTML(cfg.time):'')+
+   '<div class="sent">'+(it.ru?'<span class="w-ru">'+it.ru+'</span>':'')+
+   '<input class="ans-input" id="inp" placeholder="'+(cfg.ph||'')+'" autocomplete="off" autocapitalize="off" spellcheck="false">'+
+   (it.post?'<span>'+it.post+'</span>':'')+
+   (it.hint?'<span class="hintp">('+it.hint+')</span>':'')+'</div>'+
+   '<div class="ans-row"><button class="btn" id="ck">Check</button></div>'+
+   '<div class="fbwrap"></div>'+
+   '<div class="nav"><button class="btn hidden" id="nx">Дальше</button></div></div>';
+  var inp=stage.querySelector('#inp');
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();answer(false);}});
+  stage.querySelector('#ck').onclick=function(){answer(false);};
+  stage.querySelector('#nx').onclick=function(){next();};
+  if(cfg.time)stop=startTimer(cfg.time,stage,function(){answer(true);});
+ }
+ function answer(byTime){
+  if(stage.dataset.lock)return;stage.dataset.lock='1';started=true;
+  if(stop)stop();
+  var it=items[idx];
+  var answers=Array.isArray(it.ans)?it.ans:[it.ans];
+  var v=stage.querySelector('#inp').value;
+  var ok=!byTime&&answers.some(function(a){return norm(a)===norm(v);});
+  record(cfg.sec,ok);
+  stage.querySelector('#inp').disabled=true;stage.querySelector('#ck').style.display='none';
+  stage.querySelector('.fbwrap').innerHTML=fbHTML(ok?'ok':(byTime?'time':'bad'),answers[0]);
+  if(byTime){setTimeout(next,1500);}else{stage.querySelector('#nx').classList.remove('hidden');}
+ }
+ function next(){idx++;if(idx<items.length)show();else{stage.insertAdjacentHTML('beforeend','<div class="done-strip">'+ICO.check+'<span>Часть завершена!</span></div>');cfg.onDone();}}
+ show();
+}
+
+/* ---------- matching runner (исправлен: ошибка не увеличивает счётчик заданий) ---------- */
+function runMatch(stage,pairs,sec,onDone){
+ var matched=0,selL=null,selR=null;
+ var L=shuffle(pairs.map(function(p,i){return{i:i,t:p.en};}));
+ var R=shuffle(pairs.map(function(p,i){return{i:i,t:p.ru};}));
+ stage.innerHTML='<div class="match-wrap"><div class="match-col" id="mL"></div><div class="match-col" id="mR"></div></div>';
+ var cL=stage.querySelector('#mL'),cR=stage.querySelector('#mR');
+ L.forEach(function(o){var b=document.createElement('button');b.className='m-btn';b.textContent=o.t;b.dataset.id=o.i;b.onclick=function(){pick(b,'L');};cL.appendChild(b);});
+ R.forEach(function(o){var b=document.createElement('button');b.className='m-btn ru';b.textContent=o.t;b.dataset.id=o.i;b.onclick=function(){pick(b,'R');};cR.appendChild(b);});
+ function pick(b,side){
+  if(b.classList.contains('done'))return;
+  started=true;
+  if(side==='L'){if(selL)selL.classList.remove('sel');selL=b;}else{if(selR)selR.classList.remove('sel');selR=b;}
+  b.classList.add('sel');
+  if(selL&&selR){
+   var a=selL,c=selR;selL=null;selR=null;
+   if(a.dataset.id===c.dataset.id){
+    a.classList.remove('sel');c.classList.remove('sel');a.classList.add('done');c.classList.add('done');
+    a.disabled=true;c.disabled=true;record(sec,true);matched++;
+    if(matched===pairs.length){setTimeout(function(){stage.insertAdjacentHTML('beforeend','<div class="done-strip">'+ICO.check+'<span>Часть завершена!</span></div>');onDone();},350);}
+   }else{
+    STATS[sec].wrong=(STATS[sec].wrong||0)+1;
+    a.classList.add('badflash');c.classList.add('badflash');
+    setTimeout(function(){a.classList.remove('badflash','sel');c.classList.remove('badflash','sel');},500);
+   }
+  }
+ }
+}
+
+/* ---------- запуск ---------- */
+runTyped($('ex11'), WORDS.map(function(w){return {ru:w.ru,ans:[w.en]};}),
+ {sec:'t1',ph:'по-английски',onDone:partComplete});
+
+runMatch($('ex12'), WORDS, 'm1', partComplete);
+
+runTyped($('ex21'), DEMO1, {sec:'d1',ph:'this / that / these / those',onDone:partComplete});
+
+gated($('ex22'),'2.2 · 10 сек на предложение',function(){
+ runTyped($('ex22'), DEMO2, {sec:'d2',time:10,ph:'this / that / these / those',onDone:partComplete});
+});
+
+window.addEventListener('beforeunload',function(e){
+ if(started&&!finished){e.preventDefault();e.returnValue='';}
+});
+})();
+</script>
+</body>
+</html>
