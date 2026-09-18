@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Homework · Travel Phrases + Grammar</title>
+<style>
+  @font-face { font-family:'Georgia'; src: local('Georgia'); }
+  :root {
+    --bg:#F5F1FA; --card:#FFFFFF; --purple:#9B7BB8; --purple-dark:#7A5A96; --purple-light:#E8DFF5;
+    --ink:#3A3245; --ink-soft:#75697F; --line:#E2D8ED;
+    --green:#A9BFA0; --yellow:#E8C989; --red:#D98B7A; --lilac:#C9B8E0;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; font-family:'DejaVu Sans', sans-serif; color:var(--ink); font-size:17px;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(155,123,184,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 90% 20%, rgba(201,184,224,0.14) 0%, transparent 40%),
+      radial-gradient(circle at 50% 95%, rgba(155,123,184,0.08) 0%, transparent 45%),
+      var(--bg);
+    display:flex; justify-content:center; padding:30px 18px 100px 18px; min-height:100vh;
+  }
+  .app { width:100%; max-width:980px; }
+
+  .topbar {
+    position:sticky; top:14px; z-index:40; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px);
+    border:2px solid var(--line); border-radius:24px; padding:16px 24px; margin-bottom:26px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    box-shadow:0 10px 30px rgba(122,90,150,0.10);
+  }
+  .brand { display:flex; align-items:center; gap:14px; }
+  .brand-icon {
+    width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--lilac));
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .brand-icon svg { width:24px; height:24px; }
+  .brand-text { font-family:'Georgia',serif; font-weight:700; font-size:20px; }
+  .brand-sub { font-size:13px; color:var(--ink-soft); }
+  .score-chip {
+    background:linear-gradient(135deg, var(--purple), var(--purple-dark)); color:#fff; font-weight:700;
+    font-size:15px; padding:11px 22px; border-radius:18px; box-shadow:0 6px 16px rgba(155,123,184,0.35);
+  }
+
+  .nav-menu { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:30px; justify-content:center; }
+  .nav-menu button {
+    background:var(--card); border:2px solid var(--line); border-radius:16px; padding:10px 18px;
+    font-size:14.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; font-family:inherit;
+    transition:all .18s ease;
+  }
+  .nav-menu button.active { background:linear-gradient(135deg, var(--purple), var(--purple-dark)); border-color:transparent; color:#fff; box-shadow:0 6px 14px rgba(155,123,184,0.3); }
+  .nav-menu button:hover:not(.active) { border-color:var(--purple); color:var(--purple-dark); transform:translateY(-2px); }
+
+  .page-view { display:none; }
+  .page-view.active { display:block; animation:fadeSlide .35s ease; }
+  @keyframes fadeSlide { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .card {
+    background:var(--card); border:2px solid var(--line); border-radius:30px; padding:38px 40px 42px 40px;
+    position:relative; overflow:hidden; box-shadow:0 18px 46px rgba(122,90,150,0.08);
+  }
+  .card::before {
+    content:''; position:absolute; top:-70px; right:-70px; width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,184,224,0.22), transparent 70%);
+  }
+  .deco-line { width:60px; height:5px; border-radius:4px; background:linear-gradient(90deg, var(--purple), var(--lilac)); margin-bottom:20px; }
+  .eyebrow { font-size:13px; letter-spacing:2.5px; text-transform:uppercase; color:var(--purple-dark); font-weight:700; margin-bottom:10px; }
+  h1 { font-family:'Georgia',serif; font-size:34px; margin:0 0 12px 0; font-weight:700; line-height:1.2; position:relative; z-index:1; }
+  h2 { font-family:'Georgia',serif; font-size:24px; margin:0 0 10px 0; font-weight:700; position:relative; z-index:1; }
+  .subtitle { font-size:17px; color:var(--ink-soft); line-height:1.7; margin-bottom:8px; position:relative; z-index:1; }
+  .key { color:var(--purple-dark); font-weight:700; }
+
+  .rule-box {
+    background:linear-gradient(135deg, var(--purple-light), #F0E9F8); border:2px solid var(--lilac); border-radius:22px;
+    padding:22px 26px; margin:18px 0 26px 0; font-size:16.5px; line-height:1.8; position:relative; z-index:1;
+  }
+  .warn-box {
+    background:linear-gradient(135deg, #F7E4DE, #F3D9D0); border:2px solid var(--red); border-radius:22px;
+    padding:18px 24px; margin:16px 0; font-size:15.5px; line-height:1.7; position:relative; z-index:1;
+  }
+
+  .q-block {
+    background:#FCFAFF; border:2px solid var(--line); border-radius:20px; padding:20px 24px; margin-bottom:16px;
+  }
+  .q-text { font-size:18px; line-height:1.65; margin-bottom:12px; }
+  .gapline { display:inline-block; min-width:70px; border-bottom:3px solid var(--purple); text-align:center; }
+  .hint { font-size:13.5px; color:var(--purple-dark); font-style:italic; font-weight:700; }
+
+  .options { display:flex; gap:10px; flex-wrap:wrap; }
+  .opt-btn {
+    background:#fff; border:2px solid var(--line); border-radius:14px; padding:9px 20px;
+    font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; color:var(--ink);
+    transition:all .15s ease;
+  }
+  .opt-btn:hover { border-color:var(--purple); transform:translateY(-2px); }
+  .opt-btn.correct { background:linear-gradient(135deg, var(--green), #B9CBB1); border-color:transparent; color:#fff; }
+  .opt-btn.incorrect { background:linear-gradient(135deg, var(--red), #E3A99B); border-color:transparent; color:#fff; }
+  .opt-btn.disabled { cursor:default; opacity:.6; }
+  .opt-btn.correct.disabled, .opt-btn.incorrect.disabled { opacity:1; }
+
+  .type-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .type-input {
+    border:2px solid var(--line); border-radius:14px; padding:10px 16px; font-size:16px;
+    font-family:inherit; width:240px; background:#FCFAFF;
+  }
+  .type-input.short { width:110px; }
+  .type-input:focus { outline:none; border-color:var(--purple); background:#fff; }
+  .check-btn {
+    background:linear-gradient(135deg, var(--purple), var(--purple-dark)); color:#fff; border:none; border-radius:14px;
+    padding:10px 22px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .check-btn:hover { filter:brightness(1.06); }
+  .check-btn:disabled { opacity:.5; cursor:default; }
+  .feedback { font-size:15px; font-weight:700; }
+  .feedback.ok { color:#5C8A5C; }
+  .feedback.bad { color:#B5544A; }
+
+  .explanation { margin-top:12px; font-size:14.5px; font-style:italic; color:var(--ink-soft); padding-top:10px; border-top:2px dashed var(--line); }
+
+  .task-title {
+    font-size:17px; font-weight:700; color:var(--purple-dark); margin:28px 0 15px 0;
+    display:flex; align-items:center; gap:10px; position:relative; z-index:1;
+  }
+  .task-title .tnum { background:var(--lilac); color:#fff; border-radius:10px; padding:4px 12px; font-size:14px; }
+
+  .dialogue-card {
+    background:#FBF9FE; border:2px solid var(--line); border-radius:20px; padding:22px 26px; margin-bottom:18px; position:relative; z-index:1;
+  }
+  .dline { display:flex; gap:10px; margin-bottom:12px; align-items:flex-start; }
+  .dspeaker { flex-shrink:0; width:70px; font-size:12.5px; font-weight:700; color:var(--purple-dark); padding-top:9px; }
+  .dbubble { flex:1; background:#fff; border:2px solid var(--line); border-radius:14px; padding:10px 15px; font-size:16px; line-height:1.5; }
+  .dtitle { font-family:'Georgia',serif; font-weight:700; font-size:17px; color:var(--purple-dark); margin-bottom:12px; }
+
+  .nav-buttons { display:flex; justify-content:space-between; margin-top:30px; position:relative; z-index:1; }
+  .nav-btn {
+    background:linear-gradient(135deg, var(--purple), var(--purple-dark)); color:#fff; border:none; padding:14px 30px;
+    border-radius:22px; font-weight:700; cursor:pointer; font-family:inherit; font-size:16.5px;
+    box-shadow:0 8px 18px rgba(155,123,184,0.3);
+  }
+  .nav-btn:hover { filter:brightness(1.05); }
+  .nav-btn.secondary { background:#fff; border:2px solid var(--line); color:var(--ink-soft); box-shadow:none; }
+  .nav-btn.secondary:hover { border-color:var(--purple); color:var(--purple-dark); }
+
+  .start-btn {
+    display:block; margin:26px auto 0 auto; background:linear-gradient(135deg, var(--purple), var(--purple-dark)); color:#fff;
+    border:none; padding:16px 40px; border-radius:26px; font-weight:700; cursor:pointer; font-family:inherit;
+    font-size:18px; box-shadow:0 12px 28px rgba(155,123,184,0.35); position:relative; z-index:1;
+  }
+  .start-btn:hover { filter:brightness(1.05); }
+
+  .final-stats { text-align:center; position:relative; z-index:1; }
+  .final-stats .big-num { font-size:56px; font-weight:700; color:var(--purple-dark); font-family:'Georgia',serif; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 21V9l8-6 8 6v12" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" fill="none"/><path d="M9 21v-6h6v6" stroke="#fff" stroke-width="2.2"/></svg></div>
+      <div><div class="brand-text">Travel Phrases + Grammar</div><div class="brand-sub">Homework</div></div>
+    </div>
+    <div class="score-chip" id="globalScore">Score: 0 / 0</div>
+  </div>
+
+  <div class="nav-menu" id="navMenu"></div>
+  <div id="pagesRoot"></div>
+
+</div>
+
+<script>
+let totalScored = 0, totalCorrect = 0;
+function bumpScore(correct) {
+  totalScored++; if (correct) totalCorrect++;
+  document.getElementById('globalScore').textContent = 'Score: ' + totalCorrect + ' / ' + totalScored;
+  const fb = document.getElementById('finalScoreBig');
+  if (fb) fb.textContent = totalCorrect + ' / ' + totalScored;
+}
+function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+
+const PAGES = [
+  { id:'intro', label:'Start' },
+  { id:'match', label:'Phrases' },
+  { id:'thisthat', label:'This/That' },
+  { id:'articles', label:'Articles' },
+  { id:'final', label:'Result' }
+];
+const navMenu = document.getElementById('navMenu');
+const pagesRoot = document.getElementById('pagesRoot');
+let currentPageIdx = 0;
+PAGES.forEach((p, i) => {
+  const btn = el('button', '', p.label);
+  btn.addEventListener('click', () => goToPage(i));
+  navMenu.appendChild(btn);
+  const view = el('div', 'page-view'); view.id = 'view-' + p.id; pagesRoot.appendChild(view);
+});
+function goToPage(idx) {
+  currentPageIdx = idx;
+  document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + PAGES[idx].id).classList.add('active');
+  document.querySelectorAll('.nav-menu button').forEach((b,i) => b.classList.toggle('active', i===idx));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function addFooterNav(container) {
+  const row = el('div', 'nav-buttons');
+  const prevBtn = el('button', 'nav-btn secondary', '← Back');
+  prevBtn.addEventListener('click', () => goToPage(Math.max(0, currentPageIdx-1)));
+  const nextBtn = el('button', 'nav-btn', 'Next →');
+  nextBtn.addEventListener('click', () => goToPage(Math.min(PAGES.length-1, currentPageIdx+1)));
+  row.appendChild(prevBtn); row.appendChild(nextBtn);
+  container.appendChild(row);
+}
+function cardShell(view, eyebrow, title, subtitleHtml) {
+  const card = el('div', 'card');
+  card.appendChild(el('div', 'deco-line'));
+  card.appendChild(el('div', 'eyebrow', eyebrow));
+  card.appendChild(el('h1', '', title));
+  if (subtitleHtml) card.appendChild(el('div', 'subtitle', subtitleHtml));
+  view.appendChild(card);
+  return card;
+}
+function taskTitle(container, num, text) {
+  container.appendChild(el('div', 'task-title', '<span class="tnum">' + num + '</span> ' + text));
+}
+function buildBlank(pre, post) { return pre + '<span class="gapline">&nbsp;</span>' + post; }
+function choiceCard(container, pre, post, options, correctIdx, explain) {
+  const card = el('div', 'q-block');
+  card.appendChild(el('div', 'q-text', pre + (post!==undefined? buildBlank('', post) : '')));
+  const opts = el('div', 'options');
+  options.forEach((opt, idx) => {
+    const btn = el('button', 'opt-btn', opt);
+    btn.addEventListener('click', () => {
+      if (card.dataset.answered) return;
+      card.dataset.answered = '1';
+      const all = opts.querySelectorAll('.opt-btn');
+      all.forEach((b,i) => { b.classList.add('disabled'); if (i===correctIdx) b.classList.add('correct'); });
+      if (idx !== correctIdx) btn.classList.add('incorrect');
+      bumpScore(idx === correctIdx);
+      if (explain) card.appendChild(el('div','explanation', explain));
+    });
+    opts.appendChild(btn);
+  });
+  card.appendChild(opts);
+  container.appendChild(card);
+}
+function typeInCard(container, preHtml, correctAnswers, hint, small) {
+  if (typeof correctAnswers === 'string') correctAnswers = [correctAnswers];
+  const card = el('div', 'q-block');
+  card.appendChild(el('div', 'q-text', preHtml));
+  if (hint) card.appendChild(el('div', 'hint', hint));
+  const row = el('div', 'type-row');
+  row.style.marginTop = '10px';
+  const input = el('input', 'type-input' + (small ? ' short' : '')); input.type='text'; input.placeholder='type here';
+  const btn = el('button', 'check-btn', 'Check');
+  const fb = el('span', 'feedback', '');
+  function doCheck() {
+    if (card.dataset.answered) return;
+    card.dataset.answered = '1';
+    const val = input.value.trim().toLowerCase().replace(/^-$/, '—');
+    const isOk = correctAnswers.some(a => a.toLowerCase() === val);
+    input.disabled = true; btn.disabled = true;
+    if (isOk) { fb.textContent='✓ Correct!'; fb.classList.add('ok'); }
+    else { fb.textContent='✗ Correct: ' + correctAnswers.join(' / '); fb.classList.add('bad'); }
+    bumpScore(isOk);
+  }
+  btn.addEventListener('click', doCheck);
+  input.addEventListener('keydown', e => { if (e.key==='Enter') doCheck(); });
+  row.appendChild(input); row.appendChild(btn); row.appendChild(fb);
+  card.appendChild(row);
+  container.appendChild(card);
+}
+
+/* ============ INTRO ============ */
+{
+  const v = document.getElementById('view-intro');
+  const card = cardShell(v, 'Homework', 'Hello, Stasya!',
+    'Today\'s homework: <span class="key">travel phrases</span>, and a review of <span class="key">this/that/these/those</span> and <span class="key">articles</span>.');
+  card.appendChild(el('div', 'warn-box', '⚠️ Пройди всё целиком за один раз — <b>не перезагружай страницу и не закрывай вкладку</b>, иначе все ответы сбросятся.'));
+  card.appendChild(el('div', 'rule-box', '📸 После завершения сделай <b>скриншот страницы с результатами</b> и отправь его мне в <b>Telegram</b>.'));
+  const startBtn = el('button', 'start-btn', 'Start →');
+  startBtn.addEventListener('click', () => goToPage(1));
+  card.appendChild(startBtn);
+}
+
+/* ============ PHRASES MATCHING ============ */
+const PHRASES = [
+  ["Can you help me?", "Можешь помочь?"],
+  ["I'm lost", "Я потерялся"],
+  ["I need help", "Мне нужна помощь"],
+  ["Can I pay in cash?", "Могу я оплатить наличными?"],
+  ["Can I pay by card?", "Могу ли я расплатиться картой?"],
+  ["How much is this?", "Сколько это стоит?"],
+  ["Can I have the bill, please?", "Можно мне счёт, пожалуйста?"],
+  ["I'd like..., please.", "Я бы хотел, пожалуйста."],
+  ["Can I see the menu, please?", "Можно мне меню, пожалуйста?"],
+  ["How can I get to...?", "Как добраться?"],
+  ["Is it far from here?", "Это далеко отсюда?"],
+  ["Excuse me, where is...?", "Извините, где находится...?"],
+  ["Where can I eat?", "Где я могу поесть?"],
+  ["When is room cleaning?", "Когда уборка комнаты?"],
+  ["Can I have the key, please?", "Можно мне ключ, пожалуйста?"],
+  ["I have a reservation.", "У меня бронь"],
+  ["I have one suitcase / one bag", "У меня один чемодан / одна сумка"],
+  ["Where is check-in?", "Где регистрация?"]
+];
+
+{
+  const v = document.getElementById('view-match');
+  const card = cardShell(v, 'Block 1', 'Match the Phrase', 'For each English phrase, choose the correct Russian translation.');
+
+  taskTitle(card, '1', 'Choose the correct translation (18 phrases)');
+  PHRASES.forEach(([en, ru]) => {
+    const distractors = PHRASES.filter(p => p[1] !== ru).sort(()=>Math.random()-0.5).slice(0,3).map(p=>p[1]);
+    const opts = [ru, ...distractors].sort(()=>Math.random()-0.5);
+    choiceCard(card, '<b>' + en + '</b>', undefined, opts, opts.indexOf(ru));
+  });
+
+  addFooterNav(card);
+}
+
+/* ============ THIS/THAT/THESE/THOSE ============ */
+{
+  const v = document.getElementById('view-thisthat');
+  const card = cardShell(v, 'Block 3', 'This / That / These / Those', 'Type the correct word. Use the hint in brackets: near/far, one thing/many things.');
+
+  const ttData = [
+    ["", " is my key.", "this", "рядом, одно"],
+    ["", " is a car.", "that", "далеко, одно"],
+    ["", " are my books.", "these", "рядом, много"],
+    ["", " are birds.", "those", "далеко, много"],
+    ["", " chair is very comfortable.", "this", "рядом, одно"],
+    ["", " chairs are quite old.", "those", "далеко, много"],
+    ["", " sofa is expensive.", "this", "рядом, одно"],
+    ["", " table over there is cheap.", "that", "далеко, одно"],
+    ["I prefer ", " lamp to that one.", "this", "рядом, одно"],
+    ["", " plants need water every day.", "these", "рядом, много"],
+    ["Look at ", " mountains!", "those", "далеко, много"],
+    ["", " shoes are very dirty.", "these", "на тебе, рядом, много"],
+    ["", " is a difficult exercise.", "this", "перед тобой, одно"],
+    ["", " house across the street is very old.", "that", "далеко, одно"],
+    ["Whose is ", " key on the table?", "this", "рядом, одно"]
+  ];
+  ttData.forEach(([pre,post,ans,hint]) => typeInCard(card, buildBlank(pre, post), ans, '(' + hint + ')'));
+
+  addFooterNav(card);
+}
+
+/* ============ ARTICLES ============ */
+{
+  const v = document.getElementById('view-articles');
+  const card = cardShell(v, 'Block 4', 'Articles: a / an / the / —', 'Type the correct article, or a dash (—) if no article is needed.');
+
+  card.appendChild(el('div', 'rule-box',
+    '<b>1</b> First mention → a/an. Mentioned again → the.<br>' +
+    '<b>2</b> Unique in the world/situation → the.<br>' +
+    '<b>3</b> General/uncountable → no article (—).'
+  ));
+
+  const artData = [
+    ["I found ", " key on the floor.", "a"],
+    ["", " key was very old.", "the"],
+    ["", " plants need water every day.", "—"],
+    ["She bought ", " expensive sofa.", "an"],
+    ["", " sofa is very comfortable.", "the"],
+    ["We don't have ", " time to waste.", "—"],
+    ["", " sun is very bright today.", "the"],
+    ["He has ", " ugly painting in his hallway.", "an"],
+    ["I like ", " strong coffee in the morning.", "—"],
+    ["She found ", " cheap chair at the market.", "a"],
+    ["", " chair was still very strong.", "the"],
+    ["", " internet is very useful for work.", "the"],
+    ["I saw ", " plant in the shop window.", "a"],
+    ["", " plant was beautiful.", "the"],
+    ["We need ", " water to live.", "—"],
+    ["", " moon looked amazing last night.", "the"],
+    ["I don't like ", " dirty streets in this part of town.", "—"],
+    ["Can you bring me ", " glass of water?", "a"],
+    ["", " children love playing outside.", "—"],
+    ["This is ", " only key to the house.", "the"]
+  ];
+  artData.forEach(([pre,post,ans]) => typeInCard(card, buildBlank(pre, post), ans, null, true));
+
+  addFooterNav(card);
+}
+
+/* ============ FINAL ============ */
+{
+  const v = document.getElementById('view-final');
+  const card = cardShell(v, 'The end', 'Well done! 🎉', '');
+  const finalStats = el('div', 'final-stats');
+  finalStats.innerHTML = '<div class="big-num" id="finalScoreBig">0 / 0</div><div style="color:var(--ink-soft); margin-top:8px;">correct answers across the whole homework</div>';
+  card.appendChild(finalStats);
+  card.appendChild(el('div', 'rule-box', 'Ты молодец, ты сделала домашку! Отличная работа над фразами и грамматикой.'));
+  card.appendChild(el('div', 'warn-box', '📸 Сделай скриншот этой страницы с результатами и отправь его мне в Telegram.'));
+}
+
+goToPage(0);
+</script>
+</body>
+</html>
