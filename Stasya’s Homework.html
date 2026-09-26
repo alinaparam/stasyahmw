@@ -1,0 +1,461 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>Stasya’s Homework</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F2F4F9;--surface:#FFFFFF;--ink:#1D2540;--muted:#5D6785;--line:#DCE1EC;
+  --accent:#F28C28;--accent-ink:#9A4F07;--chip:#FFF1E2;
+  --teal:#138A78;--teal-soft:#DDF3EE;--bad:#D93D42;--bad-soft:#FDE6E6;
+  --stage:#E9EEF6;--wall:#E6EDF6;--floor:#DCCBAE;--skirt:#C8B38F;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11151E;--surface:#1A202D;--ink:#EAEEF7;--muted:#9BA4BC;--line:#2B3345;
+    --accent:#F59A42;--accent-ink:#FFC58A;--chip:#3A2A18;
+    --teal:#3CC7AE;--teal-soft:#16372F;--bad:#FF6B6F;--bad-soft:#3A1D20;
+    --stage:#222A3B;--wall:#2A3550;--floor:#5A4A36;--skirt:#6E5B42;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11151E;--surface:#1A202D;--ink:#EAEEF7;--muted:#9BA4BC;--line:#2B3345;
+  --accent:#F59A42;--accent-ink:#FFC58A;--chip:#3A2A18;
+  --teal:#3CC7AE;--teal-soft:#16372F;--bad:#FF6B6F;--bad-soft:#3A1D20;
+  --stage:#222A3B;--wall:#2A3550;--floor:#5A4A36;--skirt:#6E5B42;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;margin:0}
+h1,h2,h3{font-family:"Bricolage Grotesque","Figtree",system-ui,sans-serif;line-height:1.1;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,.card-flip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+svg{display:block;width:100%;height:auto}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar-t{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:18px}
+.prog{font-size:13.5px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center;font-variant-numeric:tabular-nums}
+.prog b{background:var(--chip);color:var(--accent-ink);border-radius:999px;padding:4px 11px}
+
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+.hello{padding-block:40px 8px}
+.hello h1{font-size:clamp(46px,8vw,82px);font-weight:800;letter-spacing:-.02em}
+.hello h1 em{font-style:normal;color:var(--accent)}
+.note{margin-top:18px;background:var(--chip);border-radius:18px;padding:16px 18px;display:grid;gap:6px;max-width:680px}
+.note p{margin:0;font-weight:600}
+.note p:first-child{color:var(--accent-ink);font-weight:700}
+
+.sec{padding-top:48px}
+.sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.step{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:15px;color:var(--surface);background:var(--ink);border-radius:10px;padding:2px 10px}
+.sec h2{font-size:clamp(28px,4.5vw,40px);font-weight:800;letter-spacing:-.01em}
+.ru{color:var(--muted);font-size:15px;margin:4px 0 20px;max-width:72ch}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px}
+.stage{background:var(--stage);border-radius:18px;padding:10px;position:relative}
+.score{font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.btn{border:none;background:var(--ink);color:var(--surface);font-weight:700;padding:10px 18px;border-radius:12px}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.listen{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13.5px;font-weight:600}
+.listen svg{width:15px;height:15px}
+.fb{min-height:26px;font-weight:600;margin-top:12px}
+.fb.ok{color:var(--teal)}.fb.no{color:var(--bad)}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.card-flip{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 10px 14px;text-align:left;display:flex;flex-direction:column;gap:8px;transition:transform .15s,border-color .15s}
+.card-flip:hover{transform:translateY(-3px);border-color:var(--accent)}
+.card-flip .pic{background:var(--stage);border-radius:12px;padding:4px}
+.card-flip .w{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:26px;line-height:1}
+.card-flip .tr{font-size:14px;color:var(--muted)}
+.card-flip .ex{font-size:14px;font-weight:600;border-top:1px dashed var(--line);padding-top:8px}
+.card-flip .hint{font-size:12px;color:var(--muted)}
+
+.place-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.counter{font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.instr{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(20px,2.6vw,26px);font-weight:700}
+.hot{fill:transparent;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4;cursor:pointer}
+.hot:hover{fill:rgba(242,140,40,.25);stroke:var(--accent)}
+.locked .hot{cursor:default;pointer-events:none}
+.ghost{fill:none;stroke:var(--teal);stroke-width:3}
+
+.room-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:start}
+.gaps{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+.gaps li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600;padding:8px 10px;border-radius:12px;border:1px solid transparent}
+.gaps li.ok{background:var(--teal-soft);border-color:var(--teal)}
+.gaps li.no{background:var(--bad-soft);border-color:var(--bad)}
+.gaps li .fix{font-size:13.5px;color:var(--teal);font-weight:700;width:100%}
+.gaps select{font:inherit;font-weight:700;color:var(--accent-ink);background:var(--chip);border:1.5px solid transparent;border-radius:9px;padding:3px 6px}
+
+.quiz{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;align-items:center}
+.sentence{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(22px,3vw,30px);font-weight:700;line-height:1.25;margin:6px 0 16px}
+.blank{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--accent);text-align:center;color:var(--accent-ink)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:12px;font-weight:700;font-size:17px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opt.missed{border-color:var(--teal);border-style:dashed;color:var(--teal)}
+.bar-prog{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 14px}
+.bar-prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+
+.results{margin-top:48px;background:var(--ink);color:var(--surface);border-radius:26px;padding:26px}
+.results h2{font-size:clamp(30px,5vw,44px);font-weight:800}
+.results .sub{opacity:.75;margin:6px 0 18px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.res{background:color-mix(in srgb,var(--surface) 10%,transparent);border-radius:16px;padding:14px}
+.res .n{font-family:"Bricolage Grotesque",sans-serif;font-size:32px;font-weight:800;font-variant-numeric:tabular-nums}
+.res .l{font-size:13px;opacity:.8;font-weight:600}
+.total{margin-top:16px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.total .n{font-family:"Bricolage Grotesque",sans-serif;font-size:64px;font-weight:800;line-height:1;color:var(--accent)}
+.total .p{font-size:20px;font-weight:700}
+.status{margin-top:12px;font-weight:600;opacity:.85}
+
+@media (max-width:760px){ .room-grid,.quiz{grid-template-columns:1fr} }
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <div class="bar-t">Prepositions · Homework</div>
+  <div class="prog">Answered <b id="topProg">0 / 30</b></div>
+</div></div>
+
+<main class="wrap">
+<header class="hello">
+  <h1>Hello, <em>Стася!</em></h1>
+  <div class="note">
+    <p>Не перезагружай эту страницу, иначе ответы сбросятся.</p>
+    <p>После завершения домашней работы пришли мне в Телеграм скрин с результатами.</p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="sec-head"><span class="step">1</span><h2>Meet the prepositions</h2></div>
+  <p class="ru">Нажми на карточку, чтобы увидеть пример и услышать произношение. Повтори фразу вслух.</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="step">2</span><h2>Put it in place</h2></div>
+  <p class="ru">Нажми на пунктирный кружок, куда нужно положить мяч. Для каждой инструкции — только одна попытка!</p>
+  <div class="block" id="plBlock">
+    <div class="place-top">
+      <div><div class="counter" id="plCount"></div><div class="instr" id="plInstr"></div></div>
+      <div class="row"><button class="listen" id="plListen"></button><span class="score" id="sc1"></span></div>
+    </div>
+    <div class="stage" id="plArt"></div>
+    <div class="fb" id="plFb"></div>
+    <div class="row"><button class="btn" id="plNext" hidden>Next instruction →</button></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="step">3</span><h2>The bedroom</h2></div>
+  <p class="ru">Посмотри на спальню и заполни пропуски. Проверить можно только один раз, поэтому сначала заполни всё.</p>
+  <div class="block room-grid">
+    <div class="stage" id="roomArt"></div>
+    <div>
+      <ol class="gaps" id="gaps"></ol>
+      <div class="row" style="margin-top:14px"><button class="btn" id="gapCheck">Check answers</button><span class="score" id="sc2"></span></div>
+      <div class="fb" id="gapFb"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="step">4</span><h2>Where is it?</h2></div>
+  <p class="ru">Посмотри на картинку и выбери предлог. Одна попытка на каждый вопрос.</p>
+  <div class="block quiz">
+    <div class="stage" id="qArt"></div>
+    <div>
+      <div class="row" style="justify-content:space-between"><span class="counter" id="qCount"></span><span class="score" id="sc3"></span></div>
+      <div class="bar-prog"><i id="qProg"></i></div>
+      <div class="sentence" id="qSent"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="fb" id="qFb"></div>
+      <div class="row" style="margin-top:6px"><button class="btn" id="qNext" hidden>Next →</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="results">
+  <h2>Stasya’s results</h2>
+  <p class="sub">Сделай скрин этого блока и пришли мне в Телеграм.</p>
+  <div class="res-grid">
+    <div class="res"><div class="n" id="r1">0 / 10</div><div class="l">Put it in place</div></div>
+    <div class="res"><div class="n" id="r2">0 / 10</div><div class="l">The bedroom</div></div>
+    <div class="res"><div class="n" id="r3">0 / 10</div><div class="l">Where is it?</div></div>
+  </div>
+  <div class="total"><span class="n" id="rTot">0 / 30</span><span class="p" id="rPct"></span></div>
+  <div class="status" id="rStatus"></div>
+</section>
+</main>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const svg = (inner, vb = '0 0 240 170') => `<svg viewBox="${vb}" role="img" aria-hidden="true">${inner}</svg>`;
+const SPK = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+function speak(t){ try { const u = new SpeechSynthesisUtterance(t); u.lang = 'en-GB'; u.rate = .9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e) {} }
+
+const score = [0,0,0], done = [0,0,0];
+function refresh(){
+  const s = score[0]+score[1]+score[2], d = done[0]+done[1]+done[2];
+  [1,2,3].forEach(n => { $('#r'+n).textContent = `${score[n-1]} / 10`; $('#sc'+n).textContent = `${score[n-1]} / 10`; });
+  $('#topProg').textContent = `${d} / 30`; $('#rTot').textContent = `${s} / 30`;
+  $('#rPct').textContent = d ? `${Math.round(s/30*100)}%` : '';
+  $('#rStatus').textContent = d === 30 ? '✓ Homework complete' : `Answered ${d} of 30 — keep going!`;
+}
+window.addEventListener('beforeunload', e => { if (done.some(Boolean)){ e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- drawing ---------- */
+function cat(x, y, s = 1, c = '#F28C28', c2 = '#C4650F'){
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M13 -6 C 36 -4, 38 -30, 26 -36" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="0" cy="-18" rx="17" ry="18" fill="${c}"/><ellipse cx="0" cy="-13" rx="9" ry="11" fill="#FFE8CF"/>
+  <ellipse cx="-7" cy="-2" rx="6" ry="3.5" fill="${c}"/><ellipse cx="7" cy="-2" rx="6" ry="3.5" fill="${c}"/>
+  <path d="M-13 -46 L-12 -62 L-2 -53 Z" fill="${c}"/><path d="M13 -46 L12 -62 L2 -53 Z" fill="${c}"/>
+  <path d="M-11 -49 L-10.5 -58 L-5 -53 Z" fill="#F7A8B8"/><path d="M11 -49 L10.5 -58 L5 -53 Z" fill="#F7A8B8"/>
+  <circle cx="0" cy="-42" r="14" fill="${c}"/>
+  <path d="M-4 -55 L-3 -50 M0 -56 L0 -51 M4 -55 L3 -50" stroke="${c2}" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="-5.5" cy="-43" r="2.4" fill="#1D2540"/><circle cx="5.5" cy="-43" r="2.4" fill="#1D2540"/>
+  <circle cx="-4.8" cy="-43.8" r=".8" fill="#fff"/><circle cx="6.2" cy="-43.8" r=".8" fill="#fff"/>
+  <path d="M-2 -38.5 L2 -38.5 L0 -36.3 Z" fill="#E5677F"/>
+  <path d="M0 -36.3 Q -2 -33.5 -4 -34.5 M0 -36.3 Q 2 -33.5 4 -34.5" stroke="#1D2540" stroke-width="1" fill="none"/>
+  <path d="M-8 -38 L-19 -40 M-8 -36 L-19 -35 M8 -38 L19 -40 M8 -36 L19 -35" stroke="#1D2540" stroke-width=".7" opacity=".55"/></g>`;
+}
+function dog(x, y, s = 1, c = '#C98A4B', e = '#7A5230'){
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M15 -8 C 30 -8, 32 -22, 26 -28" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="0" cy="-18" rx="18" ry="19" fill="${c}"/><ellipse cx="0" cy="-14" rx="9" ry="11" fill="#F6E3C8"/>
+  <ellipse cx="-8" cy="-2" rx="6.5" ry="3.5" fill="${c}"/><ellipse cx="8" cy="-2" rx="6.5" ry="3.5" fill="${c}"/>
+  <circle cx="0" cy="-44" r="15" fill="${c}"/>
+  <ellipse cx="-14" cy="-42" rx="6" ry="12" fill="${e}" transform="rotate(15 -14 -42)"/><ellipse cx="14" cy="-42" rx="6" ry="12" fill="${e}" transform="rotate(-15 14 -42)"/>
+  <ellipse cx="0" cy="-37" rx="8.5" ry="6.5" fill="#F6E3C8"/><ellipse cx="0" cy="-40" rx="3.2" ry="2.3" fill="#1D2540"/>
+  <circle cx="-6" cy="-48" r="2.3" fill="#1D2540"/><circle cx="6" cy="-48" r="2.3" fill="#1D2540"/>
+  <path d="M-3 -34 Q0 -31 3 -34" stroke="#1D2540" stroke-width="1.2" fill="none"/><path d="M-1.5 -33 q1.5 5 3 0" fill="#E5677F"/></g>`;
+}
+function box(x, floor = 150, w = 80, h = 60, open = false){
+  const t = floor - h, d = 12;
+  const top = `M${x} ${t} L${x+d} ${t-d} L${x+w+d} ${t-d} L${x+w} ${t} Z`;
+  const back = `<ellipse cx="${x+w/2+d/2}" cy="${floor}" rx="${w/2+12}" ry="4.5" fill="rgba(0,0,0,.13)"/>` + (open ? `<path d="${top}" fill="#6E4A2A"/>` : '');
+  const front = `<path d="M${x+w} ${t} L${x+w+d} ${t-d} L${x+w+d} ${floor-d} L${x+w} ${floor} Z" fill="#B97D45" stroke="#9C6533"/>`
+    + (open ? '' : `<path d="${top}" fill="#E7B47A" stroke="#9C6533"/><path d="M${x+w/2-6} ${t} L${x+w/2+d-6} ${t-d} L${x+w/2+d+6} ${t-d} L${x+w/2+6} ${t} Z" fill="#F3D3A1"/>`)
+    + `<rect x="${x}" y="${t}" width="${w}" height="${h}" fill="#D69A5C" stroke="#9C6533"/>`
+    + `<rect x="${x+w/2-6}" y="${t}" width="12" height="${h*.35}" fill="#F3D3A1"/>`;
+  return { back, front };
+}
+function table(x1, x2, top, floor = 150, c = '#A06A40'){
+  return `<ellipse cx="${(x1+x2)/2}" cy="${floor}" rx="${(x2-x1)/2+6}" ry="4" fill="rgba(0,0,0,.12)"/>
+  <rect x="${x1+8}" y="${top+6}" width="8" height="${floor-top-6}" fill="#7E5230"/><rect x="${x2-16}" y="${top+6}" width="8" height="${floor-top-6}" fill="#7E5230"/>
+  <rect x="${x1}" y="${top}" width="${x2-x1}" height="9" rx="3" fill="${c}"/>`;
+}
+const floorBand = (w = 240) => `<rect x="0" y="138" width="${w}" height="40" fill="var(--floor)"/><rect x="0" y="136" width="${w}" height="3" fill="var(--skirt)"/>`;
+function ball(x, y, r = 10){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#E5484D"/><path d="M${x-r} ${y} Q${x} ${y-r*.8} ${x+r} ${y}" stroke="#fff" stroke-width="${r*.22}" fill="none"/><circle cx="${x-r*.35}" cy="${y-r*.4}" r="${r*.2}" fill="#fff" opacity=".6"/>`; }
+function frame(x, y, w, h){ return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" stroke="#8A5A36" stroke-width="4"/><path d="M${x+4} ${y+h-4} L${x+w*.3} ${y+h*.45} L${x+w*.5} ${y+h*.7} L${x+w*.68} ${y+h*.5} L${x+w-4} ${y+h-4}Z" fill="#6FAE8A"/><circle cx="${x+w*.78}" cy="${y+h*.28}" r="${h*.1}" fill="#F2B84B"/>`; }
+const jump = (x, y) => `<path d="M${x-22} ${y+10} q6 -6 12 0 M${x+10} ${y+10} q6 -6 12 0" stroke="var(--muted)" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+const label = (x, y, t) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="10" font-weight="700" fill="#1D2540" font-family="Figtree,sans-serif">${t}</text>`;
+
+/* ---------- 1. preposition cards (same as the lesson) ---------- */
+const S = {
+  in:     { w:'in', ru:'в, внутри', ex:'The cat is in the box.', draw(){ const b = box(80,150,80,60,true); return floorBand()+b.back+cat(120,120)+b.front; } },
+  on:     { w:'on', ru:'на (на поверхности)', ex:'The cat is on the box.', draw(){ const b = box(80); return floorBand()+b.back+b.front+cat(126,85); } },
+  under:  { w:'under', ru:'под', ex:'The cat is under the table.', draw(){ return floorBand()+table(50,190,86)+cat(120,150,.85); } },
+  above:  { w:'above', ru:'над (выше, не касаясь)', ex:'The cat is above the box.', draw(){ const b = box(80); return floorBand()+b.back+b.front+jump(126,62)+cat(126,62,.9); } },
+  below:  { w:'below', ru:'ниже, под (на уровень ниже)', ex:'The cat is below the picture.', draw(){ return floorBand()+frame(90,14,64,46)+cat(122,150); } },
+  behind: { w:'behind', ru:'за, позади', ex:'The cat is behind the box.', draw(){ const b = box(70); return floorBand()+cat(150,118)+b.back+b.front; } },
+  front:  { w:'in front of', ru:'перед', ex:'The cat is in front of the box.', draw(){ const b = box(80,138); return floorBand()+b.back+b.front+cat(118,166,1.05); } },
+  next:   { w:'next to', ru:'рядом с, возле (вплотную)', ex:'The cat is next to the box.', draw(){ const b = box(45); return floorBand()+b.back+b.front+cat(172,150); } },
+  between:{ w:'between', ru:'между (двумя)', ex:'The cat is between the boxes.', draw(){ const a = box(16,150,64,56), b = box(150,150,64,56); return floorBand()+a.back+b.back+a.front+b.front+cat(120,150); } },
+  opposite:{ w:'opposite', ru:'напротив', ex:'The café is opposite the bank.', draw(){
+    return `<rect x="0" y="72" width="240" height="30" fill="#7D8597"/><path d="M0 87 H240" stroke="#fff" stroke-width="2" stroke-dasharray="10 8"/>
+    <path d="M66 26 L120 6 L174 26Z" fill="#8FA0BA"/><rect x="72" y="26" width="96" height="44" fill="#CBD5E4"/>
+    <rect x="80" y="34" width="8" height="30" fill="#fff"/><rect x="100" y="34" width="8" height="30" fill="#fff"/><rect x="132" y="34" width="8" height="30" fill="#fff"/><rect x="152" y="34" width="8" height="30" fill="#fff"/>
+    ${label(120,22,'BANK')}
+    <rect x="72" y="112" width="96" height="50" fill="#F6C9A0"/><path d="M68 104 H172 V116 H68Z" fill="#E5484D"/><path d="M80 104v12M96 104v12M112 104v12M128 104v12M144 104v12M160 104v12" stroke="#fff" stroke-width="7"/>
+    <rect x="84" y="126" width="34" height="24" fill="#BFE3F2"/><rect x="128" y="126" width="24" height="36" fill="#8A5A36"/>
+    ${label(101,160,'CAFÉ')}
+    <path d="M190 80 v-12 M190 108 v-12" stroke="var(--accent)" stroke-width="3"/><path d="M186 72 l4 -6 l4 6 M186 104 l4 6 l4 -6" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>`; } },
+};
+const MAIN = ['in','on','under','above','below','behind','front','next','between','opposite'];
+$('#gallery').innerHTML = MAIN.map(k => `<button class="card-flip" data-k="${k}"><div class="pic">${svg(S[k].draw())}</div><div class="w">${S[k].w}</div><div class="tr">${S[k].ru}</div><div class="ex" hidden>${S[k].ex}</div><div class="hint">Tap to see an example</div></button>`).join('');
+$('#gallery').addEventListener('click', e => {
+  const c = e.target.closest('.card-flip'); if (!c) return;
+  c.querySelector('.ex').hidden = false; c.querySelector('.hint').hidden = true; speak(S[c.dataset.k].ex);
+});
+
+/* ---------- 2. put it in place (one attempt each) ---------- */
+(function(){
+  const P = [
+    { t:'on the table', x:80, y:100 }, { t:'under the table', x:80, y:160 },
+    { t:'in the box', x:225, y:126, back:true }, { t:'behind the box', x:270, y:104, back:true },
+    { t:'in front of the box', x:225, y:184 }, { t:'between the box and the chair', x:285, y:160 },
+    { t:'on the chair', x:322, y:112 }, { t:'under the chair', x:324, y:160 },
+    { t:'between the table and the box', x:165, y:160 }, { t:'next to the chair', x:380, y:160 },
+  ];
+  const chair = `<ellipse cx="325" cy="170" rx="36" ry="4" fill="rgba(0,0,0,.12)"/><rect x="346" y="62" width="9" height="108" rx="3" fill="#2F6F8F"/><rect x="298" y="130" width="6" height="40" fill="#2F6F8F"/><rect x="292" y="120" width="66" height="10" rx="4" fill="#4C94B8"/><rect x="346" y="70" width="9" height="40" fill="#4C94B8"/>`;
+  const order = shuffle(P.map((_, n) => n));
+  let i = 0, pos = -1, ghost = -1, locked = false;
+  $('#plListen').innerHTML = SPK + 'Listen';
+  function draw(){
+    const b = box(190,170,70,50,true), p = P[pos];
+    const bl = pos >= 0 ? ball(p.x, p.y) : '';
+    let s = `<rect x="0" y="150" width="400" height="50" fill="var(--floor)"/><rect x="0" y="148" width="400" height="3" fill="var(--skirt)"/>`
+      + table(20,140,110,170) + chair + b.back + (p && p.back ? bl : '') + b.front + (p && !p.back ? bl : '');
+    s += P.map((q, n) => n === pos ? '' : `<circle class="hot" data-n="${n}" cx="${q.x}" cy="${q.y}" r="13"><title>${q.t}</title></circle>`).join('');
+    if (ghost >= 0) s += `<circle class="ghost" cx="${P[ghost].x}" cy="${P[ghost].y}" r="15"/>`;
+    $('#plArt').innerHTML = svg(s, '0 0 400 200');
+    $('#plArt').classList.toggle('locked', locked);
+  }
+  const say = () => speak('Put the ball ' + P[order[i]].t + '.');
+  function render(){
+    locked = false; ghost = -1;
+    $('#plCount').textContent = `Instruction ${i+1} / ${order.length}`;
+    $('#plInstr').textContent = 'Put the ball ' + P[order[i]].t + '.';
+    $('#plFb').textContent = ''; $('#plFb').className = 'fb'; $('#plNext').hidden = true; draw();
+  }
+  $('#plListen').addEventListener('click', say);
+  $('#plArt').addEventListener('click', e => {
+    const h = e.target.closest('.hot'); if (!h || locked) return;
+    const n = +h.dataset.n, want = order[i]; pos = n; locked = true;
+    if (n === want){ score[0]++; $('#plFb').className = 'fb ok'; $('#plFb').textContent = `✓ Great! The ball is ${P[n].t}.`; }
+    else { ghost = want; $('#plFb').className = 'fb no'; $('#plFb').textContent = `✗ Now the ball is ${P[n].t}. The right place is marked in green.`; }
+    done[0]++; refresh(); draw();
+    if (i < order.length - 1) $('#plNext').hidden = false;
+    else { $('#plFb').textContent += ' — Task complete!'; }
+  });
+  $('#plNext').addEventListener('click', () => { i++; pos = -1; render(); });
+  render();
+})();
+
+/* ---------- 3. bedroom ---------- */
+function bedroom(){
+  let s = `<rect width="480" height="200" fill="var(--wall)"/><rect y="200" width="480" height="100" fill="var(--floor)"/><rect y="196" width="480" height="5" fill="var(--skirt)"/>`;
+  // wardrobe with an open door and clothes inside
+  s += `<rect x="10" y="60" width="82" height="224" rx="4" fill="#9C6B45"/><rect x="14" y="66" width="37" height="212" rx="2" fill="#B8845A"/><circle cx="46" cy="170" r="3" fill="#F2C14E"/>
+  <rect x="53" y="66" width="35" height="212" fill="#4E3320"/><path d="M53 82 H88" stroke="#C9CED8" stroke-width="2.5"/>
+  <path d="M58 82 l-3 6 h14 l-3 -6" stroke="#C9CED8" stroke-width="1.5" fill="none"/><rect x="55" y="88" width="14" height="46" rx="3" fill="#E5484D"/>
+  <path d="M72 82 l-3 6 h14 l-3 -6" stroke="#C9CED8" stroke-width="1.5" fill="none"/><rect x="69" y="88" width="14" height="58" rx="3" fill="#6F9BD1"/>
+  <path d="M88 66 L104 74 V272 L88 278Z" fill="#B8845A" stroke="#9C6B45" stroke-width="1.5"/><rect x="18" y="278" width="8" height="8" fill="#5A3A22"/><rect x="78" y="278" width="8" height="8" fill="#5A3A22"/>`;
+  // guitar next to the wardrobe
+  s += `<g transform="rotate(-8 116 250)"><rect x="113" y="168" width="6" height="64" fill="#7A5230"/><rect x="111" y="160" width="10" height="12" rx="2" fill="#1D2540"/><path d="M116 228 C 100 226, 98 246, 106 252 C 96 262, 104 278, 116 276 C 128 278, 136 262, 126 252 C 134 246, 132 226, 116 228Z" fill="#E08A3C"/><circle cx="116" cy="250" r="5" fill="#1D2540"/></g>`;
+  // picture above the bed
+  s += frame(186,62,90,62);
+  // bed
+  s += `<rect x="132" y="150" width="12" height="120" rx="3" fill="#7A5230"/><rect x="318" y="196" width="10" height="74" rx="3" fill="#7A5230"/>
+  <rect x="140" y="238" width="182" height="12" fill="#7A5230"/><rect x="142" y="250" width="8" height="20" fill="#5A3A22"/><rect x="310" y="250" width="8" height="20" fill="#5A3A22"/>
+  <rect x="140" y="212" width="182" height="28" rx="4" fill="#F4F1EA"/><ellipse cx="166" cy="206" rx="22" ry="9" fill="#FFFFFF" stroke="#DCE1EC"/>
+  <rect x="190" y="204" width="132" height="38" rx="6" fill="#6F9BD1"/><path d="M190 214 H322" stroke="#5A84BA" stroke-width="2"/>`;
+  // teddy bear on the bed
+  s += `<g transform="translate(262 205)"><circle cx="0" cy="-14" r="11" fill="#B07A45"/><circle cx="-9" cy="-23" r="4.5" fill="#B07A45"/><circle cx="9" cy="-23" r="4.5" fill="#B07A45"/><ellipse cx="0" cy="-10" rx="4.5" ry="3.5" fill="#E6C39A"/><circle cx="-4" cy="-17" r="1.4" fill="#1D2540"/><circle cx="4" cy="-17" r="1.4" fill="#1D2540"/><ellipse cx="0" cy="4" rx="12" ry="10" fill="#B07A45"/></g>`;
+  // slippers under the bed
+  s += `<ellipse cx="206" cy="264" rx="11" ry="5" fill="#E7A2AE"/><ellipse cx="232" cy="265" rx="11" ry="5" fill="#E7A2AE"/><ellipse cx="202" cy="262" rx="5" ry="2.5" fill="#fff" opacity=".7"/><ellipse cx="228" cy="263" rx="5" ry="2.5" fill="#fff" opacity=".7"/>`;
+  // rug in front of the bed
+  s += `<ellipse cx="228" cy="289" rx="92" ry="8" fill="#9CC9A8"/><ellipse cx="228" cy="289" rx="78" ry="5" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  // nightstand with a lamp on it
+  s += `<rect x="336" y="222" width="44" height="60" rx="3" fill="#A06A40"/><path d="M340 250 H376" stroke="#7E5230" stroke-width="2"/><circle cx="358" cy="238" r="2.5" fill="#F2C14E"/><circle cx="358" cy="264" r="2.5" fill="#F2C14E"/>
+  <rect x="356" y="194" width="4" height="28" fill="#1D2540"/><ellipse cx="358" cy="222" rx="10" ry="3" fill="#1D2540"/><path d="M342 196 L374 196 L366 172 L350 172Z" fill="#F2C14E"/>`;
+  // backpack between the nightstand and the desk
+  s += `<g transform="translate(395 284)"><path d="M-6 -32 Q0 -40 6 -32" stroke="#2F6F8F" stroke-width="3" fill="none"/><rect x="-11" y="-32" width="22" height="32" rx="6" fill="#4C94B8"/><rect x="-7" y="-16" width="14" height="10" rx="3" fill="#2F6F8F"/></g>`;
+  // window above the desk
+  s += `<rect x="404" y="38" width="70" height="92" rx="4" fill="#FFFFFF"/><rect x="410" y="44" width="58" height="80" fill="#BFE3F2"/><circle cx="452" cy="62" r="8" fill="#FFE08A"/><path d="M410 108 Q428 96 444 104 T468 102 V124 H410Z" fill="#9CCB8F"/><rect x="436" y="44" width="5" height="80" fill="#fff"/><rect x="410" y="82" width="58" height="5" fill="#fff"/>`;
+  // desk with a dog under it
+  s += dog(443, 284, .5);
+  s += `<rect x="414" y="220" width="6" height="64" fill="#7E5230"/><rect x="466" y="220" width="6" height="64" fill="#7E5230"/><rect x="408" y="212" width="70" height="9" rx="3" fill="#A06A40"/>
+  <rect x="424" y="194" width="30" height="18" rx="2" fill="#1D2540"/><rect x="427" y="197" width="24" height="12" fill="#6F9BD1"/><rect x="420" y="210" width="38" height="3" fill="#9BA4BC"/>`;
+  return s;
+}
+$('#roomArt').innerHTML = svg(bedroom(), '0 0 480 300');
+(function(){
+  const OPTS = ['in','on','under','above','below','behind','in front of','next to','between','opposite'];
+  const G = [
+    ['The slippers are', ['under'], 'the bed.'],
+    ['The clothes are', ['in'], 'the wardrobe.'],
+    ['The picture is', ['above'], 'the bed.'],
+    ['The teddy bear is', ['on'], 'the bed.'],
+    ['The dog is', ['under'], 'the desk.'],
+    ['The guitar is', ['next to'], 'the wardrobe.'],
+    ['The rug is', ['in front of'], 'the bed.'],
+    ['The lamp is', ['on'], 'the nightstand.'],
+    ['The backpack is', ['between'], 'the nightstand and the desk.'],
+    ['The window is', ['above'], 'the desk.'],
+  ];
+  $('#gaps').innerHTML = G.map((g, n) => `<li><span>${g[0]}</span><select id="gap${n}" aria-label="preposition"><option value="">…</option>${OPTS.map(o => `<option>${o}</option>`).join('')}</select><span>${g[2]}</span></li>`).join('');
+  $('#gapCheck').addEventListener('click', () => {
+    const empty = G.filter((_, n) => !$('#gap' + n).value).length;
+    if (empty){ $('#gapFb').className = 'fb no'; $('#gapFb').textContent = `Заполни все пропуски (осталось ${empty}), потом проверяй.`; return; }
+    G.forEach((g, n) => {
+      const li = $('#gaps').children[n], sel = $('#gap' + n), good = g[1].includes(sel.value);
+      li.className = good ? 'ok' : 'no'; sel.disabled = true;
+      if (good) score[1]++; else li.insertAdjacentHTML('beforeend', `<span class="fix">Правильно: ${g[0]} ${g[1][0]} ${g[2]}</span>`);
+    });
+    done[1] = 10; refresh();
+    $('#gapCheck').disabled = true;
+    $('#gapFb').className = 'fb ' + (score[1] === 10 ? 'ok' : 'no');
+    $('#gapFb').textContent = `${score[1]} / 10 correct. Now read all the sentences aloud.`;
+  });
+})();
+
+/* ---------- 4. where is it? (new pictures) ---------- */
+const Q = {
+  in:{ s:'The fish is ___ the bowl.', draw(){ return floorBand()+table(64,176,108)+`<circle cx="120" cy="84" r="25" fill="#CFEFFC" stroke="#8FB7C9" stroke-width="2.5"/><path d="M96 80 Q120 74 144 80 A25 25 0 0 1 96 80Z" fill="#9AD3EC" opacity=".0"/><path d="M96 78 H144 A25 25 0 0 1 96 78Z" fill="#8FCBE6" opacity=".6"/><ellipse cx="118" cy="88" rx="10" ry="6" fill="#F28C28"/><path d="M128 88 L137 82 V94Z" fill="#F28C28"/><circle cx="113" cy="87" r="1.5" fill="#1D2540"/><rect x="104" y="57" width="32" height="5" rx="2.5" fill="#8FB7C9"/>`; } },
+  on:{ s:'The laptop is ___ the desk.', draw(){ return floorBand()+table(40,200,96)+`<rect x="92" y="58" width="56" height="36" rx="3" fill="#1D2540"/><rect x="96" y="62" width="48" height="28" fill="#6F9BD1"/><path d="M84 94 H156 L150 98 H90Z" fill="#9BA4BC"/><rect x="164" y="84" width="14" height="12" rx="2" fill="#fff" stroke="#1D2540" stroke-width="1.5"/>`; } },
+  under:{ s:'The shoes are ___ the bed.', draw(){ return floorBand()+`<rect x="28" y="72" width="12" height="78" rx="3" fill="#7A5230"/><rect x="202" y="96" width="10" height="54" rx="3" fill="#7A5230"/><rect x="36" y="112" width="170" height="12" fill="#7A5230"/><rect x="38" y="124" width="8" height="26" fill="#5A3A22"/><rect x="194" y="124" width="8" height="26" fill="#5A3A22"/><rect x="36" y="94" width="170" height="20" rx="4" fill="#F4F1EA"/><rect x="80" y="88" width="126" height="26" rx="5" fill="#E5677F"/><ellipse cx="60" cy="90" rx="18" ry="7" fill="#fff" stroke="#DCE1EC"/><g fill="#1D2540"><path d="M100 146 q0 -8 10 -8 h8 q10 0 12 8z"/><path d="M128 147 q0 -8 10 -8 h8 q10 0 12 8z"/></g>`; } },
+  above:{ s:'The lamp is ___ the table.', draw(){ return floorBand()+`<path d="M120 0 V36" stroke="#1D2540" stroke-width="2"/><path d="M98 58 L142 58 L132 36 L108 36Z" fill="#F2C14E"/><ellipse cx="120" cy="60" rx="22" ry="4" fill="#FFF1B8"/><path d="M104 64 L90 90 M136 64 L150 90" stroke="#F2C14E" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/>`+table(60,180,108)+`<rect x="104" y="96" width="10" height="12" rx="2" fill="#E5484D"/><circle cx="140" cy="102" r="6" fill="#6FAE8A"/>`; } },
+  below:{ s:'The plant is ___ the window.', draw(){ return floorBand()+`<rect x="76" y="10" width="88" height="70" rx="4" fill="#fff"/><rect x="82" y="16" width="76" height="58" fill="#BFE3F2"/><circle cx="142" cy="30" r="7" fill="#FFE08A"/><rect x="118" y="16" width="4" height="58" fill="#fff"/><rect x="82" y="44" width="76" height="4" fill="#fff"/><rect x="72" y="78" width="96" height="6" rx="2" fill="#F7F7F7" stroke="#CDD2DC"/><path d="M106 124 H134 L130 150 H110Z" fill="#D9774B"/><g fill="#4E9A6A"><ellipse cx="112" cy="108" rx="6" ry="16" transform="rotate(-25 112 108)"/><ellipse cx="128" cy="108" rx="6" ry="16" transform="rotate(25 128 108)"/><ellipse cx="120" cy="102" rx="5" ry="18"/></g>`; } },
+  behind:{ s:'The dog is ___ the sofa.', draw(){ return floorBand()+dog(120,112,.9)+`<rect x="40" y="82" width="160" height="42" rx="12" fill="#4F7CAC"/><rect x="34" y="104" width="24" height="42" rx="9" fill="#3E6A96"/><rect x="182" y="104" width="24" height="42" rx="9" fill="#3E6A96"/><rect x="52" y="112" width="136" height="22" rx="5" fill="#5E8BBA"/><rect x="34" y="132" width="172" height="14" rx="5" fill="#3E6A96"/><rect x="42" y="146" width="7" height="6" fill="#2A2A2A"/><rect x="191" y="146" width="7" height="6" fill="#2A2A2A"/>`; } },
+  front:{ s:'The car is ___ the house.', draw(){ return `<rect width="240" height="170" fill="#DDEBF5"/><rect y="128" width="240" height="42" fill="#9BB57F"/><path d="M60 58 L120 20 L180 58Z" fill="#C0504D"/><rect x="68" y="58" width="104" height="80" fill="#F2E3C9"/><rect x="80" y="70" width="22" height="20" fill="#BFE3F2"/><rect x="138" y="70" width="22" height="20" fill="#BFE3F2"/><rect x="110" y="100" width="20" height="38" fill="#8A5A36"/>
+    <path d="M56 156 V140 L74 136 L90 118 H150 L166 136 L184 140 V156Z" fill="#4C94B8"/><path d="M96 122 H118 V136 H84Z M122 122 H146 L158 136 H122Z" fill="#DDEBF5"/><circle cx="84" cy="158" r="10" fill="#1D2540"/><circle cx="156" cy="158" r="10" fill="#1D2540"/><circle cx="84" cy="158" r="4" fill="#9BA4BC"/><circle cx="156" cy="158" r="4" fill="#9BA4BC"/>`; } },
+  next:{ s:'The umbrella is ___ the door.', draw(){ return floorBand()+`<rect x="70" y="30" width="56" height="108" rx="3" fill="#8A5A36"/><rect x="78" y="40" width="40" height="40" rx="2" fill="#A06A40"/><rect x="78" y="88" width="40" height="42" rx="2" fill="#A06A40"/><circle cx="118" cy="86" r="3.5" fill="#F2C14E"/><rect x="62" y="26" width="72" height="6" fill="#7A5230"/>
+    <path d="M150 64 L158 132 L142 132Z" fill="#E5484D"/><path d="M150 64 V58" stroke="#1D2540" stroke-width="2"/><path d="M150 132 V144 q0 6 -6 6" stroke="#1D2540" stroke-width="3" fill="none" stroke-linecap="round"/>`; } },
+  between:{ s:'The pharmacy is ___ the bakery and the bookshop.', draw(){ return `<rect width="240" height="170" fill="#DDEBF5"/><rect y="146" width="240" height="24" fill="#9BA4BC"/>
+    <rect x="6" y="46" width="72" height="100" fill="#F6C9A0"/><rect x="6" y="46" width="72" height="16" fill="#C0504D"/>${label(42,58,'BAKERY').replace('#1D2540','#fff')}<rect x="14" y="72" width="30" height="30" fill="#BFE3F2"/><rect x="52" y="96" width="18" height="50" fill="#8A5A36"/>
+    <rect x="84" y="36" width="72" height="110" fill="#E9F4EE"/><rect x="84" y="36" width="72" height="16" fill="#138A78"/>${label(120,48,'PHARMACY').replace('#1D2540','#fff')}<path d="M114 62 h12 v10 h10 v12 h-10 v10 h-12 v-10 h-10 v-12 h10z" fill="#138A78"/><rect x="108" y="104" width="24" height="42" fill="#BFE3F2"/>
+    <rect x="162" y="46" width="72" height="100" fill="#D8CDEB"/><rect x="162" y="46" width="72" height="16" fill="#5B4B8A"/>${label(198,58,'BOOKS').replace('#1D2540','#fff')}<rect x="170" y="72" width="30" height="30" fill="#BFE3F2"/><g fill="#5B4B8A"><rect x="174" y="84" width="4" height="16"/><rect x="180" y="86" width="4" height="14"/><rect x="186" y="82" width="4" height="18"/></g><rect x="208" y="96" width="18" height="50" fill="#8A5A36"/>`; } },
+  opposite:{ s:'The school is ___ the park.', draw(){ return `<rect width="240" height="170" fill="#DDEBF5"/><rect y="0" width="240" height="70" fill="#9BCB8F"/>
+    <g fill="#4E8F4A"><circle cx="40" cy="30" r="16"/><circle cx="84" cy="24" r="14"/><circle cx="196" cy="30" r="16"/></g><g fill="#7A5230"><rect x="37" y="44" width="6" height="16"/><rect x="81" y="36" width="6" height="16"/><rect x="193" y="44" width="6" height="16"/></g>
+    <rect x="120" y="44" width="40" height="5" fill="#8A5A36"/><rect x="124" y="49" width="3" height="10" fill="#5A3A22"/><rect x="153" y="49" width="3" height="10" fill="#5A3A22"/>${label(140,20,'PARK')}
+    <rect x="0" y="72" width="240" height="30" fill="#7D8597"/><path d="M0 87 H240" stroke="#fff" stroke-width="2" stroke-dasharray="10 8"/>
+    <rect x="70" y="110" width="100" height="56" fill="#F2D59A"/><path d="M64 112 L120 100 L176 112Z" fill="#C0504D"/>${label(120,125,'SCHOOL')}<g fill="#BFE3F2"><rect x="78" y="132" width="18" height="14"/><rect x="144" y="132" width="18" height="14"/></g><rect x="110" y="136" width="20" height="30" fill="#8A5A36"/>
+    <path d="M206 80 v-12 M206 108 v-12" stroke="var(--accent)" stroke-width="3"/><path d="M202 72 l4 -6 l4 6 M202 104 l4 6 l4 -6" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>`; } },
+};
+(function(){
+  const W = { in:'in', on:'on', under:'under', above:'above', below:'below', behind:'behind', front:'in front of', next:'next to', between:'between', opposite:'opposite' };
+  const NOT = { under:['below'], below:['under'] }; // avoid confusing distractors
+  const order = shuffle(MAIN);
+  let i = 0;
+  function render(){
+    const k = order[i];
+    $('#qCount').textContent = `Question ${i+1} / ${order.length}`;
+    $('#qProg').style.width = (i / order.length * 100) + '%';
+    $('#qArt').innerHTML = svg(Q[k].draw());
+    $('#qSent').innerHTML = Q[k].s.replace('___', '<span class="blank">___</span>');
+    const pool = MAIN.filter(x => x !== k && !(NOT[k] || []).includes(x));
+    const opts = shuffle([k, ...shuffle(pool).slice(0, 3)]);
+    $('#qOpts').innerHTML = opts.map(o => `<button class="opt" data-k="${o}">${W[o]}</button>`).join('');
+    $('#qFb').textContent = ''; $('#qFb').className = 'fb'; $('#qNext').hidden = true;
+  }
+  $('#qOpts').addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if (!b || b.disabled) return;
+    const k = order[i], good = b.dataset.k === k;
+    document.querySelectorAll('#qOpts .opt').forEach(x => { x.disabled = true; if (x.dataset.k === k && !good) x.classList.add('missed'); });
+    b.classList.add(good ? 'right' : 'wrong');
+    $('#qSent').querySelector('.blank').textContent = W[k];
+    $('#qFb').className = 'fb ' + (good ? 'ok' : 'no');
+    $('#qFb').textContent = good ? '✓ Correct!' : `✗ The right answer is “${W[k]}”.`;
+    done[2]++; if (good) score[2]++; refresh();
+    if (i < order.length - 1) $('#qNext').hidden = false;
+    else { $('#qProg').style.width = '100%'; $('#qFb').textContent += ' Task complete!'; }
+  });
+  $('#qNext').addEventListener('click', () => { i++; render(); });
+  render();
+})();
+
+refresh();
+})();
+</script>
+
+</body></html>
