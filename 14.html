@@ -1,0 +1,393 @@
+<meta charset="utf-8">
+<title>Stasya · Fix the Mistakes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#ECEFEE;--surface:#FFFFFF;--ink:#1F2328;--muted:#5E676A;--line:#D9DFDD;
+  --teal:#1E6F6A;--teal-soft:#DCEFEC;--mustard:#E3A72F;--mustard-soft:#FBF0D6;--mustard-ink:#835900;
+  --red:#C8553D;--red-soft:#F8E1DB;--good:#1E7F4F;--good-soft:#DDF2E6;--stage:#E2E8E6;
+  --sea:#2B7A99;--sea-soft:#DCEEF5;--acc:#E26D3A;--acc-soft:#FCE7DC;--olive:#5E8A3A;--olive-soft:#E6F0DC;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716;--surface:#1B2221;--ink:#E8EEEC;--muted:#9AA7A4;--line:#2A3533;
+    --teal:#5BC0B6;--teal-soft:#173430;--mustard:#F0BA4A;--mustard-soft:#3A2E14;--mustard-ink:#F5CD78;
+    --red:#E27A63;--red-soft:#3A1F1A;--good:#4CC98A;--good-soft:#173526;--stage:#202A28;
+    --sea:#5FB6D6;--sea-soft:#15303B;--acc:#F08A5A;--acc-soft:#3A2419;--olive:#95C46C;--olive-soft:#1E2E15;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716;--surface:#1B2221;--ink:#E8EEEC;--muted:#9AA7A4;--line:#2A3533;
+  --teal:#5BC0B6;--teal-soft:#173430;--mustard:#F0BA4A;--mustard-soft:#3A2E14;--mustard-ink:#F5CD78;
+  --red:#E27A63;--red-soft:#3A1F1A;--good:#4CC98A;--good-soft:#173526;--stage:#202A28;
+  --sea:#5FB6D6;--sea-soft:#15303B;--acc:#F08A5A;--acc-soft:#3A2419;--olive:#95C46C;--olive-soft:#1E2E15;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;margin:0}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;line-height:1.08;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+svg{display:block;width:100%;height:auto}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1000px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar-t{font-family:"Fraunces",serif;font-weight:800;font-size:18px}
+.prog{font-size:13.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;gap:10px;align-items:center}
+.prog b{background:var(--mustard-soft);color:var(--mustard-ink);border-radius:999px;padding:4px 11px}
+
+.wrap{max-width:1000px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+.hello{padding-block:40px 8px}
+.hello h1{font-size:clamp(46px,8vw,80px);font-weight:800;letter-spacing:-.02em}
+.hello h1 em{font-weight:500;color:var(--red)}
+.note{margin-top:18px;background:var(--mustard-soft);border-radius:18px;padding:16px 18px;display:grid;gap:6px;max-width:680px}
+.note p{margin:0;font-weight:600}
+.note p:first-child{color:var(--mustard-ink);font-weight:700}
+
+.part{margin-top:56px;padding-top:12px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.part span{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.part b{font-family:"Fraunces",serif;font-size:22px}
+.sec{padding-top:28px}
+.ru{color:var(--muted);font-size:15px;margin:4px 0 12px;max-width:72ch}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:6px;background:var(--mustard-soft);color:var(--mustard-ink);margin-bottom:8px}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:18px}
+.block h3{font-size:24px;font-weight:600;margin-bottom:4px}
+.bl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.bl-head p{margin:2px 0 0;color:var(--muted);max-width:64ch}
+.score{font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:4px}
+
+.mc{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.mc li{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px;counter-increment:q}
+.mc .s{font-weight:600}
+.mc .s::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.mc .s i{color:var(--muted);font-weight:500}
+.blank{display:inline-block;min-width:3.4em;border-bottom:2.5px solid var(--mustard);text-align:center;color:var(--teal);font-weight:700}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 13px;font-weight:700;font-size:14.5px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.opt.missed{border-color:var(--good);border-style:dashed;color:var(--good)}
+li.ok,.pcard.ok{background:color-mix(in srgb,var(--good-soft) 45%,transparent)}
+li.bad,.pcard.bad{background:color-mix(in srgb,var(--red-soft) 45%,transparent)}
+.why{font-size:14px;color:var(--muted)}
+.why b{color:var(--ink)}
+
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.pcard{border:1px solid var(--line);border-radius:16px;padding:8px 10px 12px;display:flex;flex-direction:column;gap:8px}
+.pcard .pic{background:var(--stage);border-radius:12px;padding:4px}
+.pcard .opt{font-size:13.5px;padding:5px 10px}
+
+.gl{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.gl li{border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:600;line-height:2.1;counter-increment:q}
+.gl li::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.gl li b{color:var(--muted)}
+.story{font-size:18px;line-height:2.15;max-width:78ch;margin:0}
+select.g{font:inherit;font-weight:700;color:var(--teal);background:var(--teal-soft);border:1.5px solid transparent;border-radius:9px;padding:1px 4px;max-width:100%}
+.okw{font-weight:700;color:var(--good);background:var(--good-soft);border-radius:7px;padding:1px 7px}
+.badw{font-weight:700;color:var(--red);background:var(--red-soft);border-radius:7px;padding:1px 7px}
+.badw s{opacity:.7}
+.badw b{color:var(--good)}
+.btn{border:none;background:var(--ink);color:var(--surface);font-weight:700;padding:9px 16px;border-radius:11px}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fb{font-weight:600;font-size:14px}
+.fb.ok{color:var(--good)}.fb.no{color:var(--red)}
+
+.tw{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.tw li{border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:600;line-height:2.2;counter-increment:q}
+.tw li::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.tw input{font:inherit;font-weight:700;width:9.5em;max-width:100%;padding:2px 8px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.tw li.ok input{border-color:var(--good);color:var(--good)}
+.tw li.bad input{border-color:var(--red);color:var(--red)}
+.tw .chk{border:1.5px solid var(--line);background:var(--surface);border-radius:9px;padding:2px 10px;font-weight:700;font-size:13.5px;margin-left:6px}
+.tw .ans{color:var(--good);font-weight:700;margin-left:6px}
+
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px;border-top:6px solid var(--rc)}
+.rule.will{--rc:var(--sea);--rs:var(--sea-soft)}
+.rule.going{--rc:var(--acc);--rs:var(--acc-soft)}
+.rule.pc{--rc:var(--olive);--rs:var(--olive-soft)}
+.rule h3{font-size:30px;color:var(--rc)}
+.rule .form{font-weight:700;background:var(--rs);border-radius:10px;padding:8px 12px;font-size:15px}
+.use{display:grid;gap:4px}
+.use b{font-size:14.5px}
+.use span{font-style:italic;color:var(--muted);font-size:15px}
+
+.results{margin-top:48px;background:var(--ink);color:var(--surface);border-radius:26px;padding:26px}
+.results h2{font-size:clamp(30px,5vw,44px)}
+.results .sub{opacity:.75;margin:6px 0 18px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.res{background:color-mix(in srgb,var(--surface) 10%,transparent);border-radius:16px;padding:12px 14px}
+.res .n{font-family:"Fraunces",serif;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+.res .l{font-size:13px;opacity:.8;font-weight:600}
+.total{margin-top:16px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.total .n{font-family:"Fraunces",serif;font-size:64px;font-weight:800;line-height:1;color:var(--mustard)}
+.total .p{font-size:20px;font-weight:700}
+.status{margin-top:12px;font-weight:600;opacity:.85}
+</style>
+<style>
+.rule.fc{--rc:var(--teal);--rs:var(--teal-soft)}
+.rule.pc{--rc:var(--olive);--rs:var(--olive-soft)}
+.rule.fs{--rc:var(--mustard);--rs:var(--mustard-soft)}
+.audio-box{background:var(--mustard-soft);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.audio-box audio{width:100%}
+.script{margin-top:14px;background:var(--bg);border-radius:14px;padding:14px 16px;line-height:1.7}
+.ghost{border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:8px 14px;font-weight:700}
+.mc .s s{color:var(--red);text-decoration:none;font-style:italic}
+</style>
+
+<style>
+.tw .h{color:var(--muted);font-weight:600;font-style:italic}
+.tw input{width:15em}
+.tbar{display:flex;align-items:center;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.tbar .clock{font-family:"Fraunces",serif;font-size:26px;font-weight:800;min-width:3.2em;font-variant-numeric:tabular-nums}
+.tbar .clock.low{color:var(--red)}
+.tbar button{border:0;background:var(--teal);color:#fff;border-radius:12px;padding:9px 18px;font-weight:800;font-size:15px}
+.tbar button:disabled{opacity:.5}
+.tbar .tip{font-size:13.5px;color:var(--muted);font-weight:600}
+.mc.locked{filter:blur(5px);pointer-events:none;user-select:none}
+.tag.speed{background:var(--red-soft);color:var(--red)}
+</style>
+<div class="bar"><div class="bar-in">
+  <div class="bar-t">Stasya · Review: fix the mistakes</div>
+  <div class="prog">Answered <b id="topProg">0</b></div>
+</div></div>
+
+<main class="wrap">
+<header class="hello">
+  <h1>Hello, <em>Стася!</em></h1>
+  <div class="note">
+    <p>Здесь задания на ошибки, которые были на уроке во время повторения. Сначала задание без времени — подумай и вспомни правило. Потом такое же задание <b>на время ⏱</b> — отвечай быстро, чтобы правило работало на автомате. На каждый вопрос — одна попытка.</p>
+    <p>Не перезагружай страницу, иначе ответы сбросятся. После завершения пришли мне в Телеграм скрин с результатами.</p>
+  </div>
+</header>
+
+<div class="part"><span>Part 1</span><b>to be or do? 🤔</b></div>
+<section class="sec">
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise A</span><h3>Is or Does?</h3></div><span class="score" id="scA"></span></div>
+    <ol class="mc" id="exA"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise A ⏱ 60 sec</span><h3>Is or Does? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scAt"></span></div>
+    <div class="tbar"><button id="goA">Start ⏱</button><span class="clock" id="ckA">1:00</span><span class="tip" id="tpA"></span></div>
+    <ol class="mc locked" id="exAt"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise B</span><h3>isn’t, aren’t, don’t or doesn’t?</h3></div><span class="score" id="scB"></span></div>
+    <ol class="mc" id="exB"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise B ⏱ 60 sec</span><h3>isn’t, aren’t, don’t or doesn’t? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scBt"></span></div>
+    <div class="tbar"><button id="goB">Start ⏱</button><span class="clock" id="ckB">1:00</span><span class="tip" id="tpB"></span></div>
+    <ol class="mc locked" id="exBt"></ol></div>
+</section>
+
+<div class="part"><span>Part 2</span><b>Little words 🔍</b></div>
+<section class="sec">
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise C</span><h3>There are or They are?</h3></div><span class="score" id="scC"></span></div>
+    <ol class="mc" id="exC"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise C ⏱ 50 sec</span><h3>There are or They are? — speed round</h3><p>Нажми Start — у тебя 50 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scCt"></span></div>
+    <div class="tbar"><button id="goC">Start ⏱</button><span class="clock" id="ckC">0:50</span><span class="tip" id="tpC"></span></div>
+    <ol class="mc locked" id="exCt"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise D</span><h3>Where is “usually”?</h3><p>Выбери правильное предложение.</p></div><span class="score" id="scD"></span></div>
+    <ol class="mc" id="exD"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise D ⏱ 60 sec</span><h3>Where is “usually”? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scDt"></span></div>
+    <div class="tbar"><button id="goD">Start ⏱</button><span class="clock" id="ckD">1:00</span><span class="tip" id="tpD"></span></div>
+    <ol class="mc locked" id="exDt"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise E</span><h3>Every day or tomorrow?</h3></div><span class="score" id="scE"></span></div>
+    <ol class="mc" id="exE"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise E ⏱ 50 sec</span><h3>Every day or tomorrow? — speed round</h3><p>Нажми Start — у тебя 50 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scEt"></span></div>
+    <div class="tbar"><button id="goE">Start ⏱</button><span class="clock" id="ckE">0:50</span><span class="tip" id="tpE"></span></div>
+    <ol class="mc locked" id="exEt"></ol></div>
+</section>
+
+<div class="part"><span>Part 3</span><b>Translate ✍️</b></div>
+<section class="sec">
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise F</span><h3>Say it in English</h3><p>Напиши по-английски. В скобках — подсказка. Enter или Check.</p></div><span class="score" id="scF"></span></div><ol class="tw" id="exF"></ol></div>
+</section>
+
+<section class="results">
+  <h2>Stasya’s results</h2>
+  <p class="sub">Сделай скрин этого блока и пришли мне в Телеграм.</p>
+  <div class="res-grid" id="resGrid"></div>
+  <div class="total"><span class="n" id="rTot"></span><span class="p" id="rPct"></span></div>
+  <div class="status" id="rStatus"></div>
+</section>
+</main>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sv = inner => `<svg viewBox="0 0 120 90" role="img" aria-hidden="true">${inner}</svg>`;
+const INK = '#1F2328';
+
+/* ---------- scoring ---------- */
+const EX = { A:'Is or Does?', At:'Is or Does? ⏱', B:'isn’t / doesn’t', Bt:'isn’t / doesn’t ⏱', C:'There are / They are', Ct:'There are / They are ⏱', D:'Where is usually?', Dt:'Where is usually? ⏱', E:'Every day or tomorrow?', Et:'Every day or tomorrow? ⏱', F:'Translate' };
+const TOTAL = {}, score = {}, done = {};
+Object.keys(EX).forEach(k => { score[k] = 0; done[k] = 0; });
+function refresh(){
+  let s = 0, d = 0, t = 0;
+  Object.keys(EX).forEach(k => { s += score[k]; d += done[k]; t += TOTAL[k] || 0; const el = $('#sc' + k); if (el) el.textContent = `${score[k]} / ${TOTAL[k]}`; const r = $('#r' + k); if (r) r.textContent = `${score[k]} / ${TOTAL[k]}`; });
+  $('#topProg').textContent = `${d} / ${t}`; $('#rTot').textContent = `${s} / ${t}`;
+  $('#rPct').textContent = d ? `${Math.round(s / t * 100)}%` : '';
+  $('#rStatus').textContent = d === t ? '✓ Homework complete' : `Answered ${d} of ${t} — keep going!`;
+}
+window.addEventListener('beforeunload', e => { if (Object.values(done).some(Boolean)){ e.preventDefault(); e.returnValue = ''; } });
+
+/* one-attempt multiple choice. items: {s, o:[correct first, ...distractors] | a index for fixed opts, f, why} */
+function mc(key, listId, items, fixed){
+  TOTAL[key] = items.length;
+  const list = $(listId);
+  const prepared = items.map(it => {
+    if (fixed) return { ...it, opts: fixed, ans: it.a };
+    const opts = shuffle(it.o); return { ...it, opts, ans: opts.indexOf(it.o[0]) };
+  });
+  list.innerHTML = prepared.map((it, n) => `<li data-n="${n}"><div class="s">${it.s.replace('___', '<span class="blank">___</span>')}</div><div class="opts">${it.opts.map((x, k) => `<button class="opt" data-k="${k}">${x}</button>`).join('')}</div><div class="why" hidden></div></li>`).join('');
+  list.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if (!b || b.disabled) return;
+    const li = b.closest('li'), it = prepared[+li.dataset.n], good = +b.dataset.k === it.ans;
+    li.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.k === it.ans && !good) x.classList.add('missed'); });
+    b.classList.add(good ? 'right' : 'wrong'); li.classList.add(good ? 'ok' : 'bad');
+    const bl = li.querySelector('.blank'); if (bl) bl.textContent = it.f || it.opts[it.ans];
+    if (it.why || !good){ const w = li.querySelector('.why'); w.hidden = false; w.innerHTML = (good ? '✓ ' : '✗ Правильно: <b>' + it.opts[it.ans] + '</b>. ') + (it.why || ''); }
+    done[key]++; if (good) score[key]++; refresh();
+  });
+}
+/* one-check dropdown gaps. g = {o:[...], a} */
+function gaps(key, el, lines, btn, fb){
+  let gid = 0; const all = [];
+  const sel = g => { const id = el.id + 'g' + gid++; all.push({ id, ...g }); return `<select class="g" id="${id}" aria-label="choose"><option value="">…</option>${g.o.map((x, k) => `<option value="${k}">${x}</option>`).join('')}</select>`; };
+  const html = lines.map(p => p.map(x => typeof x === 'string' ? x : sel(x)).join(''));
+  el.innerHTML = el.tagName === 'OL' ? html.map(h => `<li>${h}</li>`).join('') : html.join('');
+  TOTAL[key] = all.length;
+  btn.addEventListener('click', () => {
+    const empty = all.filter(g => document.getElementById(g.id).value === '').length;
+    if (empty){ fb.className = 'fb no'; fb.textContent = `Заполни все пропуски (осталось ${empty}), потом проверяй.`; return; }
+    all.forEach(g => {
+      const s = document.getElementById(g.id), v = +s.value, w = document.createElement('span');
+      if (v === g.a){ w.className = 'okw'; w.textContent = g.o[g.a]; score[key]++; }
+      else { w.className = 'badw'; w.innerHTML = `<s>${g.o[v]}</s> → <b>${g.o[g.a]}</b>`; }
+      s.replaceWith(w);
+    });
+    done[key] = all.length; btn.disabled = true; refresh();
+    fb.className = 'fb ' + (score[key] === all.length ? 'ok' : 'no'); fb.textContent = `${score[key]} / ${all.length} correct.`;
+  });
+}
+const G = (a, ...o) => ({ o, a });
+
+
+function typing(key, elId, items, ph){
+  TOTAL[key] = items.length;
+  const norm = s => s.trim().toLowerCase().replace(/[’‘]/g, "'").replace(/\s+/g, ' ');
+  $(elId).innerHTML = items.map(([a, w, b], n) => `<li data-n="${n}">${a}<input autocomplete="off" spellcheck="false" placeholder="${ph}" aria-label="answer" style="width:12em">${b}<button class="chk">Check</button><span class="ans" hidden></span></li>`).join('');
+  function check(li){
+    const n = +li.dataset.n, inp = li.querySelector('input'); if (!inp.value.trim() || inp.disabled) return;
+    const good = items[n][1].includes(norm(inp.value));
+    inp.disabled = true; li.querySelector('.chk').remove(); li.classList.add(good ? 'ok' : 'bad');
+    const a = li.querySelector('.ans'); a.hidden = false; a.textContent = good ? '✓' : `✗ → ${items[n][1][0]}`;
+    done[key]++; if (good) score[key]++; refresh();
+  }
+  $(elId).addEventListener('click', e => { if (e.target.classList.contains('chk')) check(e.target.closest('li')); });
+  $(elId).addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') check(e.target.closest('li')); });
+}
+
+
+function timed(key, listId, items, secs){
+  mc(key, listId, items);
+  const list = $(listId), btn = $('#go' + key[0]), ck = $('#ck' + key[0]), tp = $('#tp' + key[0]); let left = secs, id = null;
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const stop = () => { clearInterval(id); id = null; list.querySelectorAll('li').forEach(li => { if (li.classList.contains('ok') || li.classList.contains('bad')) return; li.classList.add('bad'); li.querySelectorAll('.opt').forEach(x => x.disabled = true); done[key]++; }); refresh(); tp.textContent = `Время вышло! ${score[key]} / ${items.length}`; };
+  list.addEventListener('click', () => setTimeout(() => { if (id && [...list.querySelectorAll('li')].every(li => li.classList.contains('ok') || li.classList.contains('bad'))){ clearInterval(id); id = null; tp.textContent = `Готово за ${secs - left} сек! ${score[key]} / ${items.length}`; } }, 0));
+  btn.addEventListener('click', () => { btn.disabled = true; list.classList.remove('locked'); id = setInterval(() => { left--; ck.textContent = fmt(left); ck.classList.toggle('low', left <= 10); if (left <= 0) stop(); }, 1000); });
+}
+mc('A', '#exA', [
+  { s:'___ your brother tall?', o:['Is','Does','Do'] },
+  { s:'___ you live in Moscow?', o:['Do','Are','Does'] },
+  { s:'___ your husband a pilot?', o:['Is','Does','Do'] },
+  { s:'___ she speak English?', o:['Does','Is','Do'] },
+  { s:'___ they at home now?', o:['Are','Do','Does'] },
+  { s:'___ your kitchen big?', o:['Is','Does','Do'] },
+  { s:'___ he work every day?', o:['Does','Is','Do'] },
+  { s:'___ you tired?', o:['Are','Do','Does'] },
+]);
+mc('B', '#exB', [
+  { s:'She ___ at home.', o:['isn’t','doesn’t','don’t'] },
+  { s:'He ___ like coffee.', o:['doesn’t','isn’t','don’t'] },
+  { s:'My parents ___ at work today.', o:['aren’t','don’t','doesn’t'] },
+  { s:'I ___ eat meat.', o:['don’t','am not','doesn’t'] },
+  { s:'My husband ___ hungry.', o:['isn’t','doesn’t','don’t'] },
+  { s:'We ___ live in Moscow.', o:['don’t','aren’t','doesn’t'] },
+  { s:'The bread ___ fresh.', o:['isn’t','doesn’t','don’t'] },
+  { s:'My cat ___ drink milk.', o:['doesn’t','isn’t','don’t'] },
+]);
+mc('C', '#exC', [
+  { s:'___ two women in the house.', o:['There are','They are','There is'] },
+  { s:'My parents? ___ at home now.', o:['They are','There are','There is'] },
+  { s:'___ a table in the kitchen.', o:['There is','It is','They are'] },
+  { s:'I have two cats. ___ very funny.', o:['They are','There are','There is'] },
+  { s:'___ three chairs in the living room.', o:['There are','They are','There is'] },
+  { s:'___ one man in the house.', o:['There is','He is','There are'] },
+]);
+mc('D', '#exD', [
+  { s:'Which one is correct?', o:['She is usually at home at six.','She usually is at home at six.','She is at home usually at six.'] },
+  { s:'Which one is correct?', o:['I always drink tea in the morning.','I drink always tea in the morning.','Always I drink tea in the morning.'] },
+  { s:'Which one is correct?', o:['He never cooks dinner.','He cooks never dinner.','He never cook dinner.'] },
+  { s:'Which one is correct?', o:['We are often tired.','We often are tired.','Often we tired.'] },
+  { s:'Which one is correct?', o:['We sometimes go to the cinema.','We go sometimes to the cinema.','We sometimes go to cinema.'] },
+  { s:'Which one is correct?', o:['How often do you cook?','How often you cook?','How often are you cook?'] },
+]);
+mc('E', '#exE', [
+  { s:'I ___ him tomorrow.', o:['will see','see','am see'] },
+  { s:'I ___ my mum every day.', o:['call','will call','am call'] },
+  { s:'He ___ to work every day.', o:['goes','will go','go'] },
+  { s:'We ___ to the cinema next week.', o:['will go','go','goes'] },
+  { s:'She usually ___ dinner at seven.', o:['cooks','will cook','cook'] },
+  { s:'I think it ___ tomorrow.', o:['will rain','rains','rain'] },
+]);
+timed('At', '#exAt', [
+  { s:'___ your sister a teacher?', o:['Is','Does','Do'] }, { s:'___ your parents live in Kazan?', o:['Do','Are','Does'] },
+  { s:'___ the soup hot?', o:['Is','Does','Do'] }, { s:'___ he like fish?', o:['Does','Is','Do'] },
+  { s:'___ you happy?', o:['Are','Do','Does'] }, { s:'___ your flat big?', o:['Is','Does','Do'] },
+  { s:'___ they cook every day?', o:['Do','Are','Does'] }, { s:'___ she at work now?', o:['Is','Does','Do'] },
+], 60);
+timed('Bt', '#exBt', [
+  { s:'He ___ at work today.', o:['isn’t','doesn’t','don’t'] }, { s:'She ___ drink tea.', o:['doesn’t','isn’t','don’t'] },
+  { s:'They ___ hungry.', o:['aren’t','don’t','doesn’t'] }, { s:'I ___ like rain.', o:['don’t','am not','doesn’t'] },
+  { s:'The shop ___ open.', o:['isn’t','doesn’t','don’t'] }, { s:'My son ___ cook.', o:['doesn’t','isn’t','don’t'] },
+  { s:'We ___ tired.', o:['aren’t','don’t','doesn’t'] }, { s:'You ___ work on Sunday.', o:['don’t','aren’t','doesn’t'] },
+], 60);
+timed('Ct', '#exCt', [
+  { s:'___ a cat in the kitchen.', o:['There is','It is','There are'] }, { s:'My friends? ___ in Spain now.', o:['They are','There are','There is'] },
+  { s:'___ four rooms in our flat.', o:['There are','They are','There is'] }, { s:'I have two sons. ___ tall.', o:['They are','There are','There is'] },
+  { s:'___ two cups on the table.', o:['There are','They are','There is'] }, { s:'The apples? ___ in the fridge.', o:['They are','There are','There is'] },
+], 50);
+timed('Dt', '#exDt', [
+  { s:'Which one is correct?', o:['I usually get up at seven.','I get up usually at seven.','Usually I get up at seven usually.'] },
+  { s:'Which one is correct?', o:['He is always hungry.','He always is hungry.','Always he is hungry.'] },
+  { s:'Which one is correct?', o:['She often cooks fish.','She cooks often fish.','She often cook fish.'] },
+  { s:'Which one is correct?', o:['They are never late.','They never are late.','They are late never.'] },
+  { s:'Which one is correct?', o:['I sometimes drink coffee.','I drink sometimes coffee.','I sometimes drinks coffee.'] },
+  { s:'Which one is correct?', o:['We are usually at home on Sunday.','We usually are at home on Sunday.','We at home usually on Sunday.'] },
+], 60);
+timed('Et', '#exEt', [
+  { s:'I ___ you tomorrow.', o:['will call','call','am call'] }, { s:'She ___ tea every morning.', o:['drinks','will drink','drink'] },
+  { s:'We ___ to Sochi next summer.', o:['will go','go','goes'] }, { s:'He usually ___ at six.', o:['gets up','will get up','get up'] },
+  { s:'I ___ a cake tomorrow.', o:['will make','make','makes'] }, { s:'They often ___ films.', o:['watch','will watch','watches'] },
+], 50);
+const T = (s, ...ans) => { const [a, b] = s.split('___'); return [a, ans.map(x => x.toLowerCase().replace(/’/g, "'")), b.replace(/\(([^)]*)\)/, '<span class="h">($1)</span>')]; };
+const V = (...xs) => xs.flatMap(x => [x, x + '.', x + '!', x + '?']);
+typing('F', '#exF', [
+  T('Твой брат высокий? — ___ (is)', ...V('is your brother tall')),
+  T('Она не дома. — ___ (isn’t)', ...V("she isn't at home", 'she is not at home')),
+  T('Я увижу его завтра. — ___ (will)', ...V('i will see him tomorrow', "i'll see him tomorrow")),
+  T('Их собака большая. — ___ (their)', ...V('their dog is big')),
+  T('В доме две женщины. — ___ (there are)', ...V('there are two women in the house')),
+  T('Он ходит на работу каждый день. — ___ (goes)', ...V('he goes to work every day')),
+  T('Мы иногда ходим в кино. — ___ (sometimes)', ...V('we sometimes go to the cinema')),
+  T('Она обычно дома в шесть. — ___ (usually)', ...V('she is usually at home at six', 'she is usually at home at 6')),
+  T('Я всегда пью воду утром. — ___ (always)', ...V('i always drink water in the morning')),
+  T('Я люблю их. — ___ (them)', ...V('i love them')),
+], 'type here');
+$('#resGrid').innerHTML = Object.keys(EX).map(k => `<div class="res"><div class="n" id="r${k}"></div><div class="l">${k} · ${EX[k]}</div></div>`).join('');
+refresh();
+})();
+</script>

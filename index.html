@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Stasya · Fix the Mistakes</title>
+<title>Stasya · I Can</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,500&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
 :root{
@@ -153,7 +153,7 @@ select.g{font:inherit;font-weight:700;color:var(--teal);background:var(--teal-so
 .tag.speed{background:var(--red-soft);color:var(--red)}
 </style>
 <div class="bar"><div class="bar-in">
-  <div class="bar-t">Stasya · Review: fix the mistakes</div>
+  <div class="bar-t">Stasya · I can!</div>
   <div class="prog">Answered <b id="topProg">0</b></div>
 </div></div>
 
@@ -161,47 +161,52 @@ select.g{font:inherit;font-weight:700;color:var(--teal);background:var(--teal-so
 <header class="hello">
   <h1>Hello, <em>Стася!</em></h1>
   <div class="note">
-    <p>Здесь задания на ошибки, которые были на уроке во время повторения. Сначала задание без времени — подумай и вспомни правило. Потом такое же задание <b>на время ⏱</b> — отвечай быстро, чтобы правило работало на автомате. На каждый вопрос — одна попытка.</p>
+    <p>Небольшая домашка на <b>can</b>: умею / не умею, можно / нельзя, вопросы и короткие ответы. На каждый вопрос — одна попытка.</p>
     <p>Не перезагружай страницу, иначе ответы сбросятся. После завершения пришли мне в Телеграм скрин с результатами.</p>
   </div>
 </header>
 
-<div class="part"><span>Part 1</span><b>to be or do? 🤔</b></div>
+<style>
+.cancard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:22px;display:grid;gap:12px}
+.cancard h2{margin:0;font-family:"Fraunces",serif;font-size:24px}
+.cantbl{overflow-x:auto}
+.cantbl table{width:100%;border-collapse:separate;border-spacing:0;font-size:16px;min-width:0}
+.cantbl th{background:var(--teal);color:#fff;text-align:left;padding:8px 12px;font-size:14px}
+.cantbl th:first-child{border-top-left-radius:12px}.cantbl th:last-child{border-top-right-radius:12px}
+.cantbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.cantbl td:first-child{font-weight:800;white-space:nowrap}
+.cantbl b{color:var(--teal)}
+.cantbl .no b{color:var(--red)}
+.canmean{display:flex;flex-wrap:wrap;gap:8px}
+.canmean span{background:var(--teal-soft);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14.5px}
+.cannote{background:var(--red-soft);border-radius:12px;padding:10px 14px;font-weight:600;font-size:15px;line-height:1.7}
+</style>
+<section class="cancard">
+  <h2>can 💪 — уметь, мочь, можно</h2>
+  <div class="canmean"><span>🎤 умею: I can sing.</span><span>🙏 просьба: Can you help me?</span><span>✅ разрешение: Can I sit here?</span></div>
+  <div class="cantbl"><table>
+    <thead><tr><th></th><th>Схема</th><th>Пример</th></tr></thead>
+    <tbody>
+      <tr><td>✅ +</td><td>кто + <b>can</b> + глагол</td><td>He <b>can</b> dance.</td></tr>
+      <tr class="no"><td>❌ −</td><td>кто + <b>can’t</b> + глагол</td><td>She <b>can’t</b> drive.</td></tr>
+      <tr><td>❓ ?</td><td><b>Can</b> + кто + глагол?</td><td><b>Can</b> you swim?</td></tr>
+      <tr><td>💬 ответ</td><td>Yes, I <b>can</b>. / No, I <b>can’t</b>.</td><td>Can she cook? — Yes, she <b>can</b>.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cannote">⚠️ После can глагол <b>без</b> -s и <b>без</b> to: he can danc<s>es</s> → he can <b>dance</b> · can <s>to</s> swim → can <b>swim</b><br>⚠️ Нет do / does: <s>Do you can</s> → <b>Can you</b> swim?</div>
+</section>
+
+<div class="part"><span>Part 1</span><b>can or can’t? 💪</b></div>
 <section class="sec">
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise A</span><h3>Is or Does?</h3></div><span class="score" id="scA"></span></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise A</span><h3>can or can’t?</h3><p>Читай всё предложение — подсказка в контексте.</p></div><span class="score" id="scA"></span></div>
     <ol class="mc" id="exA"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise A ⏱ 60 sec</span><h3>Is or Does? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scAt"></span></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise A ⏱ 60 sec</span><h3>can or can’t? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scAt"></span></div>
     <div class="tbar"><button id="goA">Start ⏱</button><span class="clock" id="ckA">1:00</span><span class="tip" id="tpA"></span></div>
     <ol class="mc locked" id="exAt"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise B</span><h3>isn’t, aren’t, don’t or doesn’t?</h3></div><span class="score" id="scB"></span></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise B</span><h3>Make a question ❓</h3><p>Выбери правильный вопрос.</p></div><span class="score" id="scB"></span></div>
     <ol class="mc" id="exB"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise B ⏱ 60 sec</span><h3>isn’t, aren’t, don’t or doesn’t? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scBt"></span></div>
-    <div class="tbar"><button id="goB">Start ⏱</button><span class="clock" id="ckB">1:00</span><span class="tip" id="tpB"></span></div>
-    <ol class="mc locked" id="exBt"></ol></div>
-</section>
-
-<div class="part"><span>Part 2</span><b>Little words 🔍</b></div>
-<section class="sec">
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise C</span><h3>There are or They are?</h3></div><span class="score" id="scC"></span></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise C</span><h3>Short answers</h3><p>Yes, I can. / No, I can’t.</p></div><span class="score" id="scC"></span></div>
     <ol class="mc" id="exC"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise C ⏱ 50 sec</span><h3>There are or They are? — speed round</h3><p>Нажми Start — у тебя 50 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scCt"></span></div>
-    <div class="tbar"><button id="goC">Start ⏱</button><span class="clock" id="ckC">0:50</span><span class="tip" id="tpC"></span></div>
-    <ol class="mc locked" id="exCt"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise D</span><h3>Where is “usually”?</h3><p>Выбери правильное предложение.</p></div><span class="score" id="scD"></span></div>
-    <ol class="mc" id="exD"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise D ⏱ 60 sec</span><h3>Where is “usually”? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scDt"></span></div>
-    <div class="tbar"><button id="goD">Start ⏱</button><span class="clock" id="ckD">1:00</span><span class="tip" id="tpD"></span></div>
-    <ol class="mc locked" id="exDt"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise E</span><h3>Every day or tomorrow?</h3></div><span class="score" id="scE"></span></div>
-    <ol class="mc" id="exE"></ol></div>
-  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise E ⏱ 50 sec</span><h3>Every day or tomorrow? — speed round</h3><p>Нажми Start — у тебя 50 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scEt"></span></div>
-    <div class="tbar"><button id="goE">Start ⏱</button><span class="clock" id="ckE">0:50</span><span class="tip" id="tpE"></span></div>
-    <ol class="mc locked" id="exEt"></ol></div>
-</section>
-
-<div class="part"><span>Part 3</span><b>Translate ✍️</b></div>
-<section class="sec">
-  <div class="block"><div class="bl-head"><div><span class="tag">Exercise F</span><h3>Say it in English</h3><p>Напиши по-английски. В скобках — подсказка. Enter или Check.</p></div><span class="score" id="scF"></span></div><ol class="tw" id="exF"></ol></div>
 </section>
 
 <section class="results">
@@ -221,7 +226,7 @@ const sv = inner => `<svg viewBox="0 0 120 90" role="img" aria-hidden="true">${i
 const INK = '#1F2328';
 
 /* ---------- scoring ---------- */
-const EX = { A:'Is or Does?', At:'Is or Does? ⏱', B:'isn’t / doesn’t', Bt:'isn’t / doesn’t ⏱', C:'There are / They are', Ct:'There are / They are ⏱', D:'Where is usually?', Dt:'Where is usually? ⏱', E:'Every day or tomorrow?', Et:'Every day or tomorrow? ⏱', F:'Translate' };
+const EX = { A:'can or can’t?', At:'can or can’t? ⏱', B:'Questions', C:'Short answers' };
 const TOTAL = {}, score = {}, done = {};
 Object.keys(EX).forEach(k => { score[k] = 0; done[k] = 0; });
 function refresh(){
@@ -300,93 +305,41 @@ function timed(key, listId, items, secs){
   btn.addEventListener('click', () => { btn.disabled = true; list.classList.remove('locked'); id = setInterval(() => { left--; ck.textContent = fmt(left); ck.classList.toggle('low', left <= 10); if (left <= 0) stop(); }, 1000); });
 }
 mc('A', '#exA', [
-  { s:'___ your brother tall?', o:['Is','Does','Do'] },
-  { s:'___ you live in Moscow?', o:['Do','Are','Does'] },
-  { s:'___ your husband a pilot?', o:['Is','Does','Do'] },
-  { s:'___ she speak English?', o:['Does','Is','Do'] },
-  { s:'___ they at home now?', o:['Are','Do','Does'] },
-  { s:'___ your kitchen big?', o:['Is','Does','Do'] },
-  { s:'___ he work every day?', o:['Does','Is','Do'] },
-  { s:'___ you tired?', o:['Are','Do','Does'] },
-]);
-mc('B', '#exB', [
-  { s:'She ___ at home.', o:['isn’t','doesn’t','don’t'] },
-  { s:'He ___ like coffee.', o:['doesn’t','isn’t','don’t'] },
-  { s:'My parents ___ at work today.', o:['aren’t','don’t','doesn’t'] },
-  { s:'I ___ eat meat.', o:['don’t','am not','doesn’t'] },
-  { s:'My husband ___ hungry.', o:['isn’t','doesn’t','don’t'] },
-  { s:'We ___ live in Moscow.', o:['don’t','aren’t','doesn’t'] },
-  { s:'The bread ___ fresh.', o:['isn’t','doesn’t','don’t'] },
-  { s:'My cat ___ drink milk.', o:['doesn’t','isn’t','don’t'] },
-]);
-mc('C', '#exC', [
-  { s:'___ two women in the house.', o:['There are','They are','There is'] },
-  { s:'My parents? ___ at home now.', o:['They are','There are','There is'] },
-  { s:'___ a table in the kitchen.', o:['There is','It is','They are'] },
-  { s:'I have two cats. ___ very funny.', o:['They are','There are','There is'] },
-  { s:'___ three chairs in the living room.', o:['There are','They are','There is'] },
-  { s:'___ one man in the house.', o:['There is','He is','There are'] },
-]);
-mc('D', '#exD', [
-  { s:'Which one is correct?', o:['She is usually at home at six.','She usually is at home at six.','She is at home usually at six.'] },
-  { s:'Which one is correct?', o:['I always drink tea in the morning.','I drink always tea in the morning.','Always I drink tea in the morning.'] },
-  { s:'Which one is correct?', o:['He never cooks dinner.','He cooks never dinner.','He never cook dinner.'] },
-  { s:'Which one is correct?', o:['We are often tired.','We often are tired.','Often we tired.'] },
-  { s:'Which one is correct?', o:['We sometimes go to the cinema.','We go sometimes to the cinema.','We sometimes go to cinema.'] },
-  { s:'Which one is correct?', o:['How often do you cook?','How often you cook?','How often are you cook?'] },
-]);
-mc('E', '#exE', [
-  { s:'I ___ him tomorrow.', o:['will see','see','am see'] },
-  { s:'I ___ my mum every day.', o:['call','will call','am call'] },
-  { s:'He ___ to work every day.', o:['goes','will go','go'] },
-  { s:'We ___ to the cinema next week.', o:['will go','go','goes'] },
-  { s:'She usually ___ dinner at seven.', o:['cooks','will cook','cook'] },
-  { s:'I think it ___ tomorrow.', o:['will rain','rains','rain'] },
+  { s:'Jungkook is a great singer. He ___ sing very well.', o:['can','can’t','cans'] },
+  { s:'I don’t speak Korean. I ___ speak Korean.', o:['can’t','can','don’t can'] },
+  { s:'She goes to dance classes. She can ___ .', o:['dance','dances','to dance'] },
+  { s:'He doesn’t have a car licence. He ___ drive.', o:['can’t','can','doesn’t can'] },
+  { s:'RM can ___ English very well.', o:['speak','speaks','to speak'] },
+  { s:'Fish ___ swim.', o:['can','can’t','cans'] },
+  { s:'My cat is clever, but she ___ cook!', o:['can’t','can','cans'] },
+  { s:'My husband can cook, but he ___ bake cakes.', o:['can’t','can','isn’t'] },
 ]);
 timed('At', '#exAt', [
-  { s:'___ your sister a teacher?', o:['Is','Does','Do'] }, { s:'___ your parents live in Kazan?', o:['Do','Are','Does'] },
-  { s:'___ the soup hot?', o:['Is','Does','Do'] }, { s:'___ he like fish?', o:['Does','Is','Do'] },
-  { s:'___ you happy?', o:['Are','Do','Does'] }, { s:'___ your flat big?', o:['Is','Does','Do'] },
-  { s:'___ they cook every day?', o:['Do','Are','Does'] }, { s:'___ she at work now?', o:['Is','Does','Do'] },
+  { s:'Babies ___ read.', o:['can’t','can','cans'] },
+  { s:'She can ___ a cake.', o:['bake','bakes','to bake'] },
+  { s:'Birds ___ fly.', o:['can','can’t','cans'] },
+  { s:'I ___ see you — it’s very dark!', o:['can’t','can','don’t can'] },
+  { s:'He ___ play the guitar.', o:['can','cans','can to'] },
+  { s:'Cats ___ speak English.', o:['can’t','can','doesn’t'] },
+  { s:'Jin can ___ very well.', o:['cook','cooks','cooking'] },
+  { s:'You ___ eat here. It’s OK.', o:['can','can’t','cans'] },
 ], 60);
-timed('Bt', '#exBt', [
-  { s:'He ___ at work today.', o:['isn’t','doesn’t','don’t'] }, { s:'She ___ drink tea.', o:['doesn’t','isn’t','don’t'] },
-  { s:'They ___ hungry.', o:['aren’t','don’t','doesn’t'] }, { s:'I ___ like rain.', o:['don’t','am not','doesn’t'] },
-  { s:'The shop ___ open.', o:['isn’t','doesn’t','don’t'] }, { s:'My son ___ cook.', o:['doesn’t','isn’t','don’t'] },
-  { s:'We ___ tired.', o:['aren’t','don’t','doesn’t'] }, { s:'You ___ work on Sunday.', o:['don’t','aren’t','doesn’t'] },
-], 60);
-timed('Ct', '#exCt', [
-  { s:'___ a cat in the kitchen.', o:['There is','It is','There are'] }, { s:'My friends? ___ in Spain now.', o:['They are','There are','There is'] },
-  { s:'___ four rooms in our flat.', o:['There are','They are','There is'] }, { s:'I have two sons. ___ tall.', o:['They are','There are','There is'] },
-  { s:'___ two cups on the table.', o:['There are','They are','There is'] }, { s:'The apples? ___ in the fridge.', o:['They are','There are','There is'] },
-], 50);
-timed('Dt', '#exDt', [
-  { s:'Which one is correct?', o:['I usually get up at seven.','I get up usually at seven.','Usually I get up at seven usually.'] },
-  { s:'Which one is correct?', o:['He is always hungry.','He always is hungry.','Always he is hungry.'] },
-  { s:'Which one is correct?', o:['She often cooks fish.','She cooks often fish.','She often cook fish.'] },
-  { s:'Which one is correct?', o:['They are never late.','They never are late.','They are late never.'] },
-  { s:'Which one is correct?', o:['I sometimes drink coffee.','I drink sometimes coffee.','I sometimes drinks coffee.'] },
-  { s:'Which one is correct?', o:['We are usually at home on Sunday.','We usually are at home on Sunday.','We at home usually on Sunday.'] },
-], 60);
-timed('Et', '#exEt', [
-  { s:'I ___ you tomorrow.', o:['will call','call','am call'] }, { s:'She ___ tea every morning.', o:['drinks','will drink','drink'] },
-  { s:'We ___ to Sochi next summer.', o:['will go','go','goes'] }, { s:'He usually ___ at six.', o:['gets up','will get up','get up'] },
-  { s:'I ___ a cake tomorrow.', o:['will make','make','makes'] }, { s:'They often ___ films.', o:['watch','will watch','watches'] },
-], 50);
-const T = (s, ...ans) => { const [a, b] = s.split('___'); return [a, ans.map(x => x.toLowerCase().replace(/’/g, "'")), b.replace(/\(([^)]*)\)/, '<span class="h">($1)</span>')]; };
-const V = (...xs) => xs.flatMap(x => [x, x + '.', x + '!', x + '?']);
-typing('F', '#exF', [
-  T('Твой брат высокий? — ___ (is)', ...V('is your brother tall')),
-  T('Она не дома. — ___ (isn’t)', ...V("she isn't at home", 'she is not at home')),
-  T('Я увижу его завтра. — ___ (will)', ...V('i will see him tomorrow', "i'll see him tomorrow")),
-  T('Их собака большая. — ___ (their)', ...V('their dog is big')),
-  T('В доме две женщины. — ___ (there are)', ...V('there are two women in the house')),
-  T('Он ходит на работу каждый день. — ___ (goes)', ...V('he goes to work every day')),
-  T('Мы иногда ходим в кино. — ___ (sometimes)', ...V('we sometimes go to the cinema')),
-  T('Она обычно дома в шесть. — ___ (usually)', ...V('she is usually at home at six', 'she is usually at home at 6')),
-  T('Я всегда пью воду утром. — ___ (always)', ...V('i always drink water in the morning')),
-  T('Я люблю их. — ___ (them)', ...V('i love them')),
-], 'type here');
+mc('B', '#exB', [
+  { s:'Ты умеешь плавать?', o:['Can you swim?','Do you can swim?','You can swim?'] },
+  { s:'Она умеет готовить?', o:['Can she cook?','Can she cooks?','Does she can cook?'] },
+  { s:'Можно я здесь сяду?', o:['Can I sit here?','I can sit here?','Can I to sit here?'] },
+  { s:'Что ты умеешь готовить?', o:['What can you cook?','What you can cook?','What can you to cook?'] },
+  { s:'Твой муж умеет танцевать?', o:['Can your husband dance?','Can dance your husband?','Your husband can dance?'] },
+  { s:'Ты можешь мне помочь?', o:['Can you help me?','Do you help me?','Can you helps me?'] },
+]);
+mc('C', '#exC', [
+  { s:'Can you swim? — Yes, I ___ .', o:['can','do','am'] },
+  { s:'Can Jungkook sing? — Yes, he ___ .', o:['can','does','is'] },
+  { s:'Can your husband speak Korean? — No, he ___ .', o:['can’t','doesn’t','isn’t'] },
+  { s:'Can cats cook? — No, they ___ .', o:['can’t','don’t','aren’t'] },
+  { s:'Can I open the window? — Yes, you ___ .', o:['can','do','are'] },
+  { s:'Can she drive? — No, she ___ .', o:['can’t','doesn’t','isn’t'] },
+]);
 $('#resGrid').innerHTML = Object.keys(EX).map(k => `<div class="res"><div class="n" id="r${k}"></div><div class="l">${k} · ${EX[k]}</div></div>`).join('');
 refresh();
 })();
