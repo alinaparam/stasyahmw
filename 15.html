@@ -1,0 +1,346 @@
+<meta charset="utf-8">
+<title>Stasya · I Can</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#ECEFEE;--surface:#FFFFFF;--ink:#1F2328;--muted:#5E676A;--line:#D9DFDD;
+  --teal:#1E6F6A;--teal-soft:#DCEFEC;--mustard:#E3A72F;--mustard-soft:#FBF0D6;--mustard-ink:#835900;
+  --red:#C8553D;--red-soft:#F8E1DB;--good:#1E7F4F;--good-soft:#DDF2E6;--stage:#E2E8E6;
+  --sea:#2B7A99;--sea-soft:#DCEEF5;--acc:#E26D3A;--acc-soft:#FCE7DC;--olive:#5E8A3A;--olive-soft:#E6F0DC;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716;--surface:#1B2221;--ink:#E8EEEC;--muted:#9AA7A4;--line:#2A3533;
+    --teal:#5BC0B6;--teal-soft:#173430;--mustard:#F0BA4A;--mustard-soft:#3A2E14;--mustard-ink:#F5CD78;
+    --red:#E27A63;--red-soft:#3A1F1A;--good:#4CC98A;--good-soft:#173526;--stage:#202A28;
+    --sea:#5FB6D6;--sea-soft:#15303B;--acc:#F08A5A;--acc-soft:#3A2419;--olive:#95C46C;--olive-soft:#1E2E15;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716;--surface:#1B2221;--ink:#E8EEEC;--muted:#9AA7A4;--line:#2A3533;
+  --teal:#5BC0B6;--teal-soft:#173430;--mustard:#F0BA4A;--mustard-soft:#3A2E14;--mustard-ink:#F5CD78;
+  --red:#E27A63;--red-soft:#3A1F1A;--good:#4CC98A;--good-soft:#173526;--stage:#202A28;
+  --sea:#5FB6D6;--sea-soft:#15303B;--acc:#F08A5A;--acc-soft:#3A2419;--olive:#95C46C;--olive-soft:#1E2E15;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;margin:0}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;line-height:1.08;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+svg{display:block;width:100%;height:auto}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1000px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar-t{font-family:"Fraunces",serif;font-weight:800;font-size:18px}
+.prog{font-size:13.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;gap:10px;align-items:center}
+.prog b{background:var(--mustard-soft);color:var(--mustard-ink);border-radius:999px;padding:4px 11px}
+
+.wrap{max-width:1000px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+.hello{padding-block:40px 8px}
+.hello h1{font-size:clamp(46px,8vw,80px);font-weight:800;letter-spacing:-.02em}
+.hello h1 em{font-weight:500;color:var(--red)}
+.note{margin-top:18px;background:var(--mustard-soft);border-radius:18px;padding:16px 18px;display:grid;gap:6px;max-width:680px}
+.note p{margin:0;font-weight:600}
+.note p:first-child{color:var(--mustard-ink);font-weight:700}
+
+.part{margin-top:56px;padding-top:12px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.part span{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.part b{font-family:"Fraunces",serif;font-size:22px}
+.sec{padding-top:28px}
+.ru{color:var(--muted);font-size:15px;margin:4px 0 12px;max-width:72ch}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:6px;background:var(--mustard-soft);color:var(--mustard-ink);margin-bottom:8px}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:18px}
+.block h3{font-size:24px;font-weight:600;margin-bottom:4px}
+.bl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.bl-head p{margin:2px 0 0;color:var(--muted);max-width:64ch}
+.score{font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:4px}
+
+.mc{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.mc li{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px;counter-increment:q}
+.mc .s{font-weight:600}
+.mc .s::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.mc .s i{color:var(--muted);font-weight:500}
+.blank{display:inline-block;min-width:3.4em;border-bottom:2.5px solid var(--mustard);text-align:center;color:var(--teal);font-weight:700}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 13px;font-weight:700;font-size:14.5px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.opt.missed{border-color:var(--good);border-style:dashed;color:var(--good)}
+li.ok,.pcard.ok{background:color-mix(in srgb,var(--good-soft) 45%,transparent)}
+li.bad,.pcard.bad{background:color-mix(in srgb,var(--red-soft) 45%,transparent)}
+.why{font-size:14px;color:var(--muted)}
+.why b{color:var(--ink)}
+
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.pcard{border:1px solid var(--line);border-radius:16px;padding:8px 10px 12px;display:flex;flex-direction:column;gap:8px}
+.pcard .pic{background:var(--stage);border-radius:12px;padding:4px}
+.pcard .opt{font-size:13.5px;padding:5px 10px}
+
+.gl{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.gl li{border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:600;line-height:2.1;counter-increment:q}
+.gl li::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.gl li b{color:var(--muted)}
+.story{font-size:18px;line-height:2.15;max-width:78ch;margin:0}
+select.g{font:inherit;font-weight:700;color:var(--teal);background:var(--teal-soft);border:1.5px solid transparent;border-radius:9px;padding:1px 4px;max-width:100%}
+.okw{font-weight:700;color:var(--good);background:var(--good-soft);border-radius:7px;padding:1px 7px}
+.badw{font-weight:700;color:var(--red);background:var(--red-soft);border-radius:7px;padding:1px 7px}
+.badw s{opacity:.7}
+.badw b{color:var(--good)}
+.btn{border:none;background:var(--ink);color:var(--surface);font-weight:700;padding:9px 16px;border-radius:11px}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fb{font-weight:600;font-size:14px}
+.fb.ok{color:var(--good)}.fb.no{color:var(--red)}
+
+.tw{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.tw li{border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:600;line-height:2.2;counter-increment:q}
+.tw li::before{content:counter(q) ". ";color:var(--muted);font-weight:700}
+.tw input{font:inherit;font-weight:700;width:9.5em;max-width:100%;padding:2px 8px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.tw li.ok input{border-color:var(--good);color:var(--good)}
+.tw li.bad input{border-color:var(--red);color:var(--red)}
+.tw .chk{border:1.5px solid var(--line);background:var(--surface);border-radius:9px;padding:2px 10px;font-weight:700;font-size:13.5px;margin-left:6px}
+.tw .ans{color:var(--good);font-weight:700;margin-left:6px}
+
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px;border-top:6px solid var(--rc)}
+.rule.will{--rc:var(--sea);--rs:var(--sea-soft)}
+.rule.going{--rc:var(--acc);--rs:var(--acc-soft)}
+.rule.pc{--rc:var(--olive);--rs:var(--olive-soft)}
+.rule h3{font-size:30px;color:var(--rc)}
+.rule .form{font-weight:700;background:var(--rs);border-radius:10px;padding:8px 12px;font-size:15px}
+.use{display:grid;gap:4px}
+.use b{font-size:14.5px}
+.use span{font-style:italic;color:var(--muted);font-size:15px}
+
+.results{margin-top:48px;background:var(--ink);color:var(--surface);border-radius:26px;padding:26px}
+.results h2{font-size:clamp(30px,5vw,44px)}
+.results .sub{opacity:.75;margin:6px 0 18px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.res{background:color-mix(in srgb,var(--surface) 10%,transparent);border-radius:16px;padding:12px 14px}
+.res .n{font-family:"Fraunces",serif;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+.res .l{font-size:13px;opacity:.8;font-weight:600}
+.total{margin-top:16px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.total .n{font-family:"Fraunces",serif;font-size:64px;font-weight:800;line-height:1;color:var(--mustard)}
+.total .p{font-size:20px;font-weight:700}
+.status{margin-top:12px;font-weight:600;opacity:.85}
+</style>
+<style>
+.rule.fc{--rc:var(--teal);--rs:var(--teal-soft)}
+.rule.pc{--rc:var(--olive);--rs:var(--olive-soft)}
+.rule.fs{--rc:var(--mustard);--rs:var(--mustard-soft)}
+.audio-box{background:var(--mustard-soft);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.audio-box audio{width:100%}
+.script{margin-top:14px;background:var(--bg);border-radius:14px;padding:14px 16px;line-height:1.7}
+.ghost{border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:8px 14px;font-weight:700}
+.mc .s s{color:var(--red);text-decoration:none;font-style:italic}
+</style>
+
+<style>
+.tw .h{color:var(--muted);font-weight:600;font-style:italic}
+.tw input{width:15em}
+.tbar{display:flex;align-items:center;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.tbar .clock{font-family:"Fraunces",serif;font-size:26px;font-weight:800;min-width:3.2em;font-variant-numeric:tabular-nums}
+.tbar .clock.low{color:var(--red)}
+.tbar button{border:0;background:var(--teal);color:#fff;border-radius:12px;padding:9px 18px;font-weight:800;font-size:15px}
+.tbar button:disabled{opacity:.5}
+.tbar .tip{font-size:13.5px;color:var(--muted);font-weight:600}
+.mc.locked{filter:blur(5px);pointer-events:none;user-select:none}
+.tag.speed{background:var(--red-soft);color:var(--red)}
+</style>
+<div class="bar"><div class="bar-in">
+  <div class="bar-t">Stasya · I can!</div>
+  <div class="prog">Answered <b id="topProg">0</b></div>
+</div></div>
+
+<main class="wrap">
+<header class="hello">
+  <h1>Hello, <em>Стася!</em></h1>
+  <div class="note">
+    <p>Небольшая домашка на <b>can</b>: умею / не умею, можно / нельзя, вопросы и короткие ответы. На каждый вопрос — одна попытка.</p>
+    <p>Не перезагружай страницу, иначе ответы сбросятся. После завершения пришли мне в Телеграм скрин с результатами.</p>
+  </div>
+</header>
+
+<style>
+.cancard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:22px;display:grid;gap:12px}
+.cancard h2{margin:0;font-family:"Fraunces",serif;font-size:24px}
+.cantbl{overflow-x:auto}
+.cantbl table{width:100%;border-collapse:separate;border-spacing:0;font-size:16px;min-width:0}
+.cantbl th{background:var(--teal);color:#fff;text-align:left;padding:8px 12px;font-size:14px}
+.cantbl th:first-child{border-top-left-radius:12px}.cantbl th:last-child{border-top-right-radius:12px}
+.cantbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.cantbl td:first-child{font-weight:800;white-space:nowrap}
+.cantbl b{color:var(--teal)}
+.cantbl .no b{color:var(--red)}
+.canmean{display:flex;flex-wrap:wrap;gap:8px}
+.canmean span{background:var(--teal-soft);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14.5px}
+.cannote{background:var(--red-soft);border-radius:12px;padding:10px 14px;font-weight:600;font-size:15px;line-height:1.7}
+</style>
+<section class="cancard">
+  <h2>can 💪 — уметь, мочь, можно</h2>
+  <div class="canmean"><span>🎤 умею: I can sing.</span><span>🙏 просьба: Can you help me?</span><span>✅ разрешение: Can I sit here?</span></div>
+  <div class="cantbl"><table>
+    <thead><tr><th></th><th>Схема</th><th>Пример</th></tr></thead>
+    <tbody>
+      <tr><td>✅ +</td><td>кто + <b>can</b> + глагол</td><td>He <b>can</b> dance.</td></tr>
+      <tr class="no"><td>❌ −</td><td>кто + <b>can’t</b> + глагол</td><td>She <b>can’t</b> drive.</td></tr>
+      <tr><td>❓ ?</td><td><b>Can</b> + кто + глагол?</td><td><b>Can</b> you swim?</td></tr>
+      <tr><td>💬 ответ</td><td>Yes, I <b>can</b>. / No, I <b>can’t</b>.</td><td>Can she cook? — Yes, she <b>can</b>.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cannote">⚠️ После can глагол <b>без</b> -s и <b>без</b> to: he can danc<s>es</s> → he can <b>dance</b> · can <s>to</s> swim → can <b>swim</b><br>⚠️ Нет do / does: <s>Do you can</s> → <b>Can you</b> swim?</div>
+</section>
+
+<div class="part"><span>Part 1</span><b>can or can’t? 💪</b></div>
+<section class="sec">
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise A</span><h3>can or can’t?</h3><p>Читай всё предложение — подсказка в контексте.</p></div><span class="score" id="scA"></span></div>
+    <ol class="mc" id="exA"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag speed">Exercise A ⏱ 60 sec</span><h3>can or can’t? — speed round</h3><p>Нажми Start — у тебя 60 секунд. Что не успеешь — засчитается как ошибка.</p></div><span class="score" id="scAt"></span></div>
+    <div class="tbar"><button id="goA">Start ⏱</button><span class="clock" id="ckA">1:00</span><span class="tip" id="tpA"></span></div>
+    <ol class="mc locked" id="exAt"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise B</span><h3>Make a question ❓</h3><p>Выбери правильный вопрос.</p></div><span class="score" id="scB"></span></div>
+    <ol class="mc" id="exB"></ol></div>
+  <div class="block"><div class="bl-head"><div><span class="tag">Exercise C</span><h3>Short answers</h3><p>Yes, I can. / No, I can’t.</p></div><span class="score" id="scC"></span></div>
+    <ol class="mc" id="exC"></ol></div>
+</section>
+
+<section class="results">
+  <h2>Stasya’s results</h2>
+  <p class="sub">Сделай скрин этого блока и пришли мне в Телеграм.</p>
+  <div class="res-grid" id="resGrid"></div>
+  <div class="total"><span class="n" id="rTot"></span><span class="p" id="rPct"></span></div>
+  <div class="status" id="rStatus"></div>
+</section>
+</main>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sv = inner => `<svg viewBox="0 0 120 90" role="img" aria-hidden="true">${inner}</svg>`;
+const INK = '#1F2328';
+
+/* ---------- scoring ---------- */
+const EX = { A:'can or can’t?', At:'can or can’t? ⏱', B:'Questions', C:'Short answers' };
+const TOTAL = {}, score = {}, done = {};
+Object.keys(EX).forEach(k => { score[k] = 0; done[k] = 0; });
+function refresh(){
+  let s = 0, d = 0, t = 0;
+  Object.keys(EX).forEach(k => { s += score[k]; d += done[k]; t += TOTAL[k] || 0; const el = $('#sc' + k); if (el) el.textContent = `${score[k]} / ${TOTAL[k]}`; const r = $('#r' + k); if (r) r.textContent = `${score[k]} / ${TOTAL[k]}`; });
+  $('#topProg').textContent = `${d} / ${t}`; $('#rTot').textContent = `${s} / ${t}`;
+  $('#rPct').textContent = d ? `${Math.round(s / t * 100)}%` : '';
+  $('#rStatus').textContent = d === t ? '✓ Homework complete' : `Answered ${d} of ${t} — keep going!`;
+}
+window.addEventListener('beforeunload', e => { if (Object.values(done).some(Boolean)){ e.preventDefault(); e.returnValue = ''; } });
+
+/* one-attempt multiple choice. items: {s, o:[correct first, ...distractors] | a index for fixed opts, f, why} */
+function mc(key, listId, items, fixed){
+  TOTAL[key] = items.length;
+  const list = $(listId);
+  const prepared = items.map(it => {
+    if (fixed) return { ...it, opts: fixed, ans: it.a };
+    const opts = shuffle(it.o); return { ...it, opts, ans: opts.indexOf(it.o[0]) };
+  });
+  list.innerHTML = prepared.map((it, n) => `<li data-n="${n}"><div class="s">${it.s.replace('___', '<span class="blank">___</span>')}</div><div class="opts">${it.opts.map((x, k) => `<button class="opt" data-k="${k}">${x}</button>`).join('')}</div><div class="why" hidden></div></li>`).join('');
+  list.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if (!b || b.disabled) return;
+    const li = b.closest('li'), it = prepared[+li.dataset.n], good = +b.dataset.k === it.ans;
+    li.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.k === it.ans && !good) x.classList.add('missed'); });
+    b.classList.add(good ? 'right' : 'wrong'); li.classList.add(good ? 'ok' : 'bad');
+    const bl = li.querySelector('.blank'); if (bl) bl.textContent = it.f || it.opts[it.ans];
+    if (it.why || !good){ const w = li.querySelector('.why'); w.hidden = false; w.innerHTML = (good ? '✓ ' : '✗ Правильно: <b>' + it.opts[it.ans] + '</b>. ') + (it.why || ''); }
+    done[key]++; if (good) score[key]++; refresh();
+  });
+}
+/* one-check dropdown gaps. g = {o:[...], a} */
+function gaps(key, el, lines, btn, fb){
+  let gid = 0; const all = [];
+  const sel = g => { const id = el.id + 'g' + gid++; all.push({ id, ...g }); return `<select class="g" id="${id}" aria-label="choose"><option value="">…</option>${g.o.map((x, k) => `<option value="${k}">${x}</option>`).join('')}</select>`; };
+  const html = lines.map(p => p.map(x => typeof x === 'string' ? x : sel(x)).join(''));
+  el.innerHTML = el.tagName === 'OL' ? html.map(h => `<li>${h}</li>`).join('') : html.join('');
+  TOTAL[key] = all.length;
+  btn.addEventListener('click', () => {
+    const empty = all.filter(g => document.getElementById(g.id).value === '').length;
+    if (empty){ fb.className = 'fb no'; fb.textContent = `Заполни все пропуски (осталось ${empty}), потом проверяй.`; return; }
+    all.forEach(g => {
+      const s = document.getElementById(g.id), v = +s.value, w = document.createElement('span');
+      if (v === g.a){ w.className = 'okw'; w.textContent = g.o[g.a]; score[key]++; }
+      else { w.className = 'badw'; w.innerHTML = `<s>${g.o[v]}</s> → <b>${g.o[g.a]}</b>`; }
+      s.replaceWith(w);
+    });
+    done[key] = all.length; btn.disabled = true; refresh();
+    fb.className = 'fb ' + (score[key] === all.length ? 'ok' : 'no'); fb.textContent = `${score[key]} / ${all.length} correct.`;
+  });
+}
+const G = (a, ...o) => ({ o, a });
+
+
+function typing(key, elId, items, ph){
+  TOTAL[key] = items.length;
+  const norm = s => s.trim().toLowerCase().replace(/[’‘]/g, "'").replace(/\s+/g, ' ');
+  $(elId).innerHTML = items.map(([a, w, b], n) => `<li data-n="${n}">${a}<input autocomplete="off" spellcheck="false" placeholder="${ph}" aria-label="answer" style="width:12em">${b}<button class="chk">Check</button><span class="ans" hidden></span></li>`).join('');
+  function check(li){
+    const n = +li.dataset.n, inp = li.querySelector('input'); if (!inp.value.trim() || inp.disabled) return;
+    const good = items[n][1].includes(norm(inp.value));
+    inp.disabled = true; li.querySelector('.chk').remove(); li.classList.add(good ? 'ok' : 'bad');
+    const a = li.querySelector('.ans'); a.hidden = false; a.textContent = good ? '✓' : `✗ → ${items[n][1][0]}`;
+    done[key]++; if (good) score[key]++; refresh();
+  }
+  $(elId).addEventListener('click', e => { if (e.target.classList.contains('chk')) check(e.target.closest('li')); });
+  $(elId).addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') check(e.target.closest('li')); });
+}
+
+
+function timed(key, listId, items, secs){
+  mc(key, listId, items);
+  const list = $(listId), btn = $('#go' + key[0]), ck = $('#ck' + key[0]), tp = $('#tp' + key[0]); let left = secs, id = null;
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const stop = () => { clearInterval(id); id = null; list.querySelectorAll('li').forEach(li => { if (li.classList.contains('ok') || li.classList.contains('bad')) return; li.classList.add('bad'); li.querySelectorAll('.opt').forEach(x => x.disabled = true); done[key]++; }); refresh(); tp.textContent = `Время вышло! ${score[key]} / ${items.length}`; };
+  list.addEventListener('click', () => setTimeout(() => { if (id && [...list.querySelectorAll('li')].every(li => li.classList.contains('ok') || li.classList.contains('bad'))){ clearInterval(id); id = null; tp.textContent = `Готово за ${secs - left} сек! ${score[key]} / ${items.length}`; } }, 0));
+  btn.addEventListener('click', () => { btn.disabled = true; list.classList.remove('locked'); id = setInterval(() => { left--; ck.textContent = fmt(left); ck.classList.toggle('low', left <= 10); if (left <= 0) stop(); }, 1000); });
+}
+mc('A', '#exA', [
+  { s:'Jungkook is a great singer. He ___ sing very well.', o:['can','can’t','cans'] },
+  { s:'I don’t speak Korean. I ___ speak Korean.', o:['can’t','can','don’t can'] },
+  { s:'She goes to dance classes. She can ___ .', o:['dance','dances','to dance'] },
+  { s:'He doesn’t have a car licence. He ___ drive.', o:['can’t','can','doesn’t can'] },
+  { s:'RM can ___ English very well.', o:['speak','speaks','to speak'] },
+  { s:'Fish ___ swim.', o:['can','can’t','cans'] },
+  { s:'My cat is clever, but she ___ cook!', o:['can’t','can','cans'] },
+  { s:'My husband can cook, but he ___ bake cakes.', o:['can’t','can','isn’t'] },
+]);
+timed('At', '#exAt', [
+  { s:'Babies ___ read.', o:['can’t','can','cans'] },
+  { s:'She can ___ a cake.', o:['bake','bakes','to bake'] },
+  { s:'Birds ___ fly.', o:['can','can’t','cans'] },
+  { s:'I ___ see you — it’s very dark!', o:['can’t','can','don’t can'] },
+  { s:'He ___ play the guitar.', o:['can','cans','can to'] },
+  { s:'Cats ___ speak English.', o:['can’t','can','doesn’t'] },
+  { s:'Jin can ___ very well.', o:['cook','cooks','cooking'] },
+  { s:'You ___ eat here. It’s OK.', o:['can','can’t','cans'] },
+], 60);
+mc('B', '#exB', [
+  { s:'Ты умеешь плавать?', o:['Can you swim?','Do you can swim?','You can swim?'] },
+  { s:'Она умеет готовить?', o:['Can she cook?','Can she cooks?','Does she can cook?'] },
+  { s:'Можно я здесь сяду?', o:['Can I sit here?','I can sit here?','Can I to sit here?'] },
+  { s:'Что ты умеешь готовить?', o:['What can you cook?','What you can cook?','What can you to cook?'] },
+  { s:'Твой муж умеет танцевать?', o:['Can your husband dance?','Can dance your husband?','Your husband can dance?'] },
+  { s:'Ты можешь мне помочь?', o:['Can you help me?','Do you help me?','Can you helps me?'] },
+]);
+mc('C', '#exC', [
+  { s:'Can you swim? — Yes, I ___ .', o:['can','do','am'] },
+  { s:'Can Jungkook sing? — Yes, he ___ .', o:['can','does','is'] },
+  { s:'Can your husband speak Korean? — No, he ___ .', o:['can’t','doesn’t','isn’t'] },
+  { s:'Can cats cook? — No, they ___ .', o:['can’t','don’t','aren’t'] },
+  { s:'Can I open the window? — Yes, you ___ .', o:['can','do','are'] },
+  { s:'Can she drive? — No, she ___ .', o:['can’t','doesn’t','isn’t'] },
+]);
+$('#resGrid').innerHTML = Object.keys(EX).map(k => `<div class="res"><div class="n" id="r${k}"></div><div class="l">${k} · ${EX[k]}</div></div>`).join('');
+refresh();
+})();
+</script>
